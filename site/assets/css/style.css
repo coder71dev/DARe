@@ -329,16 +329,22 @@ a { color: var(--color-sky); }
   font-size: 0.95rem;
 }
 
-/* Floating zoom widget, docked in the diagram's corner — laid out
-   horizontally (a short wide pill) rather than stacked vertically, so it
-   stays compact and out of the way of box content beneath/around it. */
+/* Floating zoom widget, docked in the diagram's bottom-right corner — laid
+   out horizontally (a short wide pill) rather than stacked vertically, so
+   it stays compact. It used to dock top-right, which worked while the
+   stage showed the full source-PPTX canvas (empty margin up there), but
+   once the stage got cropped to its actual content that corner had real
+   boxes in it. Bottom-right stays clear in both Simple and Extended (the
+   last row of boxes on the right side always ends well above the diagram's
+   cropped bottom edge — Outcome Assessment in Simple, Cost benefit/
+   Portfolio/Outcome Assessment in Extended), so it floats there instead. */
 .diagram-viewport {
   position: relative;
 }
 
 .zoom-controls {
   position: absolute;
-  top: 0.9rem;
+  bottom: 0.9rem;
   right: 1.5rem;
   z-index: 10;
   display: flex;
@@ -690,7 +696,8 @@ a { color: var(--color-sky); }
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin: 0;
+  margin: 1rem 0 0; /* breathing room from the guide above; stays flush
+                        with the diagram below (see process-panel move) */
 }
 
 .process-toggle[hidden] { display: none; }
@@ -714,7 +721,7 @@ a { color: var(--color-sky); }
 
 .process-panel {
   max-width: 700px;
-  margin: 0 auto 1.25rem;
+  margin: 1.5rem auto 1.25rem;
   padding: 1rem 1.5rem;
   background: var(--color-sky-tint-bg);
   border: 1px solid var(--color-sky-tint-border);
