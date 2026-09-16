@@ -32,15 +32,19 @@
     <button class="level-tab" data-view="imp" disabled>Level 2 · IMP <span class="soon-badge">Soon</span></button>
   </div>
 
-  <div class="review-banner">
-    <strong>Working draft, for review.</strong>
-    Level 1 (Simple and Extended) is ready below. Level 2 is still in progress.
-    Boxes with a <span class="dot-sample" aria-hidden="true"></span> blue dot are still waiting on final wording from DARe —
-    click any box to see what's there so far.
-  </div>
-
   <h1 class="diagram-title" id="diagram-title"></h1>
   <p class="diagram-subtitle" id="diagram-subtitle"></p>
+
+  <div class="diagram-guide" id="diagram-guide">
+    <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="true" aria-controls="diagram-guide-body">
+      <span class="diagram-guide-toggle-label">
+        <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
+        How to explore this diagram
+      </span>
+      <svg class="diagram-guide-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="diagram-guide-body" id="diagram-guide-body"></div>
+  </div>
 
   <div class="process-toggle" id="process-toggle" role="group" aria-label="Filter by process" hidden>
     <button type="button" id="process-btn-all" aria-pressed="true">Show all</button>
