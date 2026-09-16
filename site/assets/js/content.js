@@ -26,6 +26,7 @@ const TPRAF_CONTENT = {
       {
         id: "transport-scenarios",
         label: "Transport Scenarios",
+        startHere: true,
         pos: { left: 4.42, top: 29.65, width: 15.79, height: 8.77 },
         text: "Content coming soon — awaiting text from DARe.",
         isPlaceholder: true,
@@ -170,6 +171,7 @@ const TPRAF_CONTENT = {
       {
         id: "transport-demand",
         label: "Transport Demand",
+        startHere: true,
         pos: { left: 5.92, top: 25.48, width: 9.16, height: 6.88 },
         text: "Models used to build a statistically representative population of the study area, with a variety of socio-demographic attributes (e.g., age, sex, income) and activity plans (e.g., trip purpose, starting time, main transport mode, origin-destination), such as NTEM, LUISA, UDM, SILO, and MITO.",
         isPlaceholder: false,

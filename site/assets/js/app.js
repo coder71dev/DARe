@@ -30,6 +30,10 @@
   const processBtnDsp = document.getElementById("process-btn-dsp");
   const processBtnImp = document.getElementById("process-btn-imp");
   const processBtnAll = document.getElementById("process-btn-all");
+  const guideEl = document.getElementById("diagram-guide");
+  const guideToggle = document.getElementById("diagram-guide-toggle");
+  const guideBody = document.getElementById("diagram-guide-body");
+  const stageWrap = document.getElementById("diagram-stage-wrap");
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -197,6 +201,7 @@
     el.textContent = box.label;
     if (box.group) el.dataset.group = box.group;
     if (box.rotate) el.style.setProperty("--box-rotate", box.rotate + "deg");
+    if (box.startHere) el.classList.add("is-start");
     el.addEventListener("click", () => openModal(box));
     return el;
   }
@@ -238,6 +243,64 @@
     el.style.height = pct(heading.pos.height);
     el.textContent = heading.label;
     return el;
+  }
+
+  // Guide panel: collapsible legend + interaction hints, rebuilt per view
+  // since the colour legend's meaning shifts slightly between Simple (no
+  // DSP/IMP split) and Extended (colours = process). Collapsed/expanded
+  // state is remembered per browser as a convenience, not load-bearing —
+  // if storage is unavailable the guide just defaults to expanded.
+  function getGuideCollapsed() {
+    try {
+      return localStorage.getItem("tpraf-guide-collapsed") === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function setGuideCollapsed(collapsed) {
+    guideEl.dataset.collapsed = collapsed ? "true" : "false";
+    guideToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    try {
+      localStorage.setItem("tpraf-guide-collapsed", collapsed ? "1" : "0");
+    } catch (e) {
+      /* per-viewer convenience only — fine if it can't persist */
+    }
+  }
+
+  if (guideToggle) {
+    guideToggle.addEventListener("click", () => {
+      setGuideCollapsed(guideEl.dataset.collapsed !== "true");
+    });
+    setGuideCollapsed(getGuideCollapsed());
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  }
+
+  function buildGuideBody(data) {
+    const hasProcessGroups = data.boxes.some((b) => b.group);
+    const legend = [
+      ["navy", hasProcessGroups ? "Impact Modelling (IMP) steps" : "Hazard & scenario steps"],
+      ["sky", hasProcessGroups ? "Decision Support (DSP) steps" : "Evaluation & risk steps"],
+      ["leaf", "Key decision point"]
+    ];
+    const legendHtml = legend
+      .map(([swatch, label]) => `<li><span class="diagram-guide-swatch swatch-${swatch}"></span>${escapeHtml(label)}</li>`)
+      .join("");
+    const dotHtml = `<li><span class="diagram-guide-swatch swatch-dot"></span>Wording still coming from DARe</li>`;
+    const lineHtml = `<li><span class="diagram-guide-swatch swatch-line"></span>Feedback loop</li>`;
+
+    const toggleHint = hasProcessGroups
+      ? " Use the <strong>DSP only</strong> / <strong>IMP only</strong> buttons above the diagram to follow just one process at a time."
+      : "";
+
+    return `
+      <p class="diagram-guide-hint">Click any box or label to see its full detail.${toggleHint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
+      <ul class="diagram-guide-legend">${legendHtml}${dotHtml}${lineHtml}</ul>
+      <p class="diagram-guide-status">Working draft, ready for review — Level 1 is complete below; Level 2 component diagrams are next.</p>
+    `;
   }
 
   let currentProcessFilter = null; // null | "dsp" | "imp"
@@ -308,11 +371,14 @@
       subtitleEl.textContent = "This level isn't built yet — check back after the next milestone.";
       svgLayer.innerHTML = "";
       stage.querySelectorAll(".diagram-box, .diagram-label").forEach((n) => n.remove());
+      guideEl.hidden = true;
       return;
     }
 
     titleEl.textContent = data.title;
     subtitleEl.textContent = data.subtitle;
+    guideEl.hidden = false;
+    guideBody.innerHTML = buildGuideBody(data);
 
     // Clear previous render
     svgLayer.innerHTML = "";
@@ -333,6 +399,11 @@
     });
     (data.labels || []).forEach((label) => stage.appendChild(makeLabelEl(label)));
     (data.headings || []).forEach((heading) => stage.appendChild(makeHeadingEl(heading)));
+
+    // Fade the new view in rather than snapping straight to it.
+    stageWrap.classList.remove("is-entering");
+    void stageWrap.offsetWidth; // restart the animation even if the class never left in this tick
+    stageWrap.classList.add("is-entering");
 
     const hasProcessGroups = data.boxes.some((b) => b.group);
     processToggle.hidden = !hasProcessGroups;
