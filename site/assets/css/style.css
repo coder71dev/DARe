@@ -10,6 +10,16 @@
   --color-stone: #e6e6e6; /* light grey */
   --color-white: #ffffff;
 
+  /* Every colour below this line is one of the four above at reduced
+     opacity — not a new colour. The brand guide defines exactly four
+     colours (plus white); UI chrome like info banners and muted text
+     still needs lighter/darker variants, so those are derived as tints
+     of an approved colour rather than separate arbitrary greys/blues. */
+  --color-water-muted: rgba(0, 41, 94, 0.68);   /* secondary text */
+  --color-water-faint: rgba(0, 41, 94, 0.5);    /* tertiary text, badges */
+  --color-sky-tint-bg: rgba(0, 150, 255, 0.07);   /* info banner background */
+  --color-sky-tint-border: rgba(0, 150, 255, 0.3); /* info banner border */
+
   --font-brand: 'JT Marnie', Calibri, 'Segoe UI', Arial, sans-serif;
 
   --box-border-radius: 10px;
@@ -22,6 +32,10 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: var(--font-brand);
+  /* JT Marnie is "used in Bold and Medium" per the brand guide — no
+     Regular/Light weight. 500 is the base so body copy defaults to
+     Medium; anything that needs more emphasis sets 600/700 explicitly. */
+  font-weight: 500;
   color: var(--color-water);
   background: var(--color-white);
 }
@@ -32,16 +46,34 @@ a { color: var(--color-sky); }
 .site-header {
   background: var(--color-water);
   color: var(--color-white);
-  padding: 1rem 1.5rem;
+  padding: 1.1rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .site-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Brand guide's own minimum digital size for the master logo (195px wide,
+   below which the secondary/symbol-only mark should be used instead). */
+.site-header .logo {
+  width: 195px;
+  height: auto;
+  display: block;
+}
+
+.site-header .brand-subtitle {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   letter-spacing: -0.02em;
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+  padding-left: 0.75rem;
 }
 
 .site-header nav a {
@@ -63,12 +95,12 @@ a { color: var(--color-sky); }
 
 .site-footer p {
   margin: 0;
-  color: #777;
+  color: var(--color-water-muted);
   font-size: 0.82rem;
 }
 
 .site-footer a {
-  color: #777;
+  color: var(--color-water-muted);
   text-decoration: underline;
 }
 
@@ -83,6 +115,8 @@ a { color: var(--color-sky); }
 .landing h1 {
   color: var(--color-water);
   font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em; /* brand guide: -20 tracking for titles */
   margin-bottom: 0.25rem;
 }
 
@@ -148,7 +182,7 @@ a { color: var(--color-sky); }
   padding: 0.05rem 0.45rem;
   border-radius: 999px;
   background: var(--color-stone);
-  color: #666;
+  color: var(--color-water-faint);
   font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -160,11 +194,11 @@ a { color: var(--color-sky); }
   max-width: 900px;
   margin: 1rem auto 0;
   padding: 0.85rem 1.25rem;
-  background: #eef7ff;
-  border: 1px solid #cfe6fb;
+  background: var(--color-sky-tint-bg);
+  border: 1px solid var(--color-sky-tint-border);
   border-left: 4px solid var(--color-sky);
   border-radius: 8px;
-  color: #234;
+  color: var(--color-water);
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -178,7 +212,7 @@ a { color: var(--color-sky); }
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #e0a300;
+  background: var(--color-sky);
   margin: 0 0.15rem;
   vertical-align: middle;
 }
@@ -209,12 +243,14 @@ a { color: var(--color-sky); }
 .diagram-title {
   text-align: center;
   color: var(--color-leaf);
+  font-weight: 700;
+  letter-spacing: -0.02em; /* brand guide: -20 tracking for titles */
   margin: 1.25rem 0 0.25rem;
 }
 
 .diagram-subtitle {
   text-align: center;
-  color: #555;
+  color: var(--color-water-muted);
   margin: 0 0 1rem;
   font-size: 0.95rem;
 }
@@ -281,7 +317,7 @@ a { color: var(--color-sky); }
   min-width: 2.6rem;
   text-align: center;
   font-size: 0.78rem;
-  color: #777;
+  color: var(--color-water-muted);
   font-weight: 700;
   user-select: none;
 }
@@ -340,7 +376,7 @@ a { color: var(--color-sky); }
   display: none;
   text-align: center;
   font-size: 0.8rem;
-  color: #777;
+  color: var(--color-water-muted);
   margin: 0 0 0.5rem;
 }
 
@@ -362,8 +398,8 @@ a { color: var(--color-sky); }
    arrows and boxes it groups. */
 .diagram-cluster-bg {
   position: absolute;
-  background: #eef7ff;
-  border: 1px solid #cfe6fb;
+  background: var(--color-sky-tint-bg);
+  border: 1px solid var(--color-sky-tint-border);
   border-radius: 14px;
   z-index: 0;
   pointer-events: none;
@@ -439,7 +475,7 @@ a { color: var(--color-sky); }
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #e0a300;
+  background: var(--color-sky);
   border: 2px solid var(--color-white);
   z-index: 3;
 }
@@ -528,8 +564,8 @@ a { color: var(--color-sky); }
   max-width: 700px;
   margin: 0 auto 1.25rem;
   padding: 1rem 1.5rem;
-  background: #f4faff;
-  border: 1px solid #cfe6fb;
+  background: var(--color-sky-tint-bg);
+  border: 1px solid var(--color-sky-tint-border);
   border-left: 4px solid var(--color-leaf);
   border-radius: 8px;
 }
@@ -544,7 +580,7 @@ a { color: var(--color-sky); }
 
 .process-panel p {
   margin: 0;
-  color: #333;
+  color: var(--color-water);
   font-size: 0.9rem;
   line-height: 1.55;
   white-space: pre-line;
@@ -589,14 +625,14 @@ a { color: var(--color-sky); }
   margin-top: 0;
 }
 
-.modal-box p { line-height: 1.55; color: #333; }
+.modal-box p { line-height: 1.55; color: var(--color-water); }
 
 .modal-box .placeholder-note {
   display: inline-block;
   margin-top: 0.5rem;
   padding: 0.3rem 0.6rem;
-  background: #fff4dd;
-  color: #8a6200;
+  background: var(--color-stone);
+  color: var(--color-water);
   border-radius: 6px;
   font-size: 0.8rem;
 }
