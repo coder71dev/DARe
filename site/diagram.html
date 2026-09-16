@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="An interactive walkthrough of DARe's Transport Performance & Risk Analysis Framework (TPRAF)." />
+  <title>TPRAF Interactive Diagram — DARe</title>
+  <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" />
+  <link rel="icon" href="assets/icons/favicon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="assets/icons/favicon-192.png" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- LAYOUT:HEADER — identical on every page; becomes the header block
+       inside resources/views/layouts/app.blade.php when this moves to Laravel -->
+  <header class="site-header">
+    <div class="brand">DARe · TPRAF</div>
+    <nav>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>
+  <!-- /LAYOUT:HEADER -->
+
+  <!-- PAGE:CONTENT — becomes @section('content') in resources/views/diagram.blade.php -->
+  <div class="diagram-toolbar">
+    <button class="level-tab" data-view="simple" aria-selected="true">Level 1 · Simple</button>
+    <button class="level-tab" data-view="extended">Level 1 · Extended</button>
+    <button class="level-tab" data-view="dsp" disabled>Level 2 · DSP <span class="soon-badge">Soon</span></button>
+    <button class="level-tab" data-view="imp" disabled>Level 2 · IMP <span class="soon-badge">Soon</span></button>
+  </div>
+
+  <div class="review-banner">
+    <strong>Working draft, for review.</strong>
+    Level 1 (Simple and Extended) is ready below. Level 2 is still in progress.
+    Boxes with an <span class="dot-sample" aria-hidden="true"></span> orange dot are still waiting on final wording from DARe —
+    click any box to see what's there so far.
+  </div>
+
+  <h1 class="diagram-title" id="diagram-title"></h1>
+  <p class="diagram-subtitle" id="diagram-subtitle"></p>
+
+  <div class="process-toggle" id="process-toggle" role="group" aria-label="Filter by process" hidden>
+    <button type="button" id="process-btn-all" aria-pressed="true">Show all</button>
+    <button type="button" id="process-btn-dsp" aria-pressed="false">DSP only</button>
+    <button type="button" id="process-btn-imp" aria-pressed="false">IMP only</button>
+  </div>
+
+  <div class="process-panel" id="process-panel" hidden>
+    <h2 id="process-panel-title"></h2>
+    <p id="process-panel-text"></p>
+  </div>
+
+  <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
+  <div class="diagram-viewport">
+    <div class="zoom-controls" role="group" aria-label="Zoom diagram">
+      <button type="button" id="zoom-out" aria-label="Zoom out">&minus;</button>
+      <span class="zoom-level" id="zoom-level">100%</span>
+      <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+      <div class="zoom-divider"></div>
+      <button type="button" id="zoom-fit" aria-label="Fit diagram to screen">Fit</button>
+      <button type="button" id="zoom-reset" aria-label="Reset zoom">Reset</button>
+    </div>
+    <div class="diagram-stage-wrap" id="diagram-stage-wrap">
+      <div class="zoom-sizer" id="zoom-sizer">
+        <div class="diagram-stage" id="diagram-stage">
+          <svg class="arrows-layer" id="arrows-layer"></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <span class="placeholder-note" id="modal-placeholder-note" hidden>Awaiting final text from DARe</span>
+      <br />
+      <a class="modal-handbook-link" id="modal-handbook-link" href="#" hidden>Take me to the Handbook &rarr;</a>
+    </div>
+  </div>
+
+  <!-- /PAGE:CONTENT -->
+
+  <!-- LAYOUT:FOOTER -->
+  <footer class="site-footer">
+    <p>DARe &middot; Decarbonised, Adaptable, Resilient Transport Infrastructures Hub &middot; <a href="https://dare.ac.uk">dare.ac.uk</a></p>
+  </footer>
+  <!-- /LAYOUT:FOOTER -->
+
+  <!-- DATA SOURCE — in Laravel this <script src="content.js"> tag is replaced by
+       one inline line the Blade view prints:
+         <script>const TPRAF_CONTENT = @json($tprafContent);</script>
+       That PHP array would come from the database instead of this file.
+       app.js needs ZERO changes either way — it only ever reads the
+       TPRAF_CONTENT global, never content.js by name. -->
+  <script src="assets/js/content.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
