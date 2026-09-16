@@ -435,10 +435,27 @@ a { color: var(--color-sky); }
   margin: 0 auto;
 }
 
-.diagram-stage {
+/* Clips the stage down to just its content's own bounding box (computed
+   per view in app.js from the actual boxes/labels/headings/containers),
+   instead of showing the full source-PPTX slide canvas — most views only
+   use the middle ~60-80% of that canvas vertically, so showing the whole
+   thing left a large dead margin above/below the diagram. Width isn't
+   cropped, only height. This element carries the zoom scale + the visible
+   frame; .diagram-stage inside it stays the full, untouched 0-100% slide
+   coordinate space every box/arrow/label position is still expressed in. */
+.diagram-crop {
   position: relative;
-  aspect-ratio: 12192 / 6858;
+  overflow: hidden;
   transform-origin: top left;
+}
+
+.diagram-stage {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  /* height & top are set per view by app.js, as percentages of this
+     element's own full (uncropped) 0-100 coordinate space — see
+     computeContentBounds()/applyCropToStage() in app.js. */
   user-select: none; /* dragging the stage shouldn't select box text */
 }
 
@@ -673,7 +690,7 @@ a { color: var(--color-sky); }
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin: 0 0 0.75rem;
+  margin: 0;
 }
 
 .process-toggle[hidden] { display: none; }
