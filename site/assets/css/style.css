@@ -1,0 +1,624 @@
+/* ==========================================================================
+   DARe brand tokens — from NU_DARe_Brand Guidelines_7.pdf
+   JT Marnie is DARe's brand font but the font file was not supplied yet;
+   falling back to Calibri, per the guidelines' own fallback rule.
+   ========================================================================== */
+:root {
+  --color-water: #00295e; /* dark navy — primary */
+  --color-leaf: #5ecf70;  /* green */
+  --color-sky: #0096ff;   /* blue */
+  --color-stone: #e6e6e6; /* light grey */
+  --color-white: #ffffff;
+
+  --font-brand: 'JT Marnie', Calibri, 'Segoe UI', Arial, sans-serif;
+
+  --box-border-radius: 10px;
+  --shadow-soft: 0 4px 14px rgba(0, 41, 94, 0.15);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-brand);
+  color: var(--color-water);
+  background: var(--color-white);
+}
+
+a { color: var(--color-sky); }
+
+/* ---------- Site header ---------- */
+.site-header {
+  background: var(--color-water);
+  color: var(--color-white);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-header .brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.site-header nav a {
+  color: var(--color-white);
+  text-decoration: none;
+  margin-left: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.site-header nav a:hover { text-decoration: underline; }
+
+/* ---------- Site footer ---------- */
+.site-footer {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--color-stone);
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+  color: #777;
+  font-size: 0.82rem;
+}
+
+.site-footer a {
+  color: #777;
+  text-decoration: underline;
+}
+
+/* ---------- Landing page ---------- */
+.landing {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  line-height: 1.6;
+}
+
+.landing h1 {
+  color: var(--color-water);
+  font-size: 2.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.landing .kicker {
+  color: var(--color-sky);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+}
+
+.landing p { margin: 1rem 0; }
+
+.cta-button {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.85rem 1.75rem;
+  background: var(--color-leaf);
+  color: var(--color-water);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease;
+}
+
+.cta-button:hover { transform: translateY(-2px); }
+
+/* ---------- Diagram page ---------- */
+.diagram-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--color-stone);
+}
+
+.level-tab {
+  border: none;
+  background: var(--color-white);
+  color: var(--color-water);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.level-tab[aria-selected="true"] {
+  background: var(--color-water);
+  color: var(--color-white);
+}
+
+.level-tab[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.soon-badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--color-stone);
+  color: #666;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+}
+
+.review-banner {
+  max-width: 900px;
+  margin: 1rem auto 0;
+  padding: 0.85rem 1.25rem;
+  background: #eef7ff;
+  border: 1px solid #cfe6fb;
+  border-left: 4px solid var(--color-sky);
+  border-radius: 8px;
+  color: #234;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.review-banner strong {
+  color: var(--color-water);
+}
+
+.review-banner .dot-sample {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e0a300;
+  margin: 0 0.15rem;
+  vertical-align: middle;
+}
+
+.view-toggle {
+  margin-left: auto;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.view-toggle button {
+  border: 2px solid var(--color-water);
+  background: var(--color-white);
+  color: var(--color-water);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.view-toggle button[aria-pressed="true"] {
+  background: var(--color-water);
+  color: var(--color-white);
+}
+
+.diagram-title {
+  text-align: center;
+  color: var(--color-leaf);
+  margin: 1.25rem 0 0.25rem;
+}
+
+.diagram-subtitle {
+  text-align: center;
+  color: #555;
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+/* Floating zoom widget, docked in the diagram's corner — laid out
+   horizontally (a short wide pill) rather than stacked vertically, so it
+   stays compact and out of the way of box content beneath/around it. */
+.diagram-viewport {
+  position: relative;
+}
+
+.zoom-controls {
+  position: absolute;
+  top: 0.9rem;
+  right: 1.5rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-white);
+  border: 1px solid var(--color-stone);
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  padding: 5px;
+}
+
+.zoom-controls button {
+  border: none;
+  background: none;
+  color: var(--color-water);
+  font-family: var(--font-brand);
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.zoom-controls button:hover:not(:disabled) {
+  background: var(--color-stone);
+}
+
+.zoom-controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.zoom-controls #zoom-in,
+.zoom-controls #zoom-out {
+  width: 34px;
+  height: 34px;
+  font-size: 1.15rem;
+}
+
+.zoom-controls #zoom-reset {
+  padding: 0 0.75rem;
+  height: 34px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.zoom-level {
+  min-width: 2.6rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #777;
+  font-weight: 700;
+  user-select: none;
+}
+
+.zoom-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-stone);
+  margin: 0 2px;
+}
+
+.diagram-stage-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 1rem 3rem;
+  -webkit-overflow-scrolling: touch; /* momentum scrolling on iOS */
+  touch-action: pan-x pan-y pinch-zoom; /* let touch scroll/swipe through freely */
+  cursor: grab;
+  position: relative;
+}
+
+.diagram-stage-wrap.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+
+.diagram-stage-wrap.is-dragging .diagram-box,
+.diagram-stage-wrap.is-dragging .diagram-label {
+  pointer-events: none; /* avoid accidentally opening a popup mid-drag */
+}
+
+/* .zoom-sizer's width/height are set by JS to the diagram's actual
+   post-zoom visual footprint, in plain (untransformed) pixels. A CSS
+   transform doesn't change the space an element takes up in a scrolling
+   ancestor's scrollWidth — only this wrapper's real, declared size does —
+   so this is what makes the scrollbar/drag area match what you see.
+   .diagram-stage's own width is also set by JS (app.js), responsively —
+   same 900-1200px range the original static CSS used to give it — so a
+   wide desktop screen still gets the bigger, more comfortable view;
+   zoom is layered on top of that via transform, not instead of it. */
+.zoom-sizer {
+  margin: 0 auto;
+}
+
+.diagram-stage {
+  position: relative;
+  aspect-ratio: 12192 / 6858;
+  transform-origin: top left;
+  background: var(--color-white);
+  border: 2px solid var(--color-stone);
+  border-radius: 18px;
+  user-select: none; /* dragging the stage shouldn't select box text */
+}
+
+.scroll-hint {
+  display: none;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #777;
+  margin: 0 0 0.5rem;
+}
+
+@media (max-width: 760px) {
+  .scroll-hint { display: block; }
+}
+
+.diagram-stage svg.arrows-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Light-blue cluster background (e.g. behind "Transport Scenarios" or
+   "Risk Mitigation"'s grouped boxes) — decorative only, sits behind the
+   arrows and boxes it groups. */
+.diagram-cluster-bg {
+  position: absolute;
+  background: #eef7ff;
+  border: 1px solid #cfe6fb;
+  border-radius: 14px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.diagram-box {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--box-border-radius);
+  border: 2px solid var(--color-water);
+  background: var(--color-white);
+  color: var(--color-water);
+  font-weight: 600;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  line-height: 1.15;
+  white-space: pre-line; /* honours the \n we set for source-authored manual
+                             line breaks (e.g. "Adaptation/\nInterventions"),
+                             while still auto-wrapping normal long labels */
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transform: rotate(var(--box-rotate, 0deg));
+  transition: transform 0.12s ease, filter 0.12s ease;
+  z-index: 2;
+  overflow: hidden; /* safety net: never let text bleed into neighbouring
+                        boxes even if a future label is too long for its box */
+}
+
+/* Extended's boxes are smaller and more tightly packed than Simple's, so
+   they get a smaller font/padding budget. Applied by app.js to any box
+   below a size threshold, not tied to a specific view. */
+.diagram-box.compact {
+  padding: 0.2rem 0.35rem;
+  font-size: clamp(0.55rem, 0.85vw, 0.72rem);
+  line-height: 1.1;
+}
+
+.diagram-box:hover,
+.diagram-box:focus-visible {
+  filter: brightness(1.12);
+  transform: rotate(var(--box-rotate, 0deg)) translateY(-2px);
+}
+
+/* Box color groups — matches the source PPTX: navy for the
+   scenario/hazard boxes, mid-blue for evaluation steps, green for the
+   highlighted Adaptation/Interventions decision box. */
+.diagram-box.variant-navy {
+  background: var(--color-water);
+  border-color: var(--color-water);
+  color: var(--color-white);
+}
+
+.diagram-box.variant-sky {
+  background: var(--color-sky);
+  border-color: var(--color-sky);
+  color: var(--color-white);
+}
+
+.diagram-box.variant-leaf {
+  background: var(--color-leaf);
+  border-color: var(--color-leaf);
+  color: var(--color-water);
+}
+
+.diagram-box.missing-content::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e0a300;
+  border: 2px solid var(--color-white);
+  z-index: 3;
+}
+
+/* Soft highlight halo behind a box (e.g. Adaptation/Interventions) */
+.diagram-box-halo {
+  position: absolute;
+  background: rgba(0, 150, 255, 0.15);
+  border-radius: calc(var(--box-border-radius) + 8px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Boxes outside the currently-selected DSP/IMP process — faded so the
+   relevant chain stands out, but still legible and still clickable. */
+.diagram-box.dimmed {
+  opacity: 0.3;
+}
+
+/* Section titles (e.g. "Transport Scenarios") sitting above a cluster of
+   boxes — plain text, not a button, since the PPTX source has no content
+   behind these beyond the heading itself. */
+.diagram-heading {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--color-water);
+  font-weight: 700;
+  font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Plain text labels (Risk Mitigation / Feedback loop) — no pill/background,
+   matching the source PPTX's plain bold caption style. */
+.diagram-label {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: none;
+  border: none;
+  color: var(--color-water);
+  font-weight: 700;
+  font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.diagram-label:hover,
+.diagram-label:focus-visible {
+  text-decoration: underline;
+}
+
+/* ---------- DSP / IMP process toggle ---------- */
+.process-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.process-toggle[hidden] { display: none; }
+
+.process-toggle button {
+  border: 2px solid var(--color-water);
+  background: var(--color-white);
+  color: var(--color-water);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.process-toggle button[aria-pressed="true"] {
+  background: var(--color-water);
+  color: var(--color-white);
+}
+
+.process-panel {
+  max-width: 700px;
+  margin: 0 auto 1.25rem;
+  padding: 1rem 1.5rem;
+  background: #f4faff;
+  border: 1px solid #cfe6fb;
+  border-left: 4px solid var(--color-leaf);
+  border-radius: 8px;
+}
+
+.process-panel[hidden] { display: none; }
+
+.process-panel h2 {
+  margin: 0 0 0.5rem;
+  color: var(--color-water);
+  font-size: 1.05rem;
+}
+
+.process-panel p {
+  margin: 0;
+  color: #333;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+/* ---------- Popup modal ---------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 41, 94, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+.modal-backdrop[hidden] { display: none; }
+
+.modal-backdrop.is-open { opacity: 1; }
+
+.modal-box {
+  background: var(--color-white);
+  border-radius: 14px;
+  max-width: 520px;
+  width: 100%;
+  padding: 1.75rem;
+  position: relative;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  transform: translateY(8px) scale(0.98);
+  transition: transform 0.16s ease;
+}
+
+.modal-backdrop.is-open .modal-box {
+  transform: translateY(0) scale(1);
+}
+
+.modal-box h2 {
+  color: var(--color-water);
+  margin-top: 0;
+}
+
+.modal-box p { line-height: 1.55; color: #333; }
+
+.modal-box .placeholder-note {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  background: #fff4dd;
+  color: #8a6200;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.modal-box .placeholder-note[hidden] { display: none; }
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.9rem;
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-water);
+}
+
+.modal-handbook-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.modal-handbook-link[hidden] { display: none; }

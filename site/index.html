@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="An interactive walkthrough of DARe's Transport Performance & Risk Analysis Framework (TPRAF)." />
+  <title>TPRAF — DARe</title>
+  <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" />
+  <link rel="icon" href="assets/icons/favicon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="assets/icons/favicon-192.png" />
+  <!-- ASSET PATHS: plain relative paths now; in Laravel these become
+       {{ asset('assets/css/style.css') }} — same file, one-line swap. -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- LAYOUT:HEADER — identical on every page; becomes the header block
+       inside resources/views/layouts/app.blade.php when this moves to Laravel -->
+  <header class="site-header">
+    <div class="brand">DARe · TPRAF</div>
+    <nav>
+      <a href="diagram.html">Explore TPRAF</a>
+    </nav>
+  </header>
+  <!-- /LAYOUT:HEADER -->
+
+  <!-- PAGE:CONTENT — becomes @section('content') in resources/views/index.blade.php -->
+  <main class="landing">
+    <p class="kicker">What is TPRAF?</p>
+    <h1>DARe's Transport Performance &amp; Risk Analysis Framework</h1>
+
+    <p>
+      A validated, usable framework to help decision-makers — at local, regional, and national
+      levels — assess and balance the demands associated with climate resilience, adaptation, and
+      decarbonisation when addressing risks to transport infrastructure performance and operations.
+    </p>
+
+    <p>
+      The TPRAF responds to growing challenges across the UK transport sector, including increasing
+      climate risks, ageing assets, evolving travel demand, and constrained investment, while
+      promoting decisions that consider system-wide performance rather than isolated assets.
+    </p>
+
+    <p>
+      The TPRAF is designed as a <strong>flexible, modular framework</strong> that can be applied by
+      a wide range of transport decision-makers, including national infrastructure owners, local and
+      combined authorities, transport operators, freight companies, consultancies, and researchers.
+      Rather than replacing existing organisational processes, it is intended to
+      <strong>complement and strengthen current practices</strong>, providing a unifying framework
+      that helps integrate assessments and decision-making processes, enabling smoother data exchange
+      and reducing fragmentation.
+    </p>
+
+    <p>
+      This interactive resource offers an accessible introduction to the framework, enabling users to
+      explore its structure, components, and relationships at their own pace.
+    </p>
+
+    <a class="cta-button" href="diagram.html">Explore TPRAF &rarr;</a>
+  </main>
+  <!-- /PAGE:CONTENT -->
+
+  <!-- LAYOUT:FOOTER -->
+  <footer class="site-footer">
+    <p>DARe &middot; Decarbonised, Adaptable, Resilient Transport Infrastructures Hub &middot; <a href="https://dare.ac.uk">dare.ac.uk</a></p>
+  </footer>
+  <!-- /LAYOUT:FOOTER -->
+</body>
+</html>
