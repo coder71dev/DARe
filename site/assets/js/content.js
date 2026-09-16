@@ -149,9 +149,9 @@ const TPRAF_CONTENT = {
       /* Adaptation/Interventions (top) -> Transport Scenarios (right side, vertical middle).
          The last leg is horizontal (24 -> 20.21 at the box's own mid-height) so the arrow
          approaches straight into the wall instead of dropping in from above. */
-      [ { x: 67.83, y: 45.62 }, { x: 67.83, y: 27 }, { x: 24, y: 27 }, { x: 24, y: 34.04 }, { x: 20.21, y: 34.04 } ],
+      { points: [ { x: 67.83, y: 45.62 }, { x: 67.83, y: 27 }, { x: 24, y: 27 }, { x: 24, y: 34.04 }, { x: 20.21, y: 34.04 } ] },
       /* Adaptation/Interventions (bottom) -> Hazard Model (right side, vertical middle) */
-      [ { x: 67.83, y: 54.39 }, { x: 67.83, y: 61 }, { x: 24, y: 61 }, { x: 24, y: 64.35 }, { x: 20.21, y: 64.35 } ]
+      { points: [ { x: 67.83, y: 54.39 }, { x: 67.83, y: 61 }, { x: 24, y: 61 }, { x: 24, y: 64.35 }, { x: 20.21, y: 64.35 } ] }
     ]
   },
 
@@ -341,11 +341,17 @@ const TPRAF_CONTENT = {
        present in the source PPTX behind Transport Scenarios, Weather/
        Climate, Business as usual, and Risk Mitigation. Purely decorative
        (non-interactive), drawn behind everything else. */
+    /* "group" here matches the PPTX's own DSP-only/IMP-only slides: the
+       cluster keeps its light-blue fill only in the view where most/all of
+       its member boxes are active. Risk Mitigation contains Adaptation
+       (both) + Cost benefit + Portfolio (dsp-only) — the two dsp-only
+       members make it a "dsp" cluster overall, so it loses its fill in
+       IMP-only view even though Adaptation/Interventions itself stays lit. */
     containers: [
-      { id: "transport-scenarios-bg", pos: { left: 5.26, top: 24.49, width: 20.61, height: 9.15 } },
-      { id: "weather-climate-bg", pos: { left: 5.04, top: 82.65, width: 21.49, height: 9.15 } },
-      { id: "bau-bg", pos: { left: 21.13, top: 50.34, width: 21.65, height: 10.06 } },
-      { id: "risk-mitigation-bg", pos: { left: 53.98, top: 50.44, width: 32.74, height: 9.96 } }
+      { id: "transport-scenarios-bg", pos: { left: 5.26, top: 24.49, width: 20.61, height: 9.15 }, group: "imp" },
+      { id: "weather-climate-bg", pos: { left: 5.04, top: 82.65, width: 21.49, height: 9.15 }, group: "imp" },
+      { id: "bau-bg", pos: { left: 21.13, top: 50.34, width: 21.65, height: 10.06 }, group: "dsp" },
+      { id: "risk-mitigation-bg", pos: { left: 53.98, top: 50.44, width: 32.74, height: 9.96 }, group: "dsp" }
     ],
 
     /* Non-interactive section titles — group headings above a cluster of
@@ -389,19 +395,24 @@ const TPRAF_CONTENT = {
     ],
 
     /* Main flow arrows — box-edge to box-edge, from the PPTX connectors'
-       own start/end shape-attachment data (same method used for Simple). */
+       own start/end shape-attachment data (same method used for Simple).
+       "group" is the DSP/IMP process this connection belongs to — "mixed"
+       for the one arrow that bridges the two chains (Impact Assessment ->
+       Asset/Network Evaluation), which greys out in EITHER filtered view
+       since it's not fully "inside" either process. Drives the DSP/IMP
+       toggle's arrow colouring in app.js, same idea as box.group. */
     arrows: [
-      { from: { x: 15.27, y: 44.42 }, to: { x: 14.95, y: 51.06 } },   // Transport System -> Impact Assessment
-      { from: { x: 16.52, y: 87.25 }, to: { x: 14.98, y: 87.25 } },   // Climate Scenario -> Weather Variables
-      { from: { x: 14.96, y: 72.1 }, to: { x: 14.96, y: 69.11 } },    // Hazard Model -> Transport Specific Threshold (up)
-      { from: { x: 14.95, y: 62.29 }, to: { x: 14.95, y: 59.66 } },   // Transport Specific Threshold -> Impact Assessment (up)
-      { from: { x: 20.12, y: 55.36 }, to: { x: 22.01, y: 55.36 } },   // Impact Assessment -> Asset/Network Evaluation
-      { from: { x: 31.17, y: 55.36 }, to: { x: 32.82, y: 55.36 } },   // Asset/Network Evaluation -> Problem Framing
-      { from: { x: 41.98, y: 55.36 }, to: { x: 43.79, y: 55.36 } },   // Problem Framing -> Risk Reduction Needs
-      { from: { x: 52.95, y: 55.36 }, to: { x: 54.76, y: 55.36 } },   // Risk Reduction Needs -> Adaptation/Interventions
-      { from: { x: 63.92, y: 55.36 }, to: { x: 65.2, y: 55.36 } },    // Adaptation/Interventions -> Cost benefit
-      { from: { x: 75.56, y: 55.36 }, to: { x: 76.84, y: 55.36 } },   // Cost benefit -> Portfolio Optimisation
-      { from: { x: 86.0, y: 55.36 }, to: { x: 88.0, y: 55.36 } }      // Portfolio Optimisation -> Outcome Assessment
+      { from: { x: 15.27, y: 44.42 }, to: { x: 14.95, y: 51.06 }, group: "imp" },   // Transport System -> Impact Assessment
+      { from: { x: 16.52, y: 87.25 }, to: { x: 14.98, y: 87.25 }, group: "imp" },   // Climate Scenario -> Weather Variables
+      { from: { x: 14.96, y: 72.1 }, to: { x: 14.96, y: 69.11 }, group: "imp" },    // Hazard Model -> Transport Specific Threshold (up)
+      { from: { x: 14.95, y: 62.29 }, to: { x: 14.95, y: 59.66 }, group: "imp" },   // Transport Specific Threshold -> Impact Assessment (up)
+      { from: { x: 20.12, y: 55.36 }, to: { x: 22.01, y: 55.36 }, group: "mixed" }, // Impact Assessment -> Asset/Network Evaluation
+      { from: { x: 31.17, y: 55.36 }, to: { x: 32.82, y: 55.36 }, group: "dsp" },   // Asset/Network Evaluation -> Problem Framing
+      { from: { x: 41.98, y: 55.36 }, to: { x: 43.79, y: 55.36 }, group: "dsp" },   // Problem Framing -> Risk Reduction Needs
+      { from: { x: 52.95, y: 55.36 }, to: { x: 54.76, y: 55.36 }, group: "dsp" },   // Risk Reduction Needs -> Adaptation/Interventions
+      { from: { x: 63.92, y: 55.36 }, to: { x: 65.2, y: 55.36 }, group: "dsp" },    // Adaptation/Interventions -> Cost benefit
+      { from: { x: 75.56, y: 55.36 }, to: { x: 76.84, y: 55.36 }, group: "dsp" },   // Cost benefit -> Portfolio Optimisation
+      { from: { x: 86.0, y: 55.36 }, to: { x: 88.0, y: 55.36 }, group: "dsp" }      // Portfolio Optimisation -> Outcome Assessment
     ],
 
     /* Elbow connectors for boxes that aren't directly aligned — approximated
@@ -412,42 +423,47 @@ const TPRAF_CONTENT = {
       /* Endpoints on Social Behaviour Impacts use its rotated visual footprint
          (centre (4.76, 57.31), 6.82 wide x 9.16 tall) rather than the
          unrotated pos above — same rotation, applied around the same centre. */
-      [ { x: 5.82, y: 87.25 }, { x: 4.76, y: 87.25 }, { x: 4.76, y: 61.89 } ],           // Weather Variables -> Social Behaviour Impacts (visual bottom)
+      { points: [ { x: 5.82, y: 87.25 }, { x: 4.76, y: 87.25 }, { x: 4.76, y: 61.89 } ], group: "imp" },           // Weather Variables -> Social Behaviour Impacts (visual bottom)
       // Final leg is vertical (approaching from below) to enter Hazard Model's
       // bottom edge cleanly — a horizontal final leg into a horizontal wall
       // was why this arrowhead looked misaligned.
-      [ { x: 10.4, y: 83.84 }, { x: 10.4, y: 80 }, { x: 14.96, y: 80 }, { x: 14.96, y: 78.92 } ],  // Weather Variables -> Hazard Model
+      { points: [ { x: 10.4, y: 83.84 }, { x: 10.4, y: 80 }, { x: 14.96, y: 80 }, { x: 14.96, y: 78.92 } ], group: "imp" },  // Weather Variables -> Hazard Model
       // Enters Transport Demand's left wall at vertical mid-height, not its
       // bottom — final leg is horizontal so the arrowhead points right, into
       // the wall, instead of up into the underside of the box.
-      [ { x: 4.76, y: 52.73 }, { x: 4.76, y: 28.92 }, { x: 5.92, y: 28.92 } ],           // Social Behaviour Impacts (visual top) -> Transport Demand (left wall)
+      { points: [ { x: 4.76, y: 52.73 }, { x: 4.76, y: 28.92 }, { x: 5.92, y: 28.92 } ], group: "imp" },           // Social Behaviour Impacts (visual top) -> Transport Demand (left wall)
       // Both converge toward Transport System's narrower top edge (it's not
       // as wide as Transport Demand + Transport Supply together), matching
       // the source PPTX rather than two parallel straight lines — the old
       // straight-line version put Transport Supply's arrow just outside
       // Transport System's right edge, missing the box.
-      [ { x: 10.5, y: 32.36 }, { x: 10.5, y: 35 }, { x: 12, y: 35 }, { x: 12, y: 37.61 } ],   // Transport Demand -> Transport System
-      [ { x: 20.32, y: 32.36 }, { x: 20.32, y: 35 }, { x: 18.5, y: 35 }, { x: 18.5, y: 37.61 } ]  // Transport Supply -> Transport System
+      { points: [ { x: 10.5, y: 32.36 }, { x: 10.5, y: 35 }, { x: 12, y: 35 }, { x: 12, y: 37.61 } ], group: "imp" },   // Transport Demand -> Transport System
+      { points: [ { x: 20.32, y: 32.36 }, { x: 20.32, y: 35 }, { x: 18.5, y: 35 }, { x: 18.5, y: 37.61 } ], group: "imp" }  // Transport Supply -> Transport System
     ],
 
     /* Feedback loops (green) — same pattern as Simple: Adaptation/Interventions
        loops back to both the Transport Scenarios cluster and the Hazard
-       Model, confirmed via the PPTX's <a:stCxn>/<a:endCxn> data. */
+       Model, confirmed via the PPTX's <a:stCxn>/<a:endCxn> data. Both land
+       on IMP-only boxes (Transport Supply, Hazard Model), so both grey out
+       in DSP-only view — Adaptation/Interventions itself being "both"
+       doesn't rescue them, since the arrow's whole point is the IMP-side
+       target it's looping back to. */
     feedbackPaths: [
       /* Final leg of each path is horizontal, so the arrowhead approaches
          and points straight into the target's vertical wall — a vertical
          final leg (as this had before) makes the marker point down/up
          instead of into the box, which read as "not clearly visible". */
-      [ { x: 59.34, y: 51.9 }, { x: 59.34, y: 25 }, { x: 28, y: 25 }, { x: 28, y: 28.92 }, { x: 24.9, y: 28.92 } ],  // -> Transport Supply (right wall)
-      [ { x: 59.34, y: 58.83 }, { x: 59.34, y: 76 }, { x: 22, y: 76 }, { x: 22, y: 75.51 }, { x: 20.14, y: 75.51 } ]  // -> Hazard Model (right wall)
+      { points: [ { x: 59.34, y: 51.9 }, { x: 59.34, y: 25 }, { x: 28, y: 25 }, { x: 28, y: 28.92 }, { x: 24.9, y: 28.92 } ], group: "imp" },  // -> Transport Supply (right wall)
+      { points: [ { x: 59.34, y: 58.83 }, { x: 59.34, y: 76 }, { x: 22, y: 76 }, { x: 22, y: 75.51 }, { x: 20.14, y: 75.51 } ], group: "imp" }  // -> Hazard Model (right wall)
     ],
 
     /* Portfolio Optimisation -> Adaptation/Interventions (cost-benefit
        iteration loop, within the Risk Mitigation cluster) — a smooth curve
        arcing below the row, in the main-flow navy (not feedback green),
-       matching the reference render of this slide. */
+       matching the reference render of this slide. Both ends are DSP-side
+       (Portfolio Optimisation is DSP-only), so it greys out in IMP-only view. */
     curvedPaths: [
-      { from: { x: 81.42, y: 58.83 }, control: { x: 70.38, y: 65 }, to: { x: 59.34, y: 58.83 } }
+      { from: { x: 81.42, y: 58.83 }, control: { x: 70.38, y: 65 }, to: { x: 59.34, y: 58.83 }, group: "dsp" }
     ]
   }
 

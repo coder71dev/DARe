@@ -399,6 +399,12 @@ a { color: var(--color-sky); }
   z-index: 1;
 }
 
+.diagram-stage svg.arrows-layer line,
+.diagram-stage svg.arrows-layer polyline,
+.diagram-stage svg.arrows-layer path {
+  transition: stroke 0.15s ease;
+}
+
 /* Light-blue cluster background (e.g. behind "Transport Scenarios" or
    "Risk Mitigation"'s grouped boxes) — decorative only, sits behind the
    arrows and boxes it groups. */
@@ -409,6 +415,15 @@ a { color: var(--color-sky); }
   border-radius: 14px;
   z-index: 0;
   pointer-events: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Cluster isn't part of the selected DSP/IMP process — loses its fill
+   (matching the source PPTX's own DSP-only/IMP-only slides) rather than
+   fading like a box, since it's just a grouping outline, not content. */
+.diagram-cluster-bg.muted {
+  background: transparent;
+  border-color: var(--color-stone);
 }
 
 .diagram-box {

@@ -76,6 +76,10 @@
     svgLayer.setAttribute("preserveAspectRatio", "none");
   }
 
+  const COLOR_NAVY = "#00295e";
+  const COLOR_GREEN = "#3fae52";
+  const COLOR_GREY = "#a9b1ba"; // inactive-process colour for arrows/loops, matching the dimmed boxes they connect
+
   function buildMarker(id, fill) {
     const marker = document.createElementNS(SVG_NS, "marker");
     marker.setAttribute("id", id);
@@ -94,9 +98,22 @@
 
   function makeArrowMarker() {
     const defs = document.createElementNS(SVG_NS, "defs");
-    defs.appendChild(buildMarker("arrowhead", "#00295e"));
-    defs.appendChild(buildMarker("feedback-arrowhead", "#3fae52"));
+    defs.appendChild(buildMarker("arrowhead", COLOR_NAVY));
+    defs.appendChild(buildMarker("feedback-arrowhead", COLOR_GREEN));
+    defs.appendChild(buildMarker("arrowhead-grey", COLOR_GREY));
+    defs.appendChild(buildMarker("feedback-arrowhead-grey", COLOR_GREY));
     return defs;
+  }
+
+  // Tags a drawn arrow/path element with which DSP/IMP process it belongs
+  // to, so applyProcessFilter (below) can grey it out in lockstep with the
+  // boxes it connects — same idea as box.group, just for SVG shapes.
+  function taggedArrow(el, group, kind) {
+    if (group) {
+      el.dataset.group = group;
+      el.dataset.kind = kind; // "main" (navy) or "feedback" (green)
+    }
+    return el;
   }
 
   function drawStraightArrow(arrow) {
@@ -105,34 +122,34 @@
     line.setAttribute("y1", arrow.from.y);
     line.setAttribute("x2", arrow.to.x);
     line.setAttribute("y2", arrow.to.y);
-    line.setAttribute("stroke", "#00295e");
+    line.setAttribute("stroke", COLOR_NAVY);
     line.setAttribute("stroke-width", "0.3");
     line.setAttribute("marker-end", "url(#arrowhead)");
-    svgLayer.appendChild(line);
+    svgLayer.appendChild(taggedArrow(line, arrow.group, "main"));
   }
 
-  function drawFeedbackPath(points) {
+  function drawFeedbackPath(feedback) {
     const polyline = document.createElementNS(SVG_NS, "polyline");
-    const pointsStr = points.map((p) => `${p.x},${p.y}`).join(" ");
+    const pointsStr = feedback.points.map((p) => `${p.x},${p.y}`).join(" ");
     polyline.setAttribute("points", pointsStr);
     polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke", "#3fae52");
+    polyline.setAttribute("stroke", COLOR_GREEN);
     polyline.setAttribute("stroke-width", "0.35");
     polyline.setAttribute("marker-end", "url(#feedback-arrowhead)");
-    svgLayer.appendChild(polyline);
+    svgLayer.appendChild(taggedArrow(polyline, feedback.group, "feedback"));
   }
 
   // Same visual style as the straight main-flow arrows, just with bends —
   // for boxes that aren't directly aligned (e.g. Extended's side branches).
-  function drawElbowPath(points) {
+  function drawElbowPath(elbow) {
     const polyline = document.createElementNS(SVG_NS, "polyline");
-    const pointsStr = points.map((p) => `${p.x},${p.y}`).join(" ");
+    const pointsStr = elbow.points.map((p) => `${p.x},${p.y}`).join(" ");
     polyline.setAttribute("points", pointsStr);
     polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke", "#00295e");
+    polyline.setAttribute("stroke", COLOR_NAVY);
     polyline.setAttribute("stroke-width", "0.3");
     polyline.setAttribute("marker-end", "url(#arrowhead)");
-    svgLayer.appendChild(polyline);
+    svgLayer.appendChild(taggedArrow(polyline, elbow.group, "main"));
   }
 
   // A smooth single-bulge curve (quadratic bezier) — for short loops within
@@ -143,10 +160,10 @@
     const d = `M ${curve.from.x},${curve.from.y} Q ${curve.control.x},${curve.control.y} ${curve.to.x},${curve.to.y}`;
     path.setAttribute("d", d);
     path.setAttribute("fill", "none");
-    path.setAttribute("stroke", "#00295e");
+    path.setAttribute("stroke", COLOR_NAVY);
     path.setAttribute("stroke-width", "0.3");
     path.setAttribute("marker-end", "url(#arrowhead)");
-    svgLayer.appendChild(path);
+    svgLayer.appendChild(taggedArrow(path, curve.group, "main"));
   }
 
   function makeHaloEl(box) {
@@ -206,6 +223,7 @@
     el.style.top = pct(container.pos.top);
     el.style.width = pct(container.pos.width);
     el.style.height = pct(container.pos.height);
+    if (container.group) el.dataset.group = container.group;
     return el;
   }
 
@@ -229,6 +247,33 @@
       const group = el.dataset.group;
       const dimmed = currentProcessFilter && group !== "both" && group !== currentProcessFilter;
       el.classList.toggle("dimmed", !!dimmed);
+    });
+
+    // Cluster backgrounds lose their tint (rather than fading like boxes)
+    // when their process isn't the one selected — matches the source PPTX's
+    // own DSP-only/IMP-only slides, where an inactive cluster's fill drops
+    // out entirely instead of just dimming.
+    stage.querySelectorAll(".diagram-cluster-bg[data-group]").forEach((el) => {
+      const group = el.dataset.group;
+      const muted = currentProcessFilter && group !== "both" && group !== currentProcessFilter;
+      el.classList.toggle("muted", !!muted);
+    });
+
+    // Arrows/loops grey out to match the (now-dimmed) boxes they connect —
+    // without this they stayed full navy/green regardless of mode, cutting
+    // sharply across faded boxes instead of reading as part of the same
+    // inactive chain.
+    svgLayer.querySelectorAll("[data-group]").forEach((el) => {
+      const group = el.dataset.group;
+      const kind = el.dataset.kind;
+      const active = !currentProcessFilter || group === "both" || group === currentProcessFilter;
+      if (active) {
+        el.setAttribute("stroke", kind === "feedback" ? COLOR_GREEN : COLOR_NAVY);
+        el.setAttribute("marker-end", kind === "feedback" ? "url(#feedback-arrowhead)" : "url(#arrowhead)");
+      } else {
+        el.setAttribute("stroke", COLOR_GREY);
+        el.setAttribute("marker-end", kind === "feedback" ? "url(#feedback-arrowhead-grey)" : "url(#arrowhead-grey)");
+      }
     });
   }
 
