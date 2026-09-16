@@ -34,6 +34,7 @@
   const guideToggle = document.getElementById("diagram-guide-toggle");
   const guideBody = document.getElementById("diagram-guide-body");
   const stageWrap = document.getElementById("diagram-stage-wrap");
+  const cropEl = document.getElementById("diagram-crop");
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -69,6 +70,56 @@
 
   function pct(n) {
     return n + "%";
+  }
+
+  let currentCropRatio = 1; // fraction of the full 0-100 stage height that's actually visible
+  let refreshZoom = function () {}; // replaced with the real thing once setupZoomControls runs
+
+  // The source PPTX's box/label positions are percentages of the *full
+  // slide*, but most views only use the middle portion of it vertically —
+  // showing the whole 0-100 canvas leaves a large dead margin above/below
+  // the content. This finds the actual top/bottom extent of everything
+  // drawn (boxes, using their rotated visual footprint where relevant;
+  // labels; headings; cluster backgrounds) so the stage can be cropped to
+  // just that, with a small buffer for halos/start-ribbons/shadows that
+  // extend slightly past a box's own bounds.
+  function computeContentBounds(data) {
+    const PAD = 3;
+    let top = Infinity;
+    let bottom = -Infinity;
+    const consider = (t, b) => {
+      if (t < top) top = t;
+      if (b > bottom) bottom = b;
+    };
+    data.boxes.forEach((box) => {
+      if (box.rotate) {
+        // Rotation (270/90) swaps width and height around the box's own
+        // centre — the on-screen footprint isn't the same as box.pos.
+        const centerY = box.pos.top + box.pos.height / 2;
+        const visualHeight = box.pos.width;
+        consider(centerY - visualHeight / 2, centerY + visualHeight / 2);
+      } else {
+        consider(box.pos.top, box.pos.top + box.pos.height);
+      }
+    });
+    (data.labels || []).forEach((l) => consider(l.pos.top, l.pos.top + l.pos.height));
+    (data.headings || []).forEach((h) => consider(h.pos.top, h.pos.top + h.pos.height));
+    (data.containers || []).forEach((c) => consider(c.pos.top, c.pos.top + c.pos.height));
+    top = Math.max(0, top - PAD);
+    bottom = Math.min(100, bottom + PAD);
+    return { top, bottom };
+  }
+
+  // Sizes .diagram-stage (still the full 0-100 slide coordinate space every
+  // box/arrow position is expressed in) so only [top, bottom] of it shows
+  // through .diagram-crop's clipped window — no box/arrow/label coordinate
+  // anywhere needs to change for this.
+  function applyCropToStage(data) {
+    const { top, bottom } = computeContentBounds(data);
+    const span = bottom - top; // % of full height actually shown
+    currentCropRatio = span / 100;
+    stage.style.height = pct(10000 / span);
+    stage.style.top = pct((-100 * top) / span);
   }
 
   /* The SVG uses a 0-100 viewBox (matching the % coordinates in content.js)
@@ -400,6 +451,9 @@
     (data.labels || []).forEach((label) => stage.appendChild(makeLabelEl(label)));
     (data.headings || []).forEach((heading) => stage.appendChild(makeHeadingEl(heading)));
 
+    applyCropToStage(data);
+    refreshZoom();
+
     // Fade the new view in rather than snapping straight to it.
     stageWrap.classList.remove("is-entering");
     void stageWrap.offsetWidth; // restart the animation even if the class never left in this tick
@@ -480,7 +534,7 @@
   // width/height that matches what you see — that's what the scrollbar and
   // drag-to-scroll actually measure against.
   function setupZoomControls() {
-    const stage = document.getElementById("diagram-stage");
+    const crop = document.getElementById("diagram-crop");
     const sizer = document.getElementById("zoom-sizer");
     const wrap = document.getElementById("diagram-stage-wrap");
     const zoomInBtn = document.getElementById("zoom-in");
@@ -488,7 +542,7 @@
     const zoomFitBtn = document.getElementById("zoom-fit");
     const zoomResetBtn = document.getElementById("zoom-reset");
     const zoomLevelEl = document.getElementById("zoom-level");
-    if (!stage || !sizer || !wrap || !zoomInBtn || !zoomOutBtn || !zoomFitBtn || !zoomResetBtn || !zoomLevelEl) return;
+    if (!crop || !sizer || !wrap || !zoomInBtn || !zoomOutBtn || !zoomFitBtn || !zoomResetBtn || !zoomLevelEl) return;
 
     const MIN_NATURAL_WIDTH = 900; // same floor the original static CSS used
     const MAX_NATURAL_WIDTH = 1200; // same ceiling the original static CSS used
@@ -513,14 +567,19 @@
       return Math.max(ABSOLUTE_MIN_ZOOM, Math.min(1, availableWidth() / naturalWidth()));
     }
 
+    // natH/natCropH: the full slide's height at this width, and the
+    // cropped (visible) slice of it per the current view's content bounds
+    // — .diagram-crop is sized/scaled to natCropH, not the full natH.
     function applyZoom() {
       zoom = Math.max(ABSOLUTE_MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
       const natW = naturalWidth();
-      const natH = Math.round((natW * 6858) / 12192);
-      stage.style.width = Math.round(natW) + "px";
-      stage.style.transform = Math.abs(zoom - 1) < 0.005 ? "" : `scale(${zoom})`;
+      const natH = (natW * 6858) / 12192;
+      const natCropH = natH * currentCropRatio;
+      crop.style.width = Math.round(natW) + "px";
+      crop.style.height = Math.round(natCropH) + "px";
+      crop.style.transform = Math.abs(zoom - 1) < 0.005 ? "" : `scale(${zoom})`;
       sizer.style.width = Math.round(natW * zoom) + "px";
-      sizer.style.height = Math.round(natH * zoom) + "px";
+      sizer.style.height = Math.round(natCropH * zoom) + "px";
       zoomLevelEl.textContent = Math.round(zoom * 100) + "%";
       zoomInBtn.disabled = zoom >= MAX_ZOOM - 0.001;
       zoomOutBtn.disabled = zoom <= ABSOLUTE_MIN_ZOOM + 0.001;
@@ -546,6 +605,7 @@
     });
     window.addEventListener("resize", applyZoom);
 
+    refreshZoom = applyZoom;
     applyZoom();
   }
 
