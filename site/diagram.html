@@ -52,11 +52,6 @@
     <button type="button" id="process-btn-imp" aria-pressed="false">IMP only</button>
   </div>
 
-  <div class="process-panel" id="process-panel" hidden>
-    <h2 id="process-panel-title"></h2>
-    <p id="process-panel-text"></p>
-  </div>
-
   <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
   <div class="diagram-viewport">
     <div class="zoom-controls" role="group" aria-label="Zoom diagram">
@@ -76,6 +71,16 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Sits below the diagram on purpose — opening/closing this can be a few
+       hundred px of text, and having it above the diagram meant toggling
+       DSP/IMP shoved the diagram (and whatever the visitor was looking at)
+       down the page, off-screen on a phone. Down here it can never move
+       the diagram at all. -->
+  <div class="process-panel" id="process-panel" hidden>
+    <h2 id="process-panel-title"></h2>
+    <p id="process-panel-text"></p>
   </div>
 
   <div class="modal-backdrop" id="modal-backdrop" hidden>
