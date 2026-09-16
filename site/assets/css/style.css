@@ -406,7 +406,6 @@ a { color: var(--color-sky); }
 .diagram-stage-wrap {
   width: 100%;
   overflow-x: auto;
-  padding: 0 1rem 3rem;
   -webkit-overflow-scrolling: touch; /* momentum scrolling on iOS */
   touch-action: pan-x pan-y pinch-zoom; /* let touch scroll/swipe through freely */
   cursor: grab;
@@ -440,9 +439,6 @@ a { color: var(--color-sky); }
   position: relative;
   aspect-ratio: 12192 / 6858;
   transform-origin: top left;
-  background: var(--color-white);
-  border: 2px solid var(--color-stone);
-  border-radius: 18px;
   user-select: none; /* dragging the stage shouldn't select box text */
 }
 
