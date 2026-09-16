@@ -300,8 +300,10 @@ const TPRAF_CONTENT = {
         isPlaceholder: true,
         handbookUrl: "#",
         variant: "leaf",
-        group: "both",
-        highlight: true
+        group: "both"
+        /* No halo here (unlike Simple's) — the Risk Mitigation cluster
+           background already gives this box its visual emphasis; adding
+           the halo on top produced a "double background" look. */
       },
       {
         id: "cost-benefit",
@@ -389,8 +391,6 @@ const TPRAF_CONTENT = {
     /* Main flow arrows — box-edge to box-edge, from the PPTX connectors'
        own start/end shape-attachment data (same method used for Simple). */
     arrows: [
-      { from: { x: 10.5, y: 32.36 }, to: { x: 10.5, y: 37.61 } },     // Transport Demand -> Transport System
-      { from: { x: 20.32, y: 32.36 }, to: { x: 20.32, y: 37.61 } },   // Transport Supply -> Transport System
       { from: { x: 15.27, y: 44.42 }, to: { x: 14.95, y: 51.06 } },   // Transport System -> Impact Assessment
       { from: { x: 16.52, y: 87.25 }, to: { x: 14.98, y: 87.25 } },   // Climate Scenario -> Weather Variables
       { from: { x: 14.96, y: 72.1 }, to: { x: 14.96, y: 69.11 } },    // Hazard Model -> Transport Specific Threshold (up)
@@ -413,16 +413,33 @@ const TPRAF_CONTENT = {
          (centre (4.76, 57.31), 6.82 wide x 9.16 tall) rather than the
          unrotated pos above — same rotation, applied around the same centre. */
       [ { x: 5.82, y: 87.25 }, { x: 4.76, y: 87.25 }, { x: 4.76, y: 61.89 } ],           // Weather Variables -> Social Behaviour Impacts (visual bottom)
-      [ { x: 10.4, y: 83.84 }, { x: 10.4, y: 78.92 }, { x: 14.96, y: 78.92 } ],          // Weather Variables -> Hazard Model
-      [ { x: 4.76, y: 52.73 }, { x: 4.76, y: 34 }, { x: 10.5, y: 34 }, { x: 10.5, y: 32.36 } ]  // Social Behaviour Impacts (visual top) -> Transport Demand
+      // Final leg is vertical (approaching from below) to enter Hazard Model's
+      // bottom edge cleanly — a horizontal final leg into a horizontal wall
+      // was why this arrowhead looked misaligned.
+      [ { x: 10.4, y: 83.84 }, { x: 10.4, y: 80 }, { x: 14.96, y: 80 }, { x: 14.96, y: 78.92 } ],  // Weather Variables -> Hazard Model
+      // Enters Transport Demand's left wall at vertical mid-height, not its
+      // bottom — final leg is horizontal so the arrowhead points right, into
+      // the wall, instead of up into the underside of the box.
+      [ { x: 4.76, y: 52.73 }, { x: 4.76, y: 28.92 }, { x: 5.92, y: 28.92 } ],           // Social Behaviour Impacts (visual top) -> Transport Demand (left wall)
+      // Both converge toward Transport System's narrower top edge (it's not
+      // as wide as Transport Demand + Transport Supply together), matching
+      // the source PPTX rather than two parallel straight lines — the old
+      // straight-line version put Transport Supply's arrow just outside
+      // Transport System's right edge, missing the box.
+      [ { x: 10.5, y: 32.36 }, { x: 10.5, y: 35 }, { x: 12, y: 35 }, { x: 12, y: 37.61 } ],   // Transport Demand -> Transport System
+      [ { x: 20.32, y: 32.36 }, { x: 20.32, y: 35 }, { x: 18.5, y: 35 }, { x: 18.5, y: 37.61 } ]  // Transport Supply -> Transport System
     ],
 
     /* Feedback loops (green) — same pattern as Simple: Adaptation/Interventions
        loops back to both the Transport Scenarios cluster and the Hazard
        Model, confirmed via the PPTX's <a:stCxn>/<a:endCxn> data. */
     feedbackPaths: [
-      [ { x: 59.34, y: 51.9 }, { x: 59.34, y: 25 }, { x: 25.87, y: 25 }, { x: 25.87, y: 29.07 } ],
-      [ { x: 59.34, y: 58.83 }, { x: 59.34, y: 76 }, { x: 20.14, y: 76 }, { x: 20.14, y: 75.51 } ]
+      /* Final leg of each path is horizontal, so the arrowhead approaches
+         and points straight into the target's vertical wall — a vertical
+         final leg (as this had before) makes the marker point down/up
+         instead of into the box, which read as "not clearly visible". */
+      [ { x: 59.34, y: 51.9 }, { x: 59.34, y: 25 }, { x: 28, y: 25 }, { x: 28, y: 28.92 }, { x: 24.9, y: 28.92 } ],  // -> Transport Supply (right wall)
+      [ { x: 59.34, y: 58.83 }, { x: 59.34, y: 76 }, { x: 22, y: 76 }, { x: 22, y: 75.51 }, { x: 20.14, y: 75.51 } ]  // -> Hazard Model (right wall)
     ],
 
     /* Portfolio Optimisation -> Adaptation/Interventions (cost-benefit
