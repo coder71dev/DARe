@@ -28,6 +28,12 @@
 
 * { box-sizing: border-box; }
 
+/* Browsers don't inherit font-family into form controls by default —
+   <button> falls back to the OS UI font unless told otherwise. Diagram
+   boxes and labels are <button>s (for click/keyboard accessibility), so
+   without this they'd silently skip JT Marnie/Calibri entirely. */
+button { font-family: inherit; font-weight: inherit; }
+
 html, body {
   margin: 0;
   padding: 0;
