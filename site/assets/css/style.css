@@ -1315,6 +1315,161 @@ a { color: var(--color-sky); }
 
 .process-panel-explore[hidden] { display: none; }
 
+/* ---------- Walkthrough / "play" ---------- */
+/* Sits in flow above the diagram. Restart/Stop appear and disappear as the
+   walkthrough is started and stopped, so the bar reserves its own line —
+   pressing play must never nudge the diagram up or down the page. */
+.diagram-tour {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  margin: 1rem 0 0.85rem;
+}
+
+.diagram-tour[hidden] { display: none; }
+
+.tour-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 2px solid var(--color-water);
+  background: var(--color-water);
+  color: var(--color-white);
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.4rem 1.05rem;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+}
+
+.tour-play:hover { filter: brightness(1.15); }
+
+/* Play triangle, swapping to a pause bar-pair while it's running — a CSS
+   shape rather than an icon so it inherits the button's own colour. */
+.tour-play-icon {
+  width: 0;
+  height: 0;
+  border-left: 8px solid currentColor;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.tour-play.is-pause .tour-play-icon {
+  width: 9px;
+  height: 11px;
+  border: none;
+  background: linear-gradient(to right, currentColor 0 34%, transparent 34% 66%, currentColor 66% 100%);
+}
+
+.tour-btn {
+  border: none;
+  background: none;
+  color: var(--color-water-muted);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.3rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.tour-btn:hover { color: var(--color-water); }
+.tour-btn[hidden] { display: none; }
+
+.tour-caption {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-water-muted);
+}
+
+.tour-caption.is-active {
+  color: var(--color-water);
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  /* Its own line on a phone — the step description is the useful part and a
+     squeezed column next to two buttons is worse than a second row. */
+  .tour-caption { flex: 1 0 100%; order: 3; }
+}
+
+/* While it runs, the step being described and the ones already covered stay
+   at full strength and everything else recedes: the point is to follow the
+   route, not to read a wall of boxes at once. */
+.diagram-stage.tour-running .diagram-box {
+  opacity: 0.3;
+  transition: opacity 0.25s ease;
+}
+
+.diagram-stage.tour-running .diagram-box.tour-visited {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--color-leaf), var(--shadow-soft);
+}
+
+.diagram-stage.tour-running .diagram-box.tour-focus {
+  opacity: 1;
+  z-index: 5;
+  animation: tour-box-glow 1.1s ease-in-out infinite;
+}
+
+@keyframes tour-box-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(94, 207, 112, 0.7), 0 0 10px 1px rgba(94, 207, 112, 0.5), var(--shadow-soft); }
+  50% { box-shadow: 0 0 0 9px rgba(94, 207, 112, 0), 0 0 24px 7px rgba(94, 207, 112, 0.7), var(--shadow-soft); }
+}
+
+/* Arrows start faded and are lit by the leg that walks them, so by the end
+   the whole route reads as one glowing line through the diagram. That lit
+   state deliberately outlives the run itself (see .tour-flow below), which
+   is what makes the finished walkthrough legible as a route. */
+.diagram-stage.tour-running .arrows-layer > line,
+.diagram-stage.tour-running .arrows-layer > polyline,
+.diagram-stage.tour-running .arrows-layer > path {
+  opacity: 0.22;
+  transition: opacity 0.2s ease, stroke 0.2s ease;
+}
+
+.diagram-stage.tour-running .arrows-layer > .tour-flow,
+.diagram-stage .arrows-layer > .tour-flow {
+  opacity: 1;
+  stroke: var(--color-leaf);
+  filter: drop-shadow(0 0 2px rgba(94, 207, 112, 0.9));
+}
+
+/* The travelling glow. A div rather than an SVG circle on purpose: the SVG
+   layer is stretched non-uniformly to fill the stage, which would squash a
+   circle into an oval — this keeps its round shape at any zoom. */
+.tour-pulse {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px; /* centred on the point it's given */
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #cdf3d4 40%, var(--color-leaf) 75%);
+  z-index: 6;
+  pointer-events: none;
+  animation: tour-pulse-beat 0.7s ease-in-out infinite;
+}
+
+.tour-pulse[hidden] { display: none; }
+
+@keyframes tour-pulse-beat {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(94, 207, 112, 0.35), 0 0 14px 4px rgba(94, 207, 112, 0.7); }
+  50% { box-shadow: 0 0 0 9px rgba(94, 207, 112, 0.12), 0 0 24px 10px rgba(94, 207, 112, 0.85); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-pulse { animation: none; }
+  .diagram-stage.tour-running .diagram-box.tour-focus {
+    animation: none;
+    box-shadow: 0 0 0 3px rgba(94, 207, 112, 0.6), var(--shadow-soft);
+  }
+}
+
 /* ---------- Popup modal ---------- */
 .modal-backdrop {
   position: fixed;

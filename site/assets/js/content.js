@@ -14,7 +14,19 @@
      <script>const TPRAF_CONTENT = @json($tprafContent);</script>
    Keep every future addition (extended/dsp/imp/level3) as plain data
    here — no functions, no DOM access — so that swap stays a 1-line change.
-   See MIGRATION-NOTES.md for the full file-by-file mapping.
+   See MIGRATION-NOTES.md for the full file-by-file map.
+
+   Each view also carries a `tour`: the order its boxes are meant to be read
+   in, for the walkthrough animation ("Play walkthrough" above the diagram).
+   A step is just a box id. The arrow leading into a step is found from the
+   drawn geometry (every connector starts and ends on the edge of the box or
+   cluster it joins), so authoring a tour means listing box ids in order and
+   nothing else. A step can name one specific connector instead, as
+   { box: "id", via: { from: "id", to: "id" } } — used for the feedback-loop
+   legs, which set out from a box other than the previous step's. Where two
+   consecutive steps have no arrow between them (parallel boxes that genuinely
+   have no "after"), the walk just highlights them in turn rather than
+   inventing a connection.
    ========================================================================== */
 
 const TPRAF_CONTENT = {
@@ -158,6 +170,23 @@ const TPRAF_CONTENT = {
       { points: [ { x: 67.83, y: 45.62 }, { x: 67.83, y: 27 }, { x: 24, y: 27 }, { x: 24, y: 34.04 }, { x: 20.21, y: 34.04 } ] },
       /* Adaptation/Interventions (bottom) -> Hazard Model (right side, vertical middle) */
       { points: [ { x: 67.83, y: 54.39 }, { x: 67.83, y: 61 }, { x: 24, y: 61 }, { x: 24, y: 64.35 }, { x: 20.21, y: 64.35 } ] }
+    ],
+
+    /* Up the climate chain, then left-to-right along the decision chain, then
+       the feedback loop closes the round trip back on Transport Scenarios —
+       the box the cycle starts from. Every leg but one follows a drawn arrow;
+       the climate chain and the decision chain run side by side rather than
+       into each other, so stepping between them is a move along the diagram,
+       not along a connector. */
+    tour: [
+      "climate-scenarios",
+      "hazard-model",
+      "impact-assessment",
+      "bau",
+      "risk-reduction-needs",
+      "adaptation-interventions",
+      "outcome-assessment",
+      { box: "transport-scenarios", via: { from: "adaptation-interventions", to: "transport-scenarios" } }
     ]
   },
 
@@ -471,6 +500,31 @@ const TPRAF_CONTENT = {
        (Portfolio Optimisation is DSP-only), so it greys out in IMP-only view. */
     curvedPaths: [
       { from: { x: 81.42, y: 58.83 }, control: { x: 70.38, y: 65 }, to: { x: 59.34, y: 58.83 }, group: "dsp" }
+    ],
+
+    /* Top-down through the decision chain, then back through both feedback
+       loops into the modelling side, then up the climate chain and home onto
+       Transport Demand — the box the walk set out from. Only one leg has no
+       arrow to follow (the assessment point to the climate evidence base). */
+    tour: [
+      "transport-demand",
+      "transport-system",
+      "impact-assessment",
+      "asset-network-evaluation",
+      "problem-framing",
+      "risk-reduction-needs",
+      "adaptation-interventions",
+      "cost-benefit",
+      "portfolio-optimisation",
+      "outcome-assessment",
+      { box: "transport-supply", via: { from: "adaptation-interventions", to: "transport-supply" } },
+      { box: "hazard-model", via: { from: "adaptation-interventions", to: "hazard-model" } },
+      "transport-specific-threshold",
+      "impact-assessment",
+      "climate-scenario",
+      "weather-variables",
+      "social-behaviour-impacts",
+      "transport-demand"
     ]
   },
 
@@ -654,6 +708,49 @@ const TPRAF_CONTENT = {
       { points: [ { x: 93.6, y: 89 }, { x: 93.6, y: 89.5 }, { x: 76.6, y: 89.5 }, { x: 76.6, y: 93 } ] }, // Boundary -> Funding/Budgets
       { points: [ { x: 93.6, y: 89 }, { x: 93.6, y: 93 } ] },                                              // Boundary -> Procurement
       { points: [ { x: 93.6, y: 89 }, { x: 93.6, y: 89.5 }, { x: 110.6, y: 89.5 }, { x: 110.6, y: 93 } ] } // Boundary -> PM/Governance
+    ],
+
+    /* Inputs, then one process stage at a time left to right, reading each
+       cluster top-down. The stages themselves are chained by the cluster-to-
+       cluster arrows; within a stage the steps are a working sequence rather
+       than a chain (the criteria boxes, and Outcome Assessment's three steps,
+       all hang off the same stage), so those are highlighted in turn. */
+    tour: [
+      "dsp-transport-scenarios",
+      "dsp-climate-scenarios",
+      "dsp-sustainability",
+      "dsp-risk-assessment",
+      "dsp-asset-performance",
+      "dsp-resilience-assessment",
+      "dsp-asset-registry",
+      "dsp-requirements",
+      "dsp-context",
+      "dsp-constraints",
+      "dsp-system-interdependencies",
+      "dsp-problem-definition",
+      "dsp-primary-impact-identification",
+      "dsp-option-ideation",
+      "dsp-risk-thresholds",
+      "dsp-option-matrix",
+      "dsp-selection-screened-list",
+      "dsp-interventions",
+      "dsp-resilience-assessment-2",
+      "dsp-multi-criteria-cost-benefit",
+      "dsp-asset-performance-2",
+      "dsp-resilience-assessment-3",
+      "dsp-sustainability-2",
+      "dsp-economic-impact",
+      "dsp-criteria-xyz",
+      "dsp-system-interdependencies-2",
+      "dsp-solution-bundling",
+      "dsp-resource-feasibility",
+      "dsp-asset-performance-3",
+      "dsp-intervention-effectiveness",
+      "dsp-asset-registry-2",
+      "dsp-risk-assessment-cross",
+      "dsp-funding-budgets",
+      "dsp-procurement",
+      "dsp-pm-governance"
     ]
   },
 
@@ -761,6 +858,39 @@ const TPRAF_CONTENT = {
       // distinct feedback colour in the IMP diagram, unlike Level 1/DSP).
       { points: [ { x: 82, y: 48 }, { x: 79, y: 48 }, { x: 79, y: 51 }, { x: 77, y: 51 } ] },                  // Soft Adaptation -> Synthetic Travel Demand
       { points: [ { x: 89, y: 62 }, { x: 89, y: 99 }, { x: 27, y: 99 }, { x: 27, y: 98 } ] }                   // Hard Adaptation -> Climate/Hazard modelling
+    ],
+
+    /* Demand chain top-down, then Transport Supply & Freight, then the
+       climate/hazard chain, then the two adaptation loops that feed learning
+       back into the start of the chain. The parallel inputs (the two
+       adaptation options, Weather Impacts on Trip Decisions, the
+       Transport-Specific Threshold) sit on their own with no arrow into them,
+       so they are highlighted in turn. */
+    tour: [
+      "imp-ntem",
+      "imp-building-dev-model",
+      "imp-projected-population",
+      "imp-weather-trip-decisions",
+      "imp-activity-plans",
+      "imp-synthetic-travel-demand",
+      "imp-passenger-transport-model",
+      "imp-impact-assessment",
+      "imp-adaptation-measures",
+      "imp-soft-adaptation",
+      "imp-hard-adaptation",
+      "imp-transport-specific-threshold",
+      "imp-transport-network",
+      "imp-multimodal-network",
+      "imp-freight-transport-model",
+      "imp-atmospheric-fields",
+      "imp-ukcp18-modelling",
+      "imp-heat-model",
+      "imp-temporal-temp-maps",
+      "imp-weather-event",
+      "imp-hydrological-model",
+      "imp-temporal-flood-maps",
+      { box: "imp-synthetic-travel-demand", via: { from: "imp-soft-adaptation", to: "imp-synthetic-travel-demand" } },
+      { box: "imp-hydrological-model", via: { from: "imp-hard-adaptation", to: "imp-hydrological-model" } }
     ]
   }
 

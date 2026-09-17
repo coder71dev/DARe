@@ -58,6 +58,7 @@ Each entry in `TPRAF_CONTENT` (e.g. `simple.boxes`, `simple.labels`,
 - `tpraf_boxes` (view_id, box_key, label, text, is_placeholder, handbook_url, pos_left, pos_top, pos_width, pos_height)
 - `tpraf_labels` (view_id, label_key, label, text, is_placeholder, type, pos_left, pos_top, pos_width, pos_height)
 - `tpraf_arrows` / `tpraf_feedback_paths` (view_id, points as JSON)
+- `tpraf_tour_steps` (view_id, position, box_key, via_from_key nullable, via_to_key nullable) — the walkthrough order. `via_*` are only set on the steps that name one specific connector (the feedback-loop legs); every other step's arrow is worked out from the geometry `app.js` already has.
 
 A Controller loads a view's rows, reshapes them back into the exact same
 JSON shape `content.js` uses today, and the Blade view prints it:

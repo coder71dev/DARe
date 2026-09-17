@@ -44,6 +44,9 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   function openModal(item) {
+    // Reading a box takes over from watching the walkthrough — otherwise the
+    // diagram keeps panning around behind the popup.
+    if (tourState.running) stopTour();
     modalTitle.textContent = item.label;
     modalText.textContent = item.text;
     modalPlaceholderNote.hidden = !item.isPlaceholder;
@@ -70,7 +73,9 @@
     if (e.target === modalBackdrop) closeModal();
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
+    if (e.key !== "Escape") return;
+    closeModal();
+    if (tourState.running) stopTour();
   });
 
   function pct(n) {
@@ -205,6 +210,20 @@
     return el;
   }
 
+  /* Every connector drawn for the current view, with the point list it was
+     built from. The walkthrough uses these to work out which arrow joins two
+     consecutive steps of a tour — see connectorBetween(). Rebuilt on every
+     render, since switching view throws the whole SVG layer away.
+     data-marker-end is stashed because the walkthrough hides the arrowhead
+     while the line draws itself in, then puts it back. */
+  let connectors = [];
+
+  function recordConnector(el, kind, points) {
+    const markerEnd = el.getAttribute("marker-end");
+    if (markerEnd) el.dataset.markerEnd = markerEnd;
+    connectors.push({ el: el, kind: kind, points: points });
+  }
+
   function drawStraightArrow(arrow) {
     const line = document.createElementNS(SVG_NS, "line");
     line.setAttribute("x1", arrow.from.x);
@@ -218,6 +237,7 @@
     // double-headed, showing free back-and-forth rather than one-way flow.
     if (arrow.bidirectional) line.setAttribute("marker-start", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(line, arrow.group, "main"));
+    recordConnector(line, "main", [arrow.from, arrow.to]);
   }
 
   function drawFeedbackPath(feedback) {
@@ -229,6 +249,7 @@
     polyline.setAttribute("stroke-width", "0.22");
     polyline.setAttribute("marker-end", "url(#feedback-arrowhead)");
     svgLayer.appendChild(taggedArrow(polyline, feedback.group, "feedback"));
+    recordConnector(polyline, "feedback", feedback.points);
   }
 
   // Same visual style as the straight main-flow arrows, just with bends —
@@ -243,6 +264,7 @@
     polyline.setAttribute("marker-end", "url(#arrowhead)");
     if (elbow.bidirectional) polyline.setAttribute("marker-start", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(polyline, elbow.group, "main"));
+    recordConnector(polyline, "main", elbow.points);
   }
 
   // A smooth single-bulge curve (quadratic bezier) — for short loops within
@@ -257,6 +279,24 @@
     path.setAttribute("stroke-width", "0.18");
     path.setAttribute("marker-end", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(path, curve.group, "main"));
+    recordConnector(path, "main", sampleCurve(curve));
+  }
+
+  /* The walkthrough travels the drawn curve, so a bezier is sampled into the
+     same point list shape the other connectors already use. Only the two ends
+     matter for matching it to boxes; the samples are for the pulse's path. */
+  function sampleCurve(curve) {
+    const steps = 24;
+    const points = [];
+    for (let i = 0; i <= steps; i += 1) {
+      const t = i / steps;
+      const rest = 1 - t;
+      points.push({
+        x: rest * rest * curve.from.x + 2 * rest * t * curve.control.x + t * t * curve.to.x,
+        y: rest * rest * curve.from.y + 2 * rest * t * curve.control.y + t * t * curve.to.y
+      });
+    }
+    return points;
   }
 
   function makeHaloEl(box) {
@@ -296,6 +336,7 @@
     el.style.width = pctX(box.pos.width);
     el.style.height = pct(box.pos.height);
     el.textContent = box.label;
+    el.dataset.boxId = box.id; // how the walkthrough finds a step's box again
     if (box.group) el.dataset.group = box.group;
     if (box.rotate) el.style.setProperty("--box-rotate", box.rotate + "deg");
     if (box.startHere) el.classList.add("is-start");
@@ -407,8 +448,12 @@
 
     const status = data.status || "Working draft, ready for review — Level 1 is complete below; Level 2 component diagrams are next.";
 
+    const tourHint = (data.tour || []).length
+      ? " Or press <strong>Play walkthrough</strong> to watch the steps light up in order, and see how the diagram loops back on itself."
+      : "";
+
     return `
-      <p class="diagram-guide-hint">Click any box or label to see its full detail.${toggleHint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
+      <p class="diagram-guide-hint">Click any box or label to see its full detail.${toggleHint}${tourHint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
       <ul class="diagram-guide-legend">${legendHtml}${dotHtml}${lineHtml}</ul>
       <p class="diagram-guide-status">${escapeHtml(status)}</p>
     `;
@@ -486,6 +531,10 @@
   if (processBtnImp) processBtnImp.addEventListener("click", () => setProcessPanel("imp"));
 
   function renderDiagram(viewKey) {
+    // A walkthrough belongs to one view's own step order, so it can't survive
+    // a switch — the boxes it's lighting up are about to be thrown away.
+    if (tourState.running || tourState.finished) stopTour();
+
     const data = TPRAF_CONTENT[viewKey];
     if (!data) {
       titleEl.textContent = "Coming soon";
@@ -493,6 +542,7 @@
       svgLayer.innerHTML = "";
       stage.querySelectorAll(".diagram-box, .diagram-label").forEach((n) => n.remove());
       guideEl.hidden = true;
+      if (tourBar) tourBar.hidden = true;
       return;
     }
 
@@ -505,7 +555,9 @@
 
     // Clear previous render
     svgLayer.innerHTML = "";
-    stage.querySelectorAll(".diagram-box, .diagram-label, .diagram-heading, .diagram-box-halo, .diagram-cluster-bg").forEach((n) => n.remove());
+    connectors = [];
+    tourPulse = null;
+    stage.querySelectorAll(".diagram-box, .diagram-label, .diagram-heading, .diagram-box-halo, .diagram-cluster-bg, .tour-pulse").forEach((n) => n.remove());
 
     (data.containers || []).forEach((container) => stage.appendChild(makeContainerEl(container)));
 
@@ -522,6 +574,9 @@
     });
     (data.labels || []).forEach((label) => stage.appendChild(makeLabelEl(label)));
     (data.headings || []).forEach((heading) => stage.appendChild(makeHeadingEl(heading)));
+
+    buildAnchorRegions(data);
+    if (tourBar) tourBar.hidden = !(data.tour && data.tour.length);
 
     applyCropToStage(data);
     refreshZoom();
@@ -702,6 +757,407 @@
     refreshZoom = applyZoom;
     applyZoom();
   }
+
+  /* ==========================================================================
+     Walkthrough ("play").
+     Plays the current view's own reading order (data.tour in content.js) as an
+     animated pass through the diagram: each step's box lights up, then a glow
+     travels along the very arrow that leads to the next step, leaving that
+     route lit behind it. It closes on a feedback loop, so the diagram is
+     walked as a round trip back to where it started rather than left half lit.
+     Steps with no arrow between them are highlighted in turn — several
+     diagrams have parallel boxes that genuinely have no "after", and drawing
+     an invented line between those would say something the source doesn't.
+     ========================================================================== */
+
+  const tourBar = document.getElementById("diagram-tour");
+  const tourPlayBtn = document.getElementById("tour-play");
+  const tourPlayLabel = document.getElementById("tour-play-label");
+  const tourCaption = document.getElementById("tour-caption");
+  const tourRestartBtn = document.getElementById("tour-restart");
+  const tourStopBtn = document.getElementById("tour-stop");
+
+  const TOUR_CAPTION_IDLE = "Watch the diagram complete itself, step by step.";
+  const TOUR_DWELL = 1000;              // ms a step stays centred before moving on
+  const TOUR_ANCHOR_TOLERANCE = 3;      // how far off a box/label edge an arrow end may land and still count as joined to it
+  const TOUR_CLUSTER_TOLERANCE = 1;     // the same, for a cluster background — kept tight because two clusters can sit only a couple of units apart, and a loose match there joins an arrow to the wrong cluster's boxes
+  const TOUR_HEADING_GAP = 12;          // how close a section title must be to count as that box's heading
+  const TOUR_SPEED = 0.75;              // px per ms the pulse travels at
+  const TOUR_TRAVEL_MIN = 650;
+  const TOUR_TRAVEL_MAX = 1800;
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // A run id rather than a plain "cancelled" flag: restarting stops one run and
+  // starts another in the same tick, and a flag would be cleared again by the
+  // new run before the old one's loop ever checked it.
+  const tourState = { runId: 0, running: false, paused: false, finished: false };
+  let tourPulse = null;
+  let tourStepText = "";
+
+  let boxRegions = new Map(); // box id -> the rects an arrow may legitimately touch for that box
+
+  function rectOfPos(pos) {
+    return { left: pos.left, top: pos.top, right: pos.left + pos.width, bottom: pos.top + pos.height };
+  }
+
+  // A rotated box (Extended's "Social Behaviour Impacts") occupies its frame
+  // turned 90°, so what arrows actually touch is its footprint, not its pos.
+  function rectOfBox(box) {
+    if (!box.rotate) return rectOfPos(box.pos);
+    const cx = box.pos.left + box.pos.width / 2;
+    const cy = box.pos.top + box.pos.height / 2;
+    return {
+      left: cx - box.pos.height / 2,
+      top: cy - box.pos.width / 2,
+      right: cx + box.pos.height / 2,
+      bottom: cy + box.pos.width / 2
+    };
+  }
+
+  function rectToRectGap(a, b) {
+    const dx = Math.max(a.left - b.right, 0, b.left - a.right);
+    const dy = Math.max(a.top - b.bottom, 0, b.top - a.bottom);
+    return Math.hypot(dx, dy);
+  }
+
+  /* Distance from a point to a rect. "borderOnly" is for the cluster
+     backgrounds: an arrow that ends somewhere inside a cluster has not
+     touched the cluster at all, only one that lands on (or near) its edge
+     has — without this, every arrow landing inside a cluster counts as
+     reaching every box in it. */
+  function pointToRectDistance(rect, point, borderOnly) {
+    const dx = Math.max(rect.left - point.x, 0, point.x - rect.right);
+    const dy = Math.max(rect.top - point.y, 0, point.y - rect.bottom);
+    const outside = Math.hypot(dx, dy);
+    if (outside > 0 || !borderOnly) return outside;
+    return Math.min(point.x - rect.left, rect.right - point.x, point.y - rect.top, rect.bottom - point.y);
+  }
+
+  /* Where an arrow may legitimately start or end for a given box: the box's own
+     footprint, every cluster background it sits inside, and the section title
+     that belongs to it. Level 2's stage-to-stage arrows land on the cluster
+     edge rather than on a box, and Simple's Climate Scenarios arrow lands on
+     the "Transport Scenarios" title, so both have to count as joining the box
+     they lead to. */
+  function buildAnchorRegions(data) {
+    boxRegions = new Map();
+    const containerRects = (data.containers || []).map((c) => rectOfPos(c.pos));
+    const headingRects = (data.headings || []).map((h) => rectOfPos(h.pos));
+    (data.boxes || []).forEach((box) => {
+      const own = rectOfBox(box);
+      const cx = (own.left + own.right) / 2;
+      const cy = (own.top + own.bottom) / 2;
+      const regions = [{ rect: own, borderOnly: false, tolerance: TOUR_ANCHOR_TOLERANCE }];
+      containerRects.forEach((rect) => {
+        if (cx >= rect.left && cx <= rect.right && cy >= rect.top && cy <= rect.bottom) {
+          regions.push({ rect: rect, borderOnly: true, tolerance: TOUR_CLUSTER_TOLERANCE });
+        }
+      });
+      headingRects.forEach((rect) => {
+        const overlapsX = Math.min(rect.right, own.right) > Math.max(rect.left, own.left);
+        if (overlapsX && rectToRectGap(rect, own) <= TOUR_HEADING_GAP) {
+          regions.push({ rect: rect, borderOnly: false, tolerance: TOUR_ANCHOR_TOLERANCE });
+        }
+      });
+      boxRegions.set(box.id, regions);
+    });
+  }
+
+  // How far a point is from the nearest part of a box it could be joining —
+  // Infinity when it's not close enough to any of them to count.
+  function distanceToRegions(regions, point) {
+    let best = Infinity;
+    regions.forEach((region) => {
+      const d = pointToRectDistance(region.rect, point, region.borderOnly);
+      if (d <= region.tolerance && d < best) best = d;
+    });
+    return best;
+  }
+
+  /* The drawn connector joining two boxes, if the diagram has one. Both ends
+     are measured against each box, in both directions, so a double-headed
+     connector resolves whichever way the tour walks it (some are walked
+     "backwards" on purpose — e.g. the IMP diagram steps from Transport Network
+     up to Multi-modal Network, which is drawn the other way round). */
+  function connectorBetween(fromId, toId) {
+    const from = boxRegions.get(fromId);
+    const to = boxRegions.get(toId);
+    if (!from || !to) return null;
+
+    let best = null;
+    let bestScore = Infinity;
+    connectors.forEach((connector) => {
+      const head = connector.points[0];
+      const tail = connector.points[connector.points.length - 1];
+      const headToFrom = distanceToRegions(from, head);
+      const tailToTo = distanceToRegions(to, tail);
+      const tailToFrom = distanceToRegions(from, tail);
+      const headToTo = distanceToRegions(to, head);
+      const forwardOk = headToFrom <= TOUR_ANCHOR_TOLERANCE && tailToTo <= TOUR_ANCHOR_TOLERANCE;
+      const reverseOk = tailToFrom <= TOUR_ANCHOR_TOLERANCE && headToTo <= TOUR_ANCHOR_TOLERANCE;
+      if (!forwardOk && !reverseOk) return;
+      const reversed = !forwardOk || (reverseOk && tailToFrom + headToTo < headToFrom + tailToTo);
+      const score = reversed ? tailToFrom + headToTo : headToFrom + tailToTo;
+      if (score < bestScore) {
+        bestScore = score;
+        best = { record: connector, reversed: reversed };
+      }
+    });
+    return best;
+  }
+
+  function tourBoxEl(id) {
+    return stage.querySelector('.diagram-box[data-box-id="' + id + '"]');
+  }
+
+  function labelForBox(data, id) {
+    const box = (data.boxes || []).find((b) => b.id === id);
+    return box ? box.label.replace(/\n/g, " ") : id;
+  }
+
+  /* A diagram unit is a different number of pixels horizontally and
+     vertically (the stage is never square), so the pulse is paced in real
+     pixels — otherwise it visibly speeds up and slows down around corners. */
+  function polylineMetrics(points) {
+    const unitX = stage.clientWidth / currentMaxX;
+    const unitY = stage.clientHeight / 100;
+    const segments = [];
+    let total = 0;
+    for (let i = 1; i < points.length; i += 1) {
+      const dx = (points[i].x - points[i - 1].x) * unitX;
+      const dy = (points[i].y - points[i - 1].y) * unitY;
+      const length = Math.hypot(dx, dy);
+      segments.push(length);
+      total += length;
+    }
+    return { segments: segments, total: total };
+  }
+
+  function pointAtDistance(points, segments, distance) {
+    let travelled = 0;
+    for (let i = 0; i < segments.length; i += 1) {
+      if (travelled + segments[i] >= distance || i === segments.length - 1) {
+        const t = segments[i] ? (distance - travelled) / segments[i] : 1;
+        return {
+          x: points[i].x + (points[i + 1].x - points[i].x) * t,
+          y: points[i].y + (points[i + 1].y - points[i].y) * t
+        };
+      }
+      travelled += segments[i];
+    }
+    return points[points.length - 1];
+  }
+
+  // One animation clock for every leg, so pausing holds the pulse mid-flight
+  // instead of letting it run on behind a paused step.
+  function tourTick(runId, duration, onFrame) {
+    return new Promise((resolve) => {
+      if (prefersReducedMotion) {
+        // Still pause, just without the motion — the steps need to stay
+        // readable rather than flashing past.
+        window.setTimeout(() => {
+          onFrame(1);
+          resolve(runId === tourState.runId);
+        }, Math.min(duration, 900));
+        return;
+      }
+      let elapsed = 0;
+      let previous = null;
+      function frame(now) {
+        if (runId !== tourState.runId) {
+          resolve(false);
+          return;
+        }
+        if (previous === null) previous = now;
+        const delta = now - previous;
+        previous = now; // advances even while paused, so paused time isn't counted
+        if (!tourState.paused) elapsed += delta;
+        onFrame(duration ? Math.min(1, elapsed / duration) : 1);
+        if (elapsed >= duration) {
+          resolve(true);
+          return;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function pulseEl() {
+    if (!tourPulse || !tourPulse.isConnected) {
+      tourPulse = document.createElement("div");
+      tourPulse.className = "tour-pulse";
+      tourPulse.hidden = true;
+      stage.appendChild(tourPulse);
+    }
+    return tourPulse;
+  }
+
+  function movePulseTo(point) {
+    const el = pulseEl();
+    el.hidden = false;
+    el.style.left = pctX(point.x);
+    el.style.top = pct(point.y);
+  }
+
+  /* Lights the connector and walks the pulse along it. The line draws itself
+     in as the pulse travels (dashes measured from the near end), and the
+     arrowhead is held back until the line reaches it, so it arrives with the
+     line instead of hanging at the far end on its own. */
+  async function travelLeg(runId, found) {
+    if (!found) return true;
+    const record = found.record;
+    const points = found.reversed ? record.points.slice().reverse() : record.points;
+    const metrics = polylineMetrics(points);
+    const duration = Math.max(TOUR_TRAVEL_MIN, Math.min(TOUR_TRAVEL_MAX, metrics.total / TOUR_SPEED));
+    const el = record.el;
+    const markerEnd = el.dataset.markerEnd;
+    const length = typeof el.getTotalLength === "function" ? el.getTotalLength() : 0;
+    const draw = !prefersReducedMotion && length > 0 && !!markerEnd;
+
+    el.classList.add("tour-flow");
+    if (draw) {
+      el.setAttribute("marker-end", "none");
+      el.style.strokeDasharray = String(length);
+      el.style.strokeDashoffset = String(length);
+    }
+    if (!prefersReducedMotion) movePulseTo(points[0]);
+
+    const completed = await tourTick(runId, duration, (t) => {
+      if (draw) el.style.strokeDashoffset = String(length * (1 - t));
+      if (!prefersReducedMotion && !tourState.paused) {
+        movePulseTo(pointAtDistance(points, metrics.segments, metrics.total * t));
+      }
+    });
+
+    if (draw) {
+      el.style.strokeDasharray = "";
+      el.style.strokeDashoffset = "";
+      el.setAttribute("marker-end", markerEnd);
+    }
+    if (tourPulse) tourPulse.hidden = true;
+    return completed;
+  }
+
+  // Hands the glow on to the next step and keeps it on screen — the Level 2
+  // diagrams are several screens wide, so a step can easily light up off-view.
+  function focusStep(id) {
+    stage.querySelectorAll(".diagram-box.tour-focus").forEach((el) => {
+      el.classList.remove("tour-focus");
+      el.classList.add("tour-visited");
+    });
+    const el = tourBoxEl(id);
+    if (!el) return null;
+    el.classList.add("tour-visited", "tour-focus");
+    const wrapRect = stageWrap.getBoundingClientRect();
+    const boxRect = el.getBoundingClientRect();
+    const target = stageWrap.scrollLeft + (boxRect.left + boxRect.width / 2) - (wrapRect.left + wrapRect.width / 2);
+    stageWrap.scrollTo({ left: Math.max(0, target), behavior: prefersReducedMotion ? "auto" : "smooth" });
+    return el;
+  }
+
+  function setCaption(text, active) {
+    tourStepText = text;
+    if (!tourCaption) return;
+    tourCaption.textContent = text;
+    tourCaption.classList.toggle("is-active", !!active);
+  }
+
+  function setTourControls(state) {
+    if (!tourPlayBtn) return;
+    tourPlayLabel.textContent =
+      state === "running" ? "Pause" :
+      state === "paused" ? "Resume" :
+      state === "finished" ? "Play again" : "Play walkthrough";
+    tourPlayBtn.classList.toggle("is-pause", state === "running");
+    tourPlayBtn.setAttribute("aria-pressed", String(state === "running"));
+    const idle = state === "idle";
+    if (tourRestartBtn) tourRestartBtn.hidden = idle;
+    if (tourStopBtn) tourStopBtn.hidden = idle;
+  }
+
+  function clearTourMarks() {
+    stage.classList.remove("tour-running", "tour-complete");
+    stage.querySelectorAll(".diagram-box.tour-focus, .diagram-box.tour-visited").forEach((el) => {
+      el.classList.remove("tour-focus", "tour-visited");
+    });
+    svgLayer.querySelectorAll(".tour-flow").forEach((el) => {
+      el.classList.remove("tour-flow");
+      el.style.strokeDasharray = "";
+      el.style.strokeDashoffset = "";
+      if (el.dataset.markerEnd) el.setAttribute("marker-end", el.dataset.markerEnd);
+    });
+    if (tourPulse) tourPulse.hidden = true;
+  }
+
+  function stopTour() {
+    tourState.runId += 1; // invalidates any leg still in flight
+    tourState.running = false;
+    tourState.paused = false;
+    tourState.finished = false;
+    clearTourMarks();
+    setTourControls("idle");
+    setCaption(TOUR_CAPTION_IDLE, false);
+  }
+
+  async function playTour() {
+    const data = TPRAF_CONTENT[currentViewKey];
+    const steps = ((data && data.tour) || []).map((step) => (typeof step === "string" ? { box: step } : step));
+    if (!steps.length) return;
+
+    stopTour();
+    tourState.runId += 1;
+    const runId = tourState.runId;
+    tourState.running = true;
+    tourState.finished = false;
+
+    // A walkthrough covers the whole view, so drop any DSP/IMP filter first —
+    // a half-greyed diagram would contradict where the tour is about to go.
+    if (processToggle && !processToggle.hidden) setProcessPanel(null);
+
+    stage.classList.add("tour-running");
+    setTourControls("running");
+
+    for (let i = 0; i < steps.length; i += 1) {
+      const step = steps[i];
+      if (i > 0) {
+        const found = step.via
+          ? connectorBetween(step.via.from, step.via.to)
+          : connectorBetween(steps[i - 1].box, step.box);
+        const carried = await travelLeg(runId, found);
+        if (!carried) return; // stopped, restarted or the view changed mid-leg
+      }
+      const el = focusStep(step.box);
+      setCaption("Step " + (i + 1) + " of " + steps.length + " · " + labelForBox(data, step.box), true);
+      const dwelt = await tourTick(runId, el ? TOUR_DWELL : 0, () => {});
+      if (!dwelt) return;
+    }
+
+    // Fully lit, and the last leg has closed the loop back to the start. Drop
+    // the dimming so the finished diagram reads as a whole again, and leave the
+    // route glowing until the visitor stops or replays it.
+    stage.classList.remove("tour-running");
+    stage.classList.add("tour-complete");
+    tourState.running = false;
+    tourState.finished = true;
+    setTourControls("finished");
+    setCaption("Walkthrough complete — " + steps.length + " steps, and the loop closes back to the start.", true);
+  }
+
+  if (tourPlayBtn) {
+    tourPlayBtn.addEventListener("click", () => {
+      if (tourState.running) {
+        tourState.paused = !tourState.paused;
+        setTourControls(tourState.paused ? "paused" : "running");
+        setCaption(tourState.paused ? "Paused — " + tourStepText : tourStepText, true);
+        return;
+      }
+      playTour();
+    });
+  }
+  if (tourRestartBtn) tourRestartBtn.addEventListener("click", () => playTour());
+  if (tourStopBtn) tourStopBtn.addEventListener("click", () => stopTour());
 
   // View switching. Selecting a view also writes it into the URL, so a link
   // can point straight at one level — the landing page's "Explore TPRAF"
