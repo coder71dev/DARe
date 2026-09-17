@@ -167,7 +167,11 @@
          PAGE:CONTENT, with the heading levels adjusted for this page's
          outline and the level tabs left out (this instance is pinned to the
          simple view). Per-page duplication of a shared block, exactly as the
-         LAYOUT:HEADER / LAYOUT:FOOTER blocks above and below do. -->
+         LAYOUT:HEADER / LAYOUT:FOOTER blocks above and below do.
+
+         Deliberately unframed (see .landing-diagram in style.css): no card,
+         border or shadow, so it reads as part of the page rather than an
+         embed. The wrapper is a boundary and a hook, nothing more. -->
     <section class="section" aria-labelledby="simple-title">
       <div class="container">
         <header class="section-head">
@@ -175,7 +179,7 @@
           <p class="section-index">03 &middot; Level 1</p>
         </header>
 
-        <div class="embed-panel">
+        <div class="landing-diagram">
           <h3 class="diagram-title" id="diagram-title"></h3>
           <p class="diagram-subtitle" id="diagram-subtitle"></p>
 
@@ -224,7 +228,7 @@
           </div>
         </div>
 
-        <p class="embed-cta">
+        <p class="landing-diagram-cta">
           <a class="inline-link" href="diagram.html#extended">Explore the extended form <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
         </p>
       </div>

@@ -414,22 +414,15 @@ a { color: var(--color-sky); }
   font-weight: 600;
 }
 
-/* ---------- The simple form, embedded on the landing page ---------- */
-/* Rendered by the same app.js from the same content data as diagram.html, so
-   this panel reuses the diagram's own title/guide/stage classes untouched and
-   only supplies the frame around them. No level tabs here, so this instance
-   stays on the simple view. */
-.embed-panel {
-  padding: clamp(0.9rem, 2.2vw, 1.6rem);
-  background: var(--color-white);
-  border: 1px solid rgba(0, 41, 94, 0.12);
-  border-radius: 14px;
-  box-shadow: var(--shadow-soft);
-}
+/* ---------- The simple form on the landing page ---------- */
+/* Rendered by the same app.js from the same content data as diagram.html, and
+   deliberately unframed: no background, border, radius or shadow, so the
+   diagram sits on the page rather than in a panel embedded in it. The wrapper
+   is a markup boundary and a selector hook, nothing more. No level tabs here,
+   so this instance stays on the simple view. */
+.landing-diagram .diagram-title { margin-top: 0; }
 
-.embed-panel .diagram-title { margin-top: 0; }
-
-.embed-cta { margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0; }
+.landing-diagram-cta { margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0; }
 
 /* ---------- Explore band ---------- */
 /* Bold use of Leaf — the guide's other full-bleed banner colour. */
