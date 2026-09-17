@@ -490,6 +490,18 @@ a { color: var(--color-sky); }
 
 @media (max-width: 760px) {
   .scroll-hint { display: block; }
+
+  /* Below 760px the diagram is too wide for the screen, so visitors have to
+     scroll sideways to see all of it. That breaks the bottom-right float
+     above: "bottom-right of the screen" stops lining up with "bottom-right
+     of the diagram" and the widget can end up sitting on top of real boxes
+     instead of the empty corner. Simplest fix — drop it back into normal
+     flow just above the diagram, where it can never cover anything. */
+  .zoom-controls {
+    position: static;
+    width: fit-content;
+    margin: 0 0 0.6rem auto;
+  }
 }
 
 .diagram-stage svg.arrows-layer {
