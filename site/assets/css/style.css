@@ -568,6 +568,18 @@ a { color: var(--color-sky); }
 .diagram-cluster-bg.variant-c5 { background: #f8f0e0; border-color: #f8e0b0; }
 .diagram-cluster-bg.variant-c6 { background: #c0d0d8; border-color: #88b0c0; }
 
+/* These clusters are topped by their own coloured title bar, which now
+   carries the rounded top corners — so the body underneath squares off at
+   the top and only rounds at the bottom, joining the bar seamlessly. */
+.diagram-cluster-bg.variant-c1,
+.diagram-cluster-bg.variant-c2,
+.diagram-cluster-bg.variant-c3,
+.diagram-cluster-bg.variant-c4,
+.diagram-cluster-bg.variant-c5,
+.diagram-cluster-bg.variant-c6 {
+  border-radius: 0 0 14px 14px;
+}
+
 .diagram-box {
   position: absolute;
   display: flex;
