@@ -35,8 +35,11 @@
   <h1 class="diagram-title" id="diagram-title"></h1>
   <p class="diagram-subtitle" id="diagram-subtitle"></p>
 
-  <div class="diagram-guide" id="diagram-guide">
-    <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="true" aria-controls="diagram-guide-body">
+  <!-- Starts collapsed (data-collapsed) so it's shut from first paint rather
+       than flashing open before the script runs. A visitor who opens it gets
+       that remembered; see app.js. -->
+  <div class="diagram-guide" id="diagram-guide" data-collapsed="true">
+    <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="false" aria-controls="diagram-guide-body">
       <span class="diagram-guide-toggle-label">
         <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
         How to explore this diagram
