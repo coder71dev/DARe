@@ -485,139 +485,162 @@ const TPRAF_CONTENT = {
   dsp: {
     title: "Overview of DSP Components",
     subtitle: "Level 2 — Decision Support Process",
-    status: "Redesigned from the source component map in brand colors — box color shows tool vs. input/output, and each stage's title bar keeps its own colour identity, same as the source. Wording for most steps is still coming from DARe.",
+    status: "Redesigned from the source component map in brand colors — each process stage keeps its own colour identity (title bar, body tint, and the standalone inputs that feed it), matching the source. Wording for most steps is still coming from DARe.",
     legend: [
       ["navy", "Tool or model step"],
-      ["sky", "Scenario / context input"],
       ["io", "Input or output artefact"]
     ],
+    /* Layout note: every position below comes from a small script that
+       computes cluster widths, per-column box stacking (with a deliberate
+       4-unit vertical gap so double-headed arrows have visible room to
+       draw), and the Risk Reduction Analysis / Detailed Option Assessment
+       sub-layouts, then checks nothing overlaps before any number gets
+       used here — see the commit message for how it was verified. */
     boxes: [
-      // Standalone inputs feeding the first two clusters
-      { id: "dsp-transport-scenarios", label: "Transport Scenarios", startHere: true, pos: { left: 3, top: 15, width: 10, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
-      { id: "dsp-climate-scenarios", label: "Climate Scenarios", pos: { left: 3, top: 22, width: 10, height: 6 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "sky" },
-      { id: "dsp-requirements", label: "Requirements", pos: { left: 17.5, top: 10, width: 10, height: 5.5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
-      { id: "dsp-context", label: "Context", pos: { left: 17.5, top: 16.5, width: 10, height: 5.5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
-      { id: "dsp-constraints", label: "Constraints", pos: { left: 17.5, top: 23, width: 10, height: 5.5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
+      // Standalone inputs — coloured to match the cluster they feed, not a
+      // generic "input" colour (Transport/Climate Scenarios match Asset/
+      // Network Evaluation's blue; Requirements/Context/Constraints match
+      // Problem Framing's grey).
+      { id: "dsp-transport-scenarios", label: "Transport Scenarios", startHere: true, pos: { left: 2.7, top: 12, width: 14, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky-pale" },
+      { id: "dsp-climate-scenarios", label: "Climate Scenarios", pos: { left: 2.7, top: 21, width: 14, height: 6 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "sky-pale" },
+      { id: "dsp-requirements", label: "Requirements", pos: { left: 25.7, top: 7, width: 14, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "c2-input" },
+      { id: "dsp-context", label: "Context", pos: { left: 25.7, top: 14.5, width: 14, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "c2-input" },
+      { id: "dsp-constraints", label: "Constraints", pos: { left: 25.7, top: 22, width: 14, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "c2-input" },
 
-      // Cluster 1 — Asset/Network Evaluation. Source shows Sustainability,
-      // Risk Assessment, Asset Performance, Resilience Assessment and Asset
-      // Registry chained by double-headed arrows (iterative, not one-way),
-      // with the middle three inside their own dashed sub-group.
-      { id: "dsp-sustainability", label: "Sustainability", pos: { left: 3, top: 34, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-risk-assessment", label: "Risk Assessment", pos: { left: 3, top: 43.04, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-asset-performance", label: "Asset Performance", pos: { left: 3, top: 52.08, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-resilience-assessment", label: "Resilience Assessment", pos: { left: 3, top: 61.12, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-asset-registry", label: "Asset Registry", pos: { left: 3, top: 70.16, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      // Cluster 1 — Asset/Network Evaluation, doubled in width to match the
+      // source's much wider leftmost stage. Middle three still sit in the
+      // dashed sub-group; the Asset Performance connectors are one-way
+      // (up into Risk Assessment, down into Resilience Assessment).
+      { id: "dsp-sustainability", label: "Sustainability", pos: { left: 3.9, top: 34, width: 14, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-risk-assessment", label: "Risk Assessment", pos: { left: 3.9, top: 43.8, width: 14, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-performance", label: "Asset Performance", pos: { left: 3.9, top: 53.6, width: 14, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment", label: "Resilience Assessment", pos: { left: 3.9, top: 63.4, width: 14, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-asset-registry", label: "Asset Registry", pos: { left: 3.9, top: 73.2, width: 14, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
 
-      // Cluster 2 — Problem Framing and Scope. Same double-headed chain,
-      // dashed sub-group around Problem Definition/Primary Impact ID/Option
-      // Ideation. Option Ideation is a "long list" — stacked-card treatment.
-      { id: "dsp-system-interdependencies", label: "System Interdependencies", pos: { left: 17.5, top: 34, width: 10, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-problem-definition", label: "Problem Definition", pos: { left: 17.5, top: 45.3, width: 10, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-primary-impact-identification", label: "Primary Impact Identification", pos: { left: 17.5, top: 56.6, width: 10, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-option-ideation", label: "Option Ideation (Long List)", pos: { left: 17.5, top: 67.9, width: 10, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", stacked: true },
+      // Cluster 2 — Problem Framing and Scope, doubled to match the source's
+      // wider second stage (same treatment as Asset/Network Evaluation).
+      { id: "dsp-system-interdependencies", label: "System Interdependencies", pos: { left: 25.7, top: 34, width: 14, height: 8.25 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-problem-definition", label: "Problem Definition", pos: { left: 25.7, top: 46.25, width: 14, height: 8.25 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-primary-impact-identification", label: "Primary Impact Identification", pos: { left: 25.7, top: 58.5, width: 14, height: 8.25 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-option-ideation", label: "Option Ideation (Long List)", pos: { left: 25.7, top: 70.75, width: 14, height: 8.25 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", stacked: true },
 
-      // Cluster 3 — Risk Reduction Analysis. Risk Thresholds sits on top;
-      // below it a row of Option Matrix (rotated vertical label, matching
-      // the source), the Selection/Screened List decision diamond, and the
-      // Interventions "long list" (stacked cards); Resilience Assessment
-      // sits underneath as its own row, matching the source's layout.
-      { id: "dsp-risk-thresholds", label: "Risk Thresholds", pos: { left: 32, top: 34, width: 17, height: 7 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-option-matrix", label: "Option Matrix", pos: { left: 26.75, top: 48.25, width: 14, height: 3.5 }, rotate: 270, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-selection-screened-list", label: "Selection / Screened List", pos: { left: 36.5, top: 46, width: 6, height: 8 }, shape: "diamond", text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-interventions", label: "Interventions", pos: { left: 43, top: 47, width: 6, height: 6 }, stacked: true, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-resilience-assessment-2", label: "Resilience Assessment", pos: { left: 32, top: 59, width: 17, height: 7 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      // Cluster 3 — Risk Reduction Analysis. Risk Thresholds on top (full
+      // width); below it, well-spaced: Option Matrix (rotated vertical
+      // label), the Selection/Screened list decision diamond, and the
+      // Interventions "long list" — each with a real 2.5-unit gap between
+      // them so the connecting arrows are legible, not overlapping the
+      // boxes. Resilience Assessment sits underneath as its own row.
+      { id: "dsp-risk-thresholds", label: "Risk Thresholds", pos: { left: 46.8, top: 34, width: 25, height: 7 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-option-matrix", label: "Option Matrix", pos: { left: 41.8, top: 51, width: 14, height: 4 }, rotate: 270, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-selection-screened-list", label: "Selection/\nScreened list", pos: { left: 53.3, top: 47, width: 12, height: 12 }, shape: "diamond", text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-interventions", label: "Interventions", pos: { left: 62.8, top: 51, width: 14, height: 4 }, rotate: 270, stacked: true, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment-2", label: "Resilience Assessment", pos: { left: 46.8, top: 65, width: 25, height: 7 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
 
-      // Cluster 4 — Detailed Option Assessment. "Cost Benefit/Multi-Criteria
-      // Analysis" runs as a rotated vertical label down the full cluster
-      // height (matching the source), with the 5 assessment criteria
-      // stacked to its right.
-      { id: "dsp-multi-criteria-cost-benefit", label: "Cost Benefit / Multi-Criteria Analysis", pos: { left: 33.25, top: 54.25, width: 44, height: 3.5 }, rotate: 270, text: "This process involves a criteria selection process and a detailed development and assessment of shortlisted options / pathways.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-asset-performance-2", label: "Asset Performance", pos: { left: 57.5, top: 34, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-resilience-assessment-3", label: "Resilience Assessment", pos: { left: 57.5, top: 43.04, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-sustainability-2", label: "Sustainability", pos: { left: 57.5, top: 52.08, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-economic-impact", label: "Economic Impact", pos: { left: 57.5, top: 61.12, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-criteria-xyz", label: "Criteria X, Y, Z", pos: { left: 57.5, top: 70.16, width: 10, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      // Cluster 4 — Detailed Option Assessment. "Multi Criteria / Cost
+      // Benefit Analysis" runs as a rotated vertical label down the full
+      // cluster height, with a real 2.5-unit gap before the 5-box stack
+      // (same 4-unit vertical rhythm as clusters 1/2) to its right.
+      { id: "dsp-multi-criteria-cost-benefit", label: "Multi Criteria / Cost Benefit Analysis", pos: { left: 57.2, top: 54.5, width: 45, height: 4 }, rotate: 270, text: "This process involves a criteria selection process and a detailed development and assessment of shortlisted options / pathways.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-performance-2", label: "Asset Performance", pos: { left: 84.2, top: 34, width: 10.5, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment-3", label: "Resilience Assessment", pos: { left: 84.2, top: 43.8, width: 10.5, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-sustainability-2", label: "Sustainability", pos: { left: 84.2, top: 53.6, width: 10.5, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-economic-impact", label: "Economic Impact", pos: { left: 84.2, top: 63.4, width: 10.5, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-criteria-xyz", label: "Criteria X, Y, Z", pos: { left: 84.2, top: 73.2, width: 10.5, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
 
       // Cluster 5 — Portfolio Optimisation
-      { id: "dsp-system-interdependencies-2", label: "System Interdependencies", pos: { left: 72, top: 34, width: 10, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-solution-bundling", label: "Solution Bundling", pos: { left: 72, top: 49.07, width: 10, height: 13.87 }, text: "This process looks at combining and sequencing multiple interventions/pathways to utilise and bundle resources if possible.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-resource-feasibility", label: "Resource and Feasibility", pos: { left: 72, top: 64.14, width: 10, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-system-interdependencies-2", label: "System Interdependencies", pos: { left: 98.1, top: 34, width: 7, height: 12.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-solution-bundling", label: "Solution Bundling", pos: { left: 98.1, top: 50.33, width: 7, height: 12.33 }, text: "This process looks at combining and sequencing multiple interventions/pathways to utilise and bundle resources if possible.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-resource-feasibility", label: "Resource and Feasibility", pos: { left: 98.1, top: 66.67, width: 7, height: 12.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
 
       // Cluster 6 — Outcome Assessment. Plain tool box, no special
       // highlight — the source doesn't single this step out visually.
-      { id: "dsp-asset-performance-3", label: "Asset Performance", pos: { left: 86.5, top: 34, width: 10, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-intervention-effectiveness", label: "Intervention / Adaptation Effectiveness", pos: { left: 86.5, top: 49.07, width: 10, height: 13.87 }, text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-asset-registry-2", label: "Asset Registry", pos: { left: 86.5, top: 64.14, width: 10, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-asset-performance-3", label: "Asset Performance", pos: { left: 107.7, top: 34, width: 7, height: 12.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-intervention-effectiveness", label: "Intervention / Adaptation Effectiveness", pos: { left: 107.7, top: 50.33, width: 7, height: 12.33 }, text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-registry-2", label: "Asset Registry", pos: { left: 107.7, top: 66.67, width: 7, height: 12.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
 
       // Cross-cutting Risk Assessment step and its funding/governance inputs.
       // Kept off the far right/bottom edge on purpose — that corner is where
       // the floating zoom widget docks (see style.css), same reason Level 1's
       // last row always ends well clear of it.
-      { id: "dsp-risk-assessment-cross", label: "Risk Assessment", pos: { left: 55, top: 82, width: 14, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-funding-budgets", label: "Funding / Budgets (Financial Case)", pos: { left: 40.5, top: 90, width: 13, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-procurement", label: "Procurement (Commercial Case)", pos: { left: 55.5, top: 90, width: 13, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-pm-governance", label: "PM, Governance, Reporting (Management Case)", pos: { left: 70.5, top: 90, width: 13, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" }
+      { id: "dsp-risk-assessment-cross", label: "Risk Assessment", pos: { left: 74.8, top: 83, width: 14, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-funding-budgets", label: "Funding / Budgets (Financial Case)", pos: { left: 61.8, top: 91, width: 12, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-procurement", label: "Procurement (Commercial Case)", pos: { left: 75.8, top: 91, width: 12, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-pm-governance", label: "PM, Governance, Reporting (Management Case)", pos: { left: 89.8, top: 91, width: 12, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" }
     ],
 
     containers: [
-      { id: "dsp-c1-bg", pos: { left: 1.5, top: 32.5, width: 13, height: 47.5 } },
-      { id: "dsp-c2-bg", pos: { left: 16, top: 32.5, width: 13, height: 47.5 } },
-      { id: "dsp-c3-bg", pos: { left: 30.5, top: 32.5, width: 20, height: 47.5 } },
-      { id: "dsp-c4-bg", pos: { left: 52, top: 32.5, width: 17, height: 47.5 } },
-      { id: "dsp-c5-bg", pos: { left: 70.5, top: 32.5, width: 13, height: 47.5 } },
-      { id: "dsp-c6-bg", pos: { left: 85, top: 32.5, width: 13, height: 47.5 } },
+      { id: "dsp-c1-bg", variant: "c1", pos: { left: 1.5, top: 32.5, width: 18.8, height: 48.5 } },
+      { id: "dsp-c2-bg", variant: "c2", pos: { left: 23.3, top: 32.5, width: 18.8, height: 48.5 } },
+      { id: "dsp-c3-bg", variant: "c3", pos: { left: 45.1, top: 32.5, width: 28.4, height: 48.5 } },
+      { id: "dsp-c4-bg", variant: "c4", pos: { left: 76.5, top: 32.5, width: 19.4, height: 48.5 } },
+      { id: "dsp-c5-bg", variant: "c5", pos: { left: 96.9, top: 32.5, width: 9.4, height: 48.5 } },
+      { id: "dsp-c6-bg", variant: "c6", pos: { left: 107.3, top: 32.5, width: 8.1, height: 48.5 } },
       // Dashed sub-groupings, matching the source's own inner groupings.
-      { id: "dsp-c1-subgroup", style: "dashed", pos: { left: 2.2, top: 42.24, width: 11.6, height: 27.52 } },
-      { id: "dsp-c2-subgroup", style: "dashed", pos: { left: 16.7, top: 44.5, width: 11.6, height: 34.3 } },
+      { id: "dsp-c1-subgroup", style: "dashed", pos: { left: 1.9, top: 42.8, width: 18, height: 27.4 } },
+      { id: "dsp-c2-subgroup", style: "dashed", pos: { left: 23.7, top: 45.25, width: 18, height: 34.75 } },
       // Outer dashed boundary around Detailed Option Assessment + Portfolio
-      // Optimisation together, matching the source's combined outline.
-      { id: "dsp-c4-c5-outer", style: "dashed", pos: { left: 51, top: 27, width: 33.5, height: 55 } }
+      // Optimisation together, plus the cross-cutting Risk Assessment step,
+      // matching the source's combined outline (the three funding/governance
+      // cases sit just below it, fed from Risk Assessment).
+      { id: "dsp-c4-c5-outer", style: "dashed", pos: { left: 74.6, top: 27, width: 32.0, height: 62 } }
     ],
 
     headings: [
-      { id: "dsp-c1-heading", label: "Asset/Network Evaluation", pos: { left: 1.5, top: 28.5, width: 13, height: 4 }, variant: "sky" },
-      { id: "dsp-c2-heading", label: "Problem Framing and Scope", pos: { left: 16, top: 28.5, width: 13, height: 4 }, variant: "stone" },
-      { id: "dsp-c3-heading", label: "Risk Reduction Analysis", pos: { left: 30.5, top: 28.5, width: 20, height: 4 }, variant: "navy" },
-      { id: "dsp-c4-heading", label: "Detailed Option Assessment", pos: { left: 52, top: 28.5, width: 17, height: 4 }, variant: "leaf" },
-      { id: "dsp-c5-heading", label: "Portfolio Optimisation", pos: { left: 70.5, top: 28.5, width: 13, height: 4 }, variant: "stone" },
-      { id: "dsp-c6-heading", label: "Outcome Assessment", pos: { left: 85, top: 28.5, width: 13, height: 4 }, variant: "navy" }
+      { id: "dsp-c1-heading", label: "Asset/Network Evaluation", pos: { left: 1.5, top: 28.5, width: 18.8, height: 4 }, variant: "c1" },
+      { id: "dsp-c2-heading", label: "Problem Framing and Scope", pos: { left: 23.3, top: 28.5, width: 18.8, height: 4 }, variant: "c2" },
+      { id: "dsp-c3-heading", label: "Risk Reduction Analysis", pos: { left: 45.1, top: 28.5, width: 28.4, height: 4 }, variant: "c3" },
+      { id: "dsp-c4-heading", label: "Detailed Option Assessment", pos: { left: 76.5, top: 28.5, width: 19.4, height: 4 }, variant: "c4" },
+      { id: "dsp-c5-heading", label: "Portfolio Optimisation", pos: { left: 96.9, top: 28.5, width: 9.4, height: 4 }, variant: "c5" },
+      { id: "dsp-c6-heading", label: "Outcome Assessment", pos: { left: 107.3, top: 28.5, width: 8.1, height: 4 }, variant: "c6" }
     ],
 
     arrows: [
-      { from: { x: 8, y: 21 }, to: { x: 8, y: 22 } },              // Transport Scenarios -> Climate Scenarios
-      { from: { x: 8, y: 28 }, to: { x: 8, y: 32.5 } },            // Climate Scenarios -> Asset/Network Evaluation
-      { from: { x: 22.5, y: 15.5 }, to: { x: 22.5, y: 16.5 } },    // Requirements -> Context
-      { from: { x: 22.5, y: 22 }, to: { x: 22.5, y: 23 } },        // Context -> Constraints
-      { from: { x: 22.5, y: 28.5 }, to: { x: 22.5, y: 32.5 } },    // Constraints -> Problem Framing
-      // Within-cluster steps iterate back and forth, not one-way — double
-      // headed, matching the source's own connectors.
-      { from: { x: 8, y: 41.84 }, to: { x: 8, y: 43.04 }, bidirectional: true },  // Sustainability <-> Risk Assessment
-      { from: { x: 8, y: 50.88 }, to: { x: 8, y: 52.08 }, bidirectional: true },  // Risk Assessment <-> Asset Performance
-      { from: { x: 8, y: 59.92 }, to: { x: 8, y: 61.12 }, bidirectional: true },  // Asset Performance <-> Resilience Assessment
-      { from: { x: 8, y: 68.96 }, to: { x: 8, y: 70.16 }, bidirectional: true },  // Resilience Assessment <-> Asset Registry
-      { from: { x: 22.5, y: 44.1 }, to: { x: 22.5, y: 45.3 }, bidirectional: true },  // System Interdependencies <-> Problem Definition
-      { from: { x: 22.5, y: 55.4 }, to: { x: 22.5, y: 56.6 }, bidirectional: true },  // Problem Definition <-> Primary Impact ID
-      { from: { x: 22.5, y: 66.7 }, to: { x: 22.5, y: 67.9 }, bidirectional: true },  // Primary Impact ID <-> Option Ideation
-      { from: { x: 70, y: 56 }, to: { x: 72, y: 56 } },            // Cluster 4 stack -> Portfolio Optimisation
-      { from: { x: 84, y: 56 }, to: { x: 86.5, y: 56 } },          // Portfolio Optimisation -> Outcome Assessment
-      // Risk Assessment cross-step: fed FROM the option-assessment stack
-      // (down), and feeds forward INTO Portfolio Optimisation (up) —
-      // matches the source's arrow directions exactly (not a symmetric
-      // feedback loop).
-      { from: { x: 62.5, y: 78 }, to: { x: 62.5, y: 82 } },        // Detailed Option Assessment -> Risk Assessment (cross)
-      { from: { x: 62, y: 90 }, to: { x: 62, y: 88 } }             // Procurement -> Risk Assessment (cross)
+      { from: { x: 9.7, y: 18 }, to: { x: 9.7, y: 21 } },          // Transport Scenarios -> Climate Scenarios
+      { from: { x: 9.7, y: 27 }, to: { x: 9.7, y: 28.5 } },        // Climate Scenarios -> Asset/Network Evaluation
+      { from: { x: 32.7, y: 12 }, to: { x: 32.7, y: 14.5 } },      // Requirements -> Context
+      { from: { x: 32.7, y: 19.5 }, to: { x: 32.7, y: 22 } },      // Context -> Constraints
+      { from: { x: 32.7, y: 27 }, to: { x: 32.7, y: 28.5 } },      // Constraints -> Problem Framing
+      // Cluster-to-cluster hops, aligned to the vertical middle of the
+      // group bodies so the arrows read as one consistent flow line.
+      { from: { x: 20.3, y: 56.5 }, to: { x: 23.3, y: 56.5 } },    // Asset/Network Evaluation -> Problem Framing
+      { from: { x: 42.1, y: 56.5 }, to: { x: 45.1, y: 56.5 } },    // Problem Framing -> Risk Reduction Analysis
+      { from: { x: 95.9, y: 56.5 }, to: { x: 96.9, y: 56.5 } },    // Detailed Option Assessment -> Portfolio Optimisation
+      { from: { x: 106.3, y: 56.5 }, to: { x: 107.3, y: 56.5 } },  // Portfolio Optimisation -> Outcome Assessment
+      // Within-cluster steps: the outer two connectors stay double-headed
+      // (Sustainability<->Risk, Resilience<->Asset Registry), while Asset
+      // Performance feeds one-way UP into Risk Assessment and DOWN into
+      // Resilience Assessment — matching the source's single arrowheads.
+      { from: { x: 10.9, y: 39.8 }, to: { x: 10.9, y: 43.8 }, bidirectional: true },   // Sustainability <-> Risk Assessment
+      { from: { x: 10.9, y: 53.6 }, to: { x: 10.9, y: 49.6 } },                        // Asset Performance -> Risk Assessment (up)
+      { from: { x: 10.9, y: 59.4 }, to: { x: 10.9, y: 63.4 } },                        // Asset Performance -> Resilience Assessment (down)
+      { from: { x: 10.9, y: 69.2 }, to: { x: 10.9, y: 73.2 }, bidirectional: true },   // Resilience Assessment <-> Asset Registry
+      { from: { x: 32.7, y: 42.25 }, to: { x: 32.7, y: 46.25 } },  // System Interdependencies -> Problem Definition
+      { from: { x: 32.7, y: 54.5 }, to: { x: 32.7, y: 58.5 } },    // Problem Definition -> Primary Impact ID
+      { from: { x: 32.7, y: 66.75 }, to: { x: 32.7, y: 70.75 } },  // Primary Impact ID -> Option Ideation
+      // Risk Reduction Analysis: the central Selection/Screened-list diamond
+      // is fed by the surrounding boxes — Risk Thresholds (above) and
+      // Resilience Assessment (below) — with Option Matrix and Interventions
+      // joining it horizontally (see elbowPaths below).
+      { from: { x: 59.3, y: 41 }, to: { x: 59.3, y: 47 } },        // Risk Thresholds -> Selection/Screened list
+      { from: { x: 59.3, y: 65 }, to: { x: 59.3, y: 59 } }         // Resilience Assessment -> Selection/Screened list
     ],
 
     elbowPaths: [
-      { points: [ { x: 49, y: 50 }, { x: 53, y: 50 }, { x: 53, y: 41 }, { x: 57.5, y: 37.5 } ] },  // Risk Reduction Analysis -> Detailed Option Assessment stack
-      { points: [ { x: 40.5, y: 41 }, { x: 33.75, y: 41 }, { x: 33.75, y: 43 } ], bidirectional: true },  // Risk Thresholds <-> Option Matrix
-      { points: [ { x: 35.5, y: 50 }, { x: 36.5, y: 50 } ] },                                       // Option Matrix -> Selection/Screened List
-      { points: [ { x: 42.5, y: 50 }, { x: 43, y: 50 } ] },                                         // Selection/Screened List -> Interventions
-      { points: [ { x: 46, y: 59 }, { x: 46, y: 53 } ], bidirectional: true },                       // Resilience Assessment <-> Interventions
-      { points: [ { x: 47, y: 90 }, { x: 47, y: 88.5 }, { x: 62, y: 88.5 }, { x: 62, y: 88 } ] },  // Funding/Budgets -> Risk Assessment (cross)
-      { points: [ { x: 77, y: 90 }, { x: 77, y: 88.5 }, { x: 62, y: 88.5 }, { x: 62, y: 88 } ] },  // PM/Governance -> Risk Assessment (cross)
-      { points: [ { x: 62, y: 82 }, { x: 62, y: 79 }, { x: 77, y: 79 }, { x: 77, y: 78 } ] }        // Risk Assessment (cross) -> Portfolio Optimisation
+      // Cluster 3 internal flow: Option Matrix -> diamond -> Interventions,
+      // each with a real gap so the arrows read clearly between the shapes
+      // rather than touching them.
+      { points: [ { x: 50.8, y: 53 }, { x: 53.3, y: 53 } ] },                                          // Option Matrix -> Selection/Screened list
+      { points: [ { x: 65.3, y: 53 }, { x: 67.8, y: 53 } ] },                                          // Selection/Screened list -> Interventions
+      // Interventions (the cluster's output) -> Detailed Option Assessment's
+      // stack, routed clear of the rotated "Multi Criteria / Cost Benefit"
+      // label so the line doesn't cross behind it.
+      { points: [ { x: 71.8, y: 53 }, { x: 83.8, y: 53 }, { x: 83.8, y: 36.9 }, { x: 84.2, y: 36.9 } ] }, // Interventions -> Detailed Option Assessment stack
+      { points: [ { x: 89.45, y: 79 }, { x: 89.45, y: 81 }, { x: 81.8, y: 81 }, { x: 81.8, y: 83 } ] },   // Detailed Option Assessment -> Risk Assessment (cross)
+      { points: [ { x: 101.6, y: 79 }, { x: 101.6, y: 85.5 }, { x: 88.8, y: 85.5 } ] },                 // Portfolio Optimisation -> Risk Assessment (cross)
+      { points: [ { x: 74.8, y: 85.5 }, { x: 71.8, y: 85.5 }, { x: 71.8, y: 79 }, { x: 84.2, y: 79 } ] }, // Risk Assessment (cross) -> Detailed Option Assessment
+      { points: [ { x: 81.8, y: 88 }, { x: 81.8, y: 89.5 }, { x: 67.8, y: 89.5 }, { x: 67.8, y: 91 } ] }, // Risk Assessment (cross) -> Funding/Budgets
+      { points: [ { x: 81.8, y: 88 }, { x: 81.8, y: 91 } ] },                                              // Risk Assessment (cross) -> Procurement
+      { points: [ { x: 81.8, y: 88 }, { x: 81.8, y: 89.5 }, { x: 95.8, y: 89.5 }, { x: 95.8, y: 91 } ] }  // Risk Assessment (cross) -> PM/Governance
     ]
   },
 

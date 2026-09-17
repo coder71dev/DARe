@@ -550,6 +550,24 @@ a { color: var(--color-sky); }
   border-color: var(--color-water-faint);
 }
 
+/* Each Level 2 cluster's body carries its own pale tint (matching its
+   title bar), same as the source diagrams, instead of one uniform tint
+   for every cluster. */
+.diagram-cluster-bg.variant-navy { background: rgba(0, 41, 94, 0.07); border-color: rgba(0, 41, 94, 0.25); }
+.diagram-cluster-bg.variant-sky { background: var(--color-sky-tint-bg); border-color: var(--color-sky-tint-border); }
+.diagram-cluster-bg.variant-leaf { background: rgba(94, 207, 112, 0.12); border-color: rgba(94, 207, 112, 0.4); }
+.diagram-cluster-bg.variant-stone { background: rgba(169, 177, 186, 0.18); border-color: var(--color-stone); }
+
+/* DSP cluster backgrounds/headers — pastel fills taken from the source
+   component map (level_2_slide_11.png), so each process stage keeps its
+   own colour identity rather than being forced into the 4 brand colours. */
+.diagram-cluster-bg.variant-c1 { background: #d8f0f8; border-color: #60c8f0; }
+.diagram-cluster-bg.variant-c2 { background: #f8e0c8; border-color: #f0a860; }
+.diagram-cluster-bg.variant-c3 { background: #f8d8d0; border-color: #f08878; }
+.diagram-cluster-bg.variant-c4 { background: #e0f0e0; border-color: #b0e0a0; }
+.diagram-cluster-bg.variant-c5 { background: #f8f0e0; border-color: #f8e0b0; }
+.diagram-cluster-bg.variant-c6 { background: #c0d0d8; border-color: #88b0c0; }
+
 .diagram-box {
   position: absolute;
   display: flex;
@@ -641,19 +659,42 @@ a { color: var(--color-sky); }
   color: var(--color-white);
 }
 
+/* Source diagram's pale-blue scenario input boxes (Transport/Climate
+   Scenarios) — lighter than brand sky, matching level_2_slide_11.png. */
+.diagram-box.variant-sky-pale {
+  background: #b8e0f0;
+  border-color: #60c8f0;
+  color: var(--color-water);
+}
+
+/* Problem Framing's Requirements/Context/Constraints inputs — peach fill
+   from the source component map. */
+.diagram-box.variant-c2-input {
+  background: #f3b08f;
+  border-color: #d97f52;
+  color: var(--color-water);
+}
+
 .diagram-box.variant-leaf {
   background: var(--color-leaf);
   border-color: var(--color-leaf);
   color: var(--color-water);
 }
 
-/* DSP's "Selection / Screened list" decision point — a diamond in the
+.diagram-box.variant-stone {
+  background: var(--color-stone);
+  border-color: var(--color-water-faint);
+  color: var(--color-water);
+}
+
+/* DSP's "Selection/Screened list" decision point — a diamond in the
    source diagram, via clip-path rather than rotation so the label stays
    upright and readable inside the point. */
 .diagram-box.shape-diamond {
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  padding: 0.3rem;
-  font-size: clamp(0.5rem, 0.75vw, 0.65rem);
+  padding: 0.3rem 0.7rem;
+  font-size: clamp(0.45rem, 0.68vw, 0.58rem);
+  line-height: 1.1;
 }
 
 /* "Option Ideation (Long List)" / "Interventions" — the source shows these
@@ -724,6 +765,12 @@ a { color: var(--color-sky); }
 .diagram-heading.variant-sky { background: var(--color-sky); color: var(--color-white); }
 .diagram-heading.variant-leaf { background: var(--color-leaf); color: var(--color-water); }
 .diagram-heading.variant-stone { background: var(--color-stone); color: var(--color-water); }
+.diagram-heading.variant-c1 { background: #60c8f0; color: var(--color-white); }
+.diagram-heading.variant-c2 { background: #f0a860; color: var(--color-water); }
+.diagram-heading.variant-c3 { background: #f08878; color: var(--color-white); }
+.diagram-heading.variant-c4 { background: #b0e0a0; color: var(--color-water); }
+.diagram-heading.variant-c5 { background: #f8e0b0; color: var(--color-water); }
+.diagram-heading.variant-c6 { background: #88b0c0; color: var(--color-white); }
 
 /* Plain text labels (Risk Mitigation / Feedback loop) — no pill/background,
    matching the source PPTX's plain bold caption style. */

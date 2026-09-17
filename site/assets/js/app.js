@@ -73,6 +73,14 @@
     return n + "%";
   }
 
+  // Horizontal coordinate space can exceed 100 (e.g. the wider Level 2 DSP
+  // layout). HTML left/width are scaled by this so they stay in the same
+  // coordinate system the SVG viewBox uses — see computeMaxX()/pctX().
+  let currentMaxX = 100;
+  function pctX(n) {
+    return (n / currentMaxX) * 100 + "%";
+  }
+
   let currentCropRatio = 1; // fraction of the full 0-100 stage height that's actually visible
   let refreshZoom = function () {}; // replaced with the real thing once setupZoomControls runs
 
@@ -111,6 +119,27 @@
     return { top, bottom };
   }
 
+  // The horizontal coordinate space can exceed 100 for the wider Level 2
+  // layouts. HTML left/width are expressed as a fraction of this max so
+  // they share one coordinate system with the SVG viewBox.
+  function computeMaxX(data) {
+    let maxX = 100;
+    const consider = (v) => { if (v > maxX) maxX = v; };
+    (data.boxes || []).forEach((box) => {
+      if (box.rotate) {
+        const centerX = box.pos.left + box.pos.width / 2;
+        const visualWidth = box.pos.height;
+        consider(centerX + visualWidth / 2);
+      } else {
+        consider(box.pos.left + box.pos.width);
+      }
+    });
+    (data.labels || []).forEach((l) => consider(l.pos.left + l.pos.width));
+    (data.headings || []).forEach((h) => consider(h.pos.left + h.pos.width));
+    (data.containers || []).forEach((c) => consider(c.pos.left + c.pos.width));
+    return maxX;
+  }
+
   // Sizes .diagram-stage (still the full 0-100 slide coordinate space every
   // box/arrow position is expressed in) so only [top, bottom] of it shows
   // through .diagram-crop's clipped window — no box/arrow/label coordinate
@@ -123,12 +152,12 @@
     stage.style.top = pct((-100 * top) / span);
   }
 
-  /* The SVG uses a 0-100 viewBox (matching the % coordinates in content.js)
-     so <line> and <polyline> share one coordinate system. <polyline points>
-     doesn't support "%" units the way <line x1/y1> does, so a shared
-     viewBox is the only way to keep both consistent and responsive. */
+  /* The SVG viewBox shares one coordinate system with the % coordinates in
+     content.js — width can exceed 100 for wide Level 2 layouts, so it is
+     set from computeMaxX(). <polyline points> doesn't support "%" units,
+     so a shared viewBox is the only way to keep everything consistent. */
   function setupViewBox() {
-    svgLayer.setAttribute("viewBox", "0 0 100 100");
+    svgLayer.setAttribute("viewBox", "0 0 " + currentMaxX + " 100");
     svgLayer.setAttribute("preserveAspectRatio", "none");
   }
 
@@ -142,8 +171,8 @@
     marker.setAttribute("viewBox", "0 0 10 10");
     marker.setAttribute("refX", "8");
     marker.setAttribute("refY", "5");
-    marker.setAttribute("markerWidth", "4");
-    marker.setAttribute("markerHeight", "4");
+    marker.setAttribute("markerWidth", "6.5");
+    marker.setAttribute("markerHeight", "6.5");
     marker.setAttribute("orient", "auto-start-reverse");
     const path = document.createElementNS(SVG_NS, "path");
     path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
@@ -179,7 +208,7 @@
     line.setAttribute("x2", arrow.to.x);
     line.setAttribute("y2", arrow.to.y);
     line.setAttribute("stroke", COLOR_NAVY);
-    line.setAttribute("stroke-width", "0.3");
+    line.setAttribute("stroke-width", "0.18");
     line.setAttribute("marker-end", "url(#arrowhead)");
     // Some source-diagram connectors (e.g. DSP's within-cluster steps) are
     // double-headed, showing free back-and-forth rather than one-way flow.
@@ -193,7 +222,7 @@
     polyline.setAttribute("points", pointsStr);
     polyline.setAttribute("fill", "none");
     polyline.setAttribute("stroke", COLOR_GREEN);
-    polyline.setAttribute("stroke-width", "0.35");
+    polyline.setAttribute("stroke-width", "0.22");
     polyline.setAttribute("marker-end", "url(#feedback-arrowhead)");
     svgLayer.appendChild(taggedArrow(polyline, feedback.group, "feedback"));
   }
@@ -206,7 +235,7 @@
     polyline.setAttribute("points", pointsStr);
     polyline.setAttribute("fill", "none");
     polyline.setAttribute("stroke", COLOR_NAVY);
-    polyline.setAttribute("stroke-width", "0.3");
+    polyline.setAttribute("stroke-width", "0.18");
     polyline.setAttribute("marker-end", "url(#arrowhead)");
     if (elbow.bidirectional) polyline.setAttribute("marker-start", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(polyline, elbow.group, "main"));
@@ -221,7 +250,7 @@
     path.setAttribute("d", d);
     path.setAttribute("fill", "none");
     path.setAttribute("stroke", COLOR_NAVY);
-    path.setAttribute("stroke-width", "0.3");
+    path.setAttribute("stroke-width", "0.18");
     path.setAttribute("marker-end", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(path, curve.group, "main"));
   }
@@ -230,9 +259,9 @@
     const halo = document.createElement("div");
     halo.className = "diagram-box-halo";
     const padX = 1.5, padY = 2;
-    halo.style.left = pct(box.pos.left - padX);
+    halo.style.left = pctX(box.pos.left - padX);
     halo.style.top = pct(box.pos.top - padY);
-    halo.style.width = pct(box.pos.width + padX * 2);
+    halo.style.width = pctX(box.pos.width + padX * 2);
     halo.style.height = pct(box.pos.height + padY * 2);
     return halo;
   }
@@ -255,9 +284,9 @@
     const shapeClass = box.shape === "diamond" ? " shape-diamond" : "";
     const stackClass = box.stacked ? " is-stacked" : "";
     el.className = "diagram-box" + variantClass + compactClass + shapeClass + stackClass + (box.isPlaceholder ? " missing-content" : "");
-    el.style.left = pct(box.pos.left);
+    el.style.left = pctX(box.pos.left);
     el.style.top = pct(box.pos.top);
-    el.style.width = pct(box.pos.width);
+    el.style.width = pctX(box.pos.width);
     el.style.height = pct(box.pos.height);
     el.textContent = box.label;
     if (box.group) el.dataset.group = box.group;
@@ -271,9 +300,9 @@
     const el = document.createElement("button");
     el.type = "button";
     el.className = "diagram-label";
-    el.style.left = pct(label.pos.left);
+    el.style.left = pctX(label.pos.left);
     el.style.top = pct(label.pos.top);
-    el.style.width = pct(label.pos.width);
+    el.style.width = pctX(label.pos.width);
     el.style.height = pct(label.pos.height);
     el.textContent = label.label;
     el.addEventListener("click", () => openModal(label));
@@ -288,10 +317,11 @@
   // Detailed Option Assessment + Portfolio Optimisation together.
   function makeContainerEl(container) {
     const el = document.createElement("div");
-    el.className = "diagram-cluster-bg" + (container.style === "dashed" ? " style-dashed" : "");
-    el.style.left = pct(container.pos.left);
+    const variantClass = container.variant ? ` variant-${container.variant}` : "";
+    el.className = "diagram-cluster-bg" + variantClass + (container.style === "dashed" ? " style-dashed" : "");
+    el.style.left = pctX(container.pos.left);
     el.style.top = pct(container.pos.top);
-    el.style.width = pct(container.pos.width);
+    el.style.width = pctX(container.pos.width);
     el.style.height = pct(container.pos.height);
     if (container.group) el.dataset.group = container.group;
     return el;
@@ -305,9 +335,9 @@
   function makeHeadingEl(heading) {
     const el = document.createElement("div");
     el.className = "diagram-heading" + (heading.variant ? ` variant-${heading.variant}` : "");
-    el.style.left = pct(heading.pos.left);
+    el.style.left = pctX(heading.pos.left);
     el.style.top = pct(heading.pos.top);
-    el.style.width = pct(heading.pos.width);
+    el.style.width = pctX(heading.pos.width);
     el.style.height = pct(heading.pos.height);
     el.textContent = heading.label;
     return el;
@@ -463,6 +493,8 @@
     subtitleEl.textContent = data.subtitle;
     guideEl.hidden = false;
     guideBody.innerHTML = buildGuideBody(data);
+
+    currentMaxX = computeMaxX(data);
 
     // Clear previous render
     svgLayer.innerHTML = "";
