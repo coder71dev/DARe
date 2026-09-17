@@ -91,6 +91,13 @@ a { color: var(--color-sky); }
 
 .site-header nav a:hover { text-decoration: underline; }
 
+/* Below the guide's mobile threshold the header drops back to the logo alone.
+   The "Explore TPRAF" nav item duplicates the hero button sitting directly
+   beneath it, and at this width it was forcing the header onto two rows. */
+@media (max-width: 760px) {
+  .site-header .nav-cta { display: none; }
+}
+
 /* ---------- Site footer ---------- */
 /* Carries the funder/partner lockup — the guide's own report covers and
    banners all pair the DARe logo with a "Funded by / Led by" lockup, and
@@ -239,8 +246,26 @@ a { color: var(--color-sky); }
   margin-left: auto;
 }
 
+/* There's no room for a second column on a phone, so the mark comes out of
+   the flow entirely and parks in the bottom-right corner of the hero. Extra
+   bottom padding is reserved on the grid to hold it, so it lives in space the
+   copy can never reach and cannot overlap anything however long the copy
+   runs. Keeping it in the flow instead left an orphaned block sitting alone
+   under the buttons and made the hero considerably taller. */
 @media (max-width: 819px) {
-  .hero-graphic img { width: clamp(96px, 26vw, 150px); margin-left: 0; }
+  .hero-grid { padding-bottom: clamp(9rem, 26vw, 12rem); }
+
+  .hero-graphic {
+    position: absolute;
+    right: clamp(1.25rem, 3.4vw, 4.25rem);
+    bottom: clamp(1.5rem, 4vw, 2.25rem);
+    z-index: 1;
+  }
+
+  .hero-graphic img {
+    width: clamp(64px, 15vw, 104px);
+    margin-left: 0;
+  }
 }
 
 /* ---------- Brand colour ribbon ---------- */
@@ -406,20 +431,6 @@ a { color: var(--color-sky); }
 
 .embed-cta { margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0; }
 
-.inline-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  color: var(--color-water);
-  font-weight: 700;
-  text-decoration: none;
-  padding-bottom: 0.15rem;
-  border-bottom: 2px solid var(--color-leaf);
-}
-
-.inline-link:hover,
-.inline-link:focus-visible { border-bottom-color: var(--color-sky); }
-
 /* ---------- Explore band ---------- */
 /* Bold use of Leaf — the guide's other full-bleed banner colour. */
 .cta-band {
@@ -487,6 +498,29 @@ a { color: var(--color-sky); }
   text-decoration: none;
   padding-bottom: 0.15rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+/* Secondary in-flow link, used on both pages: the landing page's way through
+   to the extended form, and the diagram page's per-view "next" link. */
+.inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--color-water);
+  font-weight: 700;
+  text-decoration: none;
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid var(--color-leaf);
+}
+
+.inline-link:hover,
+.inline-link:focus-visible { border-bottom-color: var(--color-sky); }
+
+/* The diagram page's per-view "go deeper" link, below the diagram. */
+.view-next {
+  max-width: 900px;
+  margin: 1.5rem auto 0;
+  text-align: center;
 }
 
 .ghost-link:hover,

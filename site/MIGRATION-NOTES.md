@@ -54,7 +54,7 @@ collapse into one included partial rather than copied twice.
 Each entry in `TPRAF_CONTENT` (e.g. `simple.boxes`, `simple.labels`,
 `simple.arrows`) becomes rows in a table — roughly:
 
-- `tpraf_views` (id, key e.g. `simple`/`extended`/`dsp`/`imp`, title, subtitle)
+- `tpraf_views` (id, key e.g. `simple`/`extended`/`dsp`/`imp`, title, subtitle, next_view_key nullable, next_view_label nullable — the per-view "go deeper" link)
 - `tpraf_boxes` (view_id, box_key, label, text, is_placeholder, handbook_url, pos_left, pos_top, pos_width, pos_height)
 - `tpraf_labels` (view_id, label_key, label, text, is_placeholder, type, pos_left, pos_top, pos_width, pos_height)
 - `tpraf_arrows` / `tpraf_feedback_paths` (view_id, points as JSON)
