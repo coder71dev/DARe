@@ -389,29 +389,58 @@ a { color: var(--color-sky); }
   font-weight: 600;
 }
 
+/* ---------- The simple form, embedded on the landing page ---------- */
+/* Rendered by the same app.js from the same content data as diagram.html, so
+   this panel reuses the diagram's own title/guide/stage classes untouched and
+   only supplies the frame around them. No level tabs here, so this instance
+   stays on the simple view. */
+.embed-panel {
+  padding: clamp(0.9rem, 2.2vw, 1.6rem);
+  background: var(--color-white);
+  border: 1px solid rgba(0, 41, 94, 0.12);
+  border-radius: 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.embed-panel .diagram-title { margin-top: 0; }
+
+.embed-cta { margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0; }
+
+.inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--color-water);
+  font-weight: 700;
+  text-decoration: none;
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid var(--color-leaf);
+}
+
+.inline-link:hover,
+.inline-link:focus-visible { border-bottom-color: var(--color-sky); }
+
 /* ---------- Explore band ---------- */
-/* Bold use of Leaf — the guide's other full-bleed banner colour — with a
-   white panel sitting inside it, the same coloured-panel-plus-content
-   arrangement as its report covers and banners. */
+/* Bold use of Leaf — the guide's other full-bleed banner colour. */
 .cta-band {
   background: var(--color-leaf);
   color: var(--color-water);
 }
 
-.cta-grid {
-  display: grid;
-  gap: clamp(1.75rem, 4vw, 3rem);
+.cta-inner {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem 2.5rem;
   padding-top: clamp(2.5rem, 5vw, 4.25rem);
   padding-bottom: clamp(2.5rem, 5vw, 4.25rem);
 }
 
-@media (min-width: 900px) {
-  .cta-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
-}
+.cta-inner > div { flex: 1 1 24rem; }
 
 .cta-band h2 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.6rem;
   font-size: clamp(1.5rem, 3vw, 2.15rem);
   font-weight: 700;
   line-height: 1.08;
@@ -419,34 +448,9 @@ a { color: var(--color-sky); }
 }
 
 .cta-band p {
-  max-width: 40ch;
-  margin: 0 0 1.5rem;
-  line-height: 1.55;
-}
-
-.cta-preview {
+  max-width: 54ch;
   margin: 0;
-  padding: 10px 10px 0;
-  background: var(--color-white);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 41, 94, 0.22);
-}
-
-.cta-preview img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-}
-
-.cta-preview figcaption {
-  padding: 0.55rem 0.15rem 0.7rem;
-  color: var(--color-water-muted);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-align: right;
-  text-transform: uppercase;
+  line-height: 1.55;
 }
 
 /* ---------- Buttons and links ---------- */

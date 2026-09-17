@@ -687,18 +687,30 @@
     applyZoom();
   }
 
-  // Level tab wiring
+  // View switching. Selecting a view also writes it into the URL, so a link
+  // can point straight at one level — the landing page's "Explore TPRAF"
+  // button uses this to open the extended form directly.
+  function selectView(viewKey) {
+    document.querySelectorAll(".level-tab").forEach((t) => {
+      t.setAttribute("aria-selected", String(t.dataset.view === viewKey));
+    });
+    renderDiagram(viewKey);
+  }
+
   document.querySelectorAll(".level-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       if (tab.disabled) return;
-      document.querySelectorAll(".level-tab").forEach((t) => t.setAttribute("aria-selected", "false"));
-      tab.setAttribute("aria-selected", "true");
-      renderDiagram(tab.dataset.view);
+      selectView(tab.dataset.view);
+      location.hash = tab.dataset.view;
     });
   });
 
-  // Initial render
-  renderDiagram("simple");
+  // Initial render. A #view hash wins so deep links land on the right level;
+  // anything that isn't a real view key is ignored rather than rendered as an
+  // unknown view — the landing page's own #what-is-tpraf anchor, for
+  // instance, and the landing page's embedded copy of this diagram.
+  const linkedView = location.hash.slice(1);
+  selectView(TPRAF_CONTENT[linkedView] ? linkedView : "simple");
   setupDragToScroll();
   setupZoomControls();
 })();
