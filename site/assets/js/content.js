@@ -467,6 +467,240 @@ const TPRAF_CONTENT = {
     curvedPaths: [
       { from: { x: 81.42, y: 58.83 }, control: { x: 70.38, y: 65 }, to: { x: 59.34, y: 58.83 }, group: "dsp" }
     ]
+  },
+
+  /* Level 2 — DSP components. Built 20 Sept.
+     The source PPTX (slide 11, "Overview of DSP components") is a flat
+     pasted screenshot, not editable shapes — no geometry to extract, and
+     the client's own note on slide 13 explicitly invites a redesign
+     ("can be more oriented as long as the groups, links and key stay the
+     same"). So this is a from-scratch layout in brand colors, reusing the
+     same box/container/arrow system as Level 1, rather than a pixel trace.
+     Colour key (kept deliberately simple, only the 4 approved brand
+     colours): navy = a tool/model step, sky = a scenario/context input,
+     leaf = the key outcome, plain white = an input/output artefact —
+     matches the source's own tool-vs-input/output distinction. The six
+     process-stage groupings from the source image are preserved as
+     labelled clusters left-to-right in the same order. */
+  dsp: {
+    title: "Overview of DSP Components",
+    subtitle: "Level 2 — Decision Support Process",
+    status: "Redesigned from the source component map in brand colors — box color shows tool vs. input/output, groups show which stage of the process each step belongs to. Wording for most steps is still coming from DARe.",
+    legend: [
+      ["navy", "Tool or model step"],
+      ["sky", "Scenario / context input"],
+      ["leaf", "Key outcome"],
+      ["io", "Input or output artefact"]
+    ],
+    boxes: [
+      // Standalone inputs feeding the first two clusters
+      { id: "dsp-transport-scenarios", label: "Transport Scenarios", startHere: true, pos: { left: 3, top: 15, width: 11.5, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
+      { id: "dsp-climate-scenarios", label: "Climate Scenarios", pos: { left: 3, top: 22, width: 11.5, height: 6 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "sky" },
+      { id: "dsp-requirements", label: "Requirements", pos: { left: 19, top: 10, width: 11.5, height: 5.5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
+      { id: "dsp-context", label: "Context", pos: { left: 19, top: 16.5, width: 11.5, height: 5.5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
+      { id: "dsp-constraints", label: "Constraints", pos: { left: 19, top: 23, width: 11.5, height: 5.5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
+
+      // Cluster 1 — Asset/Network Evaluation
+      { id: "dsp-sustainability", label: "Sustainability", pos: { left: 3, top: 34, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-risk-assessment", label: "Risk Assessment", pos: { left: 3, top: 43.04, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-performance", label: "Asset Performance", pos: { left: 3, top: 52.08, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment", label: "Resilience Assessment", pos: { left: 3, top: 61.12, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-asset-registry", label: "Asset Registry", pos: { left: 3, top: 70.16, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+
+      // Cluster 2 — Problem Framing and Scope
+      { id: "dsp-system-interdependencies", label: "System Interdependencies", pos: { left: 19, top: 34, width: 11.5, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-problem-definition", label: "Problem Definition", pos: { left: 19, top: 45.3, width: 11.5, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-primary-impact-identification", label: "Primary Impact Identification", pos: { left: 19, top: 56.6, width: 11.5, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-option-ideation", label: "Option Ideation (Long List)", pos: { left: 19, top: 67.9, width: 11.5, height: 10.1 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+
+      // Cluster 3 — Risk Reduction Analysis
+      { id: "dsp-risk-thresholds", label: "Risk Thresholds", pos: { left: 35, top: 34, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-option-matrix", label: "Option Matrix", pos: { left: 35, top: 43.04, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-selection-screened-list", label: "Selection / Screened List", pos: { left: 35, top: 52.08, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-interventions", label: "Interventions", pos: { left: 35, top: 61.12, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment-2", label: "Resilience Assessment", pos: { left: 35, top: 70.16, width: 11.5, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+
+      // Cluster 4 — Detailed Option Assessment
+      { id: "dsp-multi-criteria-cost-benefit", label: "Cost Benefit / Multi-Criteria Analysis", pos: { left: 51, top: 34, width: 11.5, height: 6.33 }, text: "This process involves a criteria selection process and a detailed development and assessment of shortlisted options / pathways.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-performance-2", label: "Asset Performance", pos: { left: 51, top: 41.53, width: 11.5, height: 6.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment-3", label: "Resilience Assessment", pos: { left: 51, top: 49.06, width: 11.5, height: 6.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-sustainability-2", label: "Sustainability", pos: { left: 51, top: 56.59, width: 11.5, height: 6.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-economic-impact", label: "Economic Impact", pos: { left: 51, top: 64.12, width: 11.5, height: 6.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-criteria-xyz", label: "Criteria X, Y, Z", pos: { left: 51, top: 71.65, width: 11.5, height: 6.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+
+      // Cluster 5 — Portfolio Optimisation
+      { id: "dsp-system-interdependencies-2", label: "System Interdependencies", pos: { left: 67, top: 34, width: 11.5, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-solution-bundling", label: "Solution Bundling", pos: { left: 67, top: 49.07, width: 11.5, height: 13.87 }, text: "This process looks at combining and sequencing multiple interventions/pathways to utilise and bundle resources if possible.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-resource-feasibility", label: "Resource and Feasibility", pos: { left: 67, top: 64.14, width: 11.5, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+
+      // Cluster 6 — Outcome Assessment
+      { id: "dsp-asset-performance-3", label: "Asset Performance", pos: { left: 83, top: 34, width: 11.5, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-intervention-effectiveness", label: "Intervention / Adaptation Effectiveness", pos: { left: 83, top: 49.07, width: 11.5, height: 13.87 }, text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.", isPlaceholder: false, handbookUrl: "#", variant: "leaf", highlight: true },
+      { id: "dsp-asset-registry-2", label: "Asset Registry", pos: { left: 83, top: 64.14, width: 11.5, height: 13.87 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+
+      // Cross-cutting Risk Assessment step and its funding/governance inputs.
+      // Kept off the far right/bottom edge on purpose — that corner is where
+      // the floating zoom widget docks (see style.css), same reason Level 1's
+      // last row always ends well clear of it.
+      { id: "dsp-risk-assessment-cross", label: "Risk Assessment", pos: { left: 50, top: 82, width: 14, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-funding-budgets", label: "Funding / Budgets (Financial Case)", pos: { left: 35.5, top: 90, width: 13, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-procurement", label: "Procurement (Commercial Case)", pos: { left: 50.5, top: 90, width: 13, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-pm-governance", label: "PM, Governance, Reporting (Management Case)", pos: { left: 65.5, top: 90, width: 13, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" }
+    ],
+
+    containers: [
+      { id: "dsp-c1-bg", pos: { left: 1.5, top: 32.5, width: 14.5, height: 47.5 } },
+      { id: "dsp-c2-bg", pos: { left: 17.5, top: 32.5, width: 14.5, height: 47.5 } },
+      { id: "dsp-c3-bg", pos: { left: 33.5, top: 32.5, width: 14.5, height: 47.5 } },
+      { id: "dsp-c4-bg", pos: { left: 49.5, top: 32.5, width: 14.5, height: 47.5 } },
+      { id: "dsp-c5-bg", pos: { left: 65.5, top: 32.5, width: 14.5, height: 47.5 } },
+      { id: "dsp-c6-bg", pos: { left: 81.5, top: 32.5, width: 14.5, height: 47.5 } }
+    ],
+
+    headings: [
+      { id: "dsp-c1-heading", label: "Asset/Network Evaluation", pos: { left: 1.5, top: 28, width: 14.5, height: 4.3 } },
+      { id: "dsp-c2-heading", label: "Problem Framing and Scope", pos: { left: 17.5, top: 28, width: 14.5, height: 4.3 } },
+      { id: "dsp-c3-heading", label: "Risk Reduction Analysis", pos: { left: 33.5, top: 28, width: 14.5, height: 4.3 } },
+      { id: "dsp-c4-heading", label: "Detailed Option Assessment", pos: { left: 49.5, top: 28, width: 14.5, height: 4.3 } },
+      { id: "dsp-c5-heading", label: "Portfolio Optimisation", pos: { left: 65.5, top: 28, width: 14.5, height: 4.3 } },
+      { id: "dsp-c6-heading", label: "Outcome Assessment", pos: { left: 81.5, top: 28, width: 14.5, height: 4.3 } }
+    ],
+
+    arrows: [
+      { from: { x: 8.75, y: 21 }, to: { x: 8.75, y: 22 } },        // Transport Scenarios -> Climate Scenarios
+      { from: { x: 8.75, y: 28 }, to: { x: 8.75, y: 32.5 } },      // Climate Scenarios -> Asset/Network Evaluation
+      { from: { x: 24.75, y: 15.5 }, to: { x: 24.75, y: 16.5 } },  // Requirements -> Context
+      { from: { x: 24.75, y: 22 }, to: { x: 24.75, y: 23 } },      // Context -> Constraints
+      { from: { x: 24.75, y: 28.5 }, to: { x: 24.75, y: 32.5 } },  // Constraints -> Problem Framing
+      { from: { x: 17.5, y: 56 }, to: { x: 19, y: 56 } },          // C1 -> C2
+      { from: { x: 33.5, y: 56 }, to: { x: 35, y: 56 } },          // C2 -> C3
+      { from: { x: 49.5, y: 56 }, to: { x: 51, y: 56 } },          // C3 -> C4
+      { from: { x: 65.5, y: 56 }, to: { x: 67, y: 56 } },          // C4 -> C5
+      { from: { x: 81.5, y: 56 }, to: { x: 83, y: 56 } },          // C5 -> C6
+      { from: { x: 57, y: 90 }, to: { x: 57, y: 88 } }             // Procurement -> Risk Assessment (cross)
+    ],
+
+    elbowPaths: [
+      { points: [ { x: 42, y: 90 }, { x: 42, y: 88.5 }, { x: 57, y: 88.5 }, { x: 57, y: 88 } ] },  // Funding/Budgets -> Risk Assessment (cross)
+      { points: [ { x: 72, y: 90 }, { x: 72, y: 88.5 }, { x: 57, y: 88.5 }, { x: 57, y: 88 } ] }   // PM/Governance -> Risk Assessment (cross)
+    ],
+
+    /* The cross-cutting Risk Assessment step feeds back up into the option-
+       assessment/portfolio stages it screens — drawn in the feedback green,
+       same convention as Level 1's loops. */
+    feedbackPaths: [
+      { points: [ { x: 57, y: 82 }, { x: 57, y: 79 }, { x: 56.75, y: 79 }, { x: 56.75, y: 77.98 } ] },
+      { points: [ { x: 57, y: 82 }, { x: 57, y: 80 }, { x: 72.75, y: 80 }, { x: 72.75, y: 78.01 } ] }
+    ]
+  },
+
+  /* Level 2 — IMP components. Built 20 Sept. Same redesign basis as the
+     DSP diagram above — source slide 12 is a flat screenshot with its own
+     colour-per-domain key (Transport Demand/Supply/Freight/Climate/Social/
+     Threshold/Adaptation, each a different colour, plus Tool=black vs
+     Input/Output=white). That many colours doesn't fit the brand's 4-colour
+     palette, so domain identity is kept through the labelled cluster
+     backgrounds (same as DSP and Level 1 Extended) while box colour is
+     simplified to the same navy/sky/leaf/white legend as DSP, so the two
+     Level 2 diagrams read as one consistent system. */
+  imp: {
+    title: "Overview of IMP Components",
+    subtitle: "Level 2 — Integrated Modelling Platform",
+    status: "Redesigned from the source component map in brand colors — box color shows tool vs. input/output, groups show which modelling domain each step belongs to. Wording for most steps is still coming from DARe.",
+    legend: [
+      ["navy", "Tool or model step"],
+      ["sky", "Final adaptation output"],
+      ["leaf", "Key convergence point"],
+      ["io", "Input or output artefact"]
+    ],
+    boxes: [
+      // Transport Demand cluster (top right)
+      { id: "imp-ntem", label: "National Trip End Model (NTEM)", startHere: true, pos: { left: 61, top: 15, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "imp-building-dev-model", label: "Building Development Model", pos: { left: 79, top: 15, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "imp-projected-population", label: "Projected Synthetic Population", pos: { left: 61, top: 25, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+
+      // Main spine
+      { id: "imp-activity-plans", label: "Activity Plans Assignment", pos: { left: 61, top: 38, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-synthetic-travel-demand", label: "Synthetic Travel Demand", pos: { left: 61, top: 48, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-passenger-transport-model", label: "Passenger Transport Model", pos: { left: 61, top: 58, width: 16, height: 7 }, text: "The central simulation step — brings together transport demand, transport supply/freight, and weather/hazard effects to model how passenger journeys are actually made and disrupted.", isPlaceholder: true, handbookUrl: "#", variant: "leaf", highlight: true },
+      { id: "imp-impact-assessment", label: "Impact Assessment / Performance Metrics", pos: { left: 61, top: 69, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-adaptation-measures", label: "Adaptation Measures", pos: { left: 80, top: 69, width: 15, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
+
+      // Social Behavioural Impacts cluster
+      { id: "imp-weather-trip-decisions", label: "Weather Impacts on Trip Decisions", pos: { left: 5, top: 43, width: 24, height: 7 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+
+      // Transport-Specific Threshold cluster
+      { id: "imp-transport-specific-threshold", label: "Transport-Specific Threshold", pos: { left: 5, top: 59, width: 24, height: 7 }, text: "Analysis of the impacts of weather conditions (e.g., rain, heat) on different modes of transport (e.g., car, public transport, active modes).", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+
+      // Climate Scenario, Weather Variables & Hazard Models cluster
+      { id: "imp-atmospheric-fields", label: "Atmospheric Fields, Soil Fields, Sea Surface Temperature etc.", pos: { left: 4, top: 75, width: 15, height: 8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-ukcp18-modelling", label: "UKCP18-Local Modelling of the Atmosphere", pos: { left: 4, top: 85, width: 15, height: 6 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "imp-weather-event", label: "Weather Event", pos: { left: 4, top: 92, width: 15, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-heat-model", label: "Heat Model", pos: { left: 21, top: 85, width: 12, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "imp-hydrological-model", label: "Hydrological Model", pos: { left: 21, top: 92, width: 12, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "imp-temporal-temp-maps", label: "Temporal Air and Surface Temperature Maps", pos: { left: 35, top: 85, width: 17, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-temporal-flood-maps", label: "Temporal Flood Maps", pos: { left: 35, top: 92, width: 17, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+
+      // Transport Supply & Freight cluster
+      { id: "imp-transport-network", label: "Transport Network", pos: { left: 58, top: 85, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-multimodal-network", label: "Multi-modal Network", pos: { left: 58, top: 92, width: 16, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "imp-freight-transport-model", label: "Freight Transport Model", pos: { left: 76, top: 85, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+
+      // Adaptation Measures (options) cluster
+      { id: "imp-soft-adaptation", label: "Soft Adaptation — e.g. Early Warning", pos: { left: 82, top: 44, width: 14, height: 8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-hard-adaptation", label: "Hard Adaptation — e.g. Green/Grey Infrastructure", pos: { left: 82, top: 54, width: 14, height: 8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" }
+    ],
+
+    containers: [
+      { id: "imp-transport-demand-bg", pos: { left: 58, top: 8, width: 39, height: 26 } },
+      { id: "imp-social-behavioural-bg", pos: { left: 2, top: 38, width: 30, height: 14 } },
+      { id: "imp-threshold-bg", pos: { left: 2, top: 54, width: 30, height: 14 } },
+      { id: "imp-climate-bg", pos: { left: 2, top: 70, width: 52, height: 28 } },
+      { id: "imp-supply-freight-bg", pos: { left: 56, top: 80, width: 40, height: 18 } },
+      { id: "imp-adaptation-options-bg", pos: { left: 80, top: 38, width: 18, height: 26 } }
+    ],
+
+    headings: [
+      { id: "imp-transport-demand-heading", label: "Transport Demand", pos: { left: 58, top: 9, width: 39, height: 4 } },
+      { id: "imp-social-behavioural-heading", label: "Social Behavioural Impacts", pos: { left: 2, top: 38, width: 30, height: 4 } },
+      { id: "imp-threshold-heading", label: "Transport-Specific Threshold", pos: { left: 2, top: 54, width: 30, height: 4 } },
+      { id: "imp-climate-heading", label: "Climate Scenario, Weather Variables & Hazard Models", pos: { left: 2, top: 70, width: 52, height: 4 } },
+      { id: "imp-supply-freight-heading", label: "Transport Supply & Freight", pos: { left: 56, top: 80, width: 40, height: 4 } },
+      { id: "imp-adaptation-options-heading", label: "Adaptation Measures (Options)", pos: { left: 80, top: 39, width: 18, height: 8 } }
+    ],
+
+    arrows: [
+      { from: { x: 69, y: 21 }, to: { x: 69, y: 25 } },     // NTEM -> Projected Synthetic Population
+      { from: { x: 69, y: 31 }, to: { x: 69, y: 38 } },     // Projected Synthetic Population -> Activity Plans
+      { from: { x: 69, y: 44 }, to: { x: 69, y: 48 } },     // Activity Plans -> Synthetic Travel Demand
+      { from: { x: 69, y: 54 }, to: { x: 69, y: 58 } },     // Synthetic Travel Demand -> Passenger Transport Model
+      { from: { x: 69, y: 65 }, to: { x: 69, y: 69 } },     // Passenger Transport Model -> Impact Assessment
+      { from: { x: 77, y: 72 }, to: { x: 80, y: 72 } },     // Impact Assessment -> Adaptation Measures
+      { from: { x: 11.5, y: 83 }, to: { x: 11.5, y: 85 } }, // Atmospheric fields -> UKCP18 modelling
+      { from: { x: 11.5, y: 91 }, to: { x: 11.5, y: 92 } }, // UKCP18 modelling -> Weather Event
+      { from: { x: 33, y: 88 }, to: { x: 35, y: 88 } },     // Heat Model -> Temporal air/surface maps
+      { from: { x: 33, y: 94.5 }, to: { x: 35, y: 94.5 } }, // Hydrological Model -> Temporal flood maps
+      { from: { x: 66, y: 92 }, to: { x: 66, y: 91 } },     // Multi-modal Network -> Transport Network
+      { from: { x: 76, y: 88 }, to: { x: 74, y: 88 } }      // Freight Transport Model -> Transport Network
+    ],
+
+    elbowPaths: [
+      { points: [ { x: 87, y: 21 }, { x: 87, y: 28 }, { x: 77, y: 28 } ] },                                   // Building Development Model -> Projected Synthetic Population
+      { points: [ { x: 29, y: 46.5 }, { x: 45, y: 46.5 }, { x: 45, y: 41 }, { x: 61, y: 41 } ] },              // Weather impacts on trip decisions -> Activity Plans
+      { points: [ { x: 29, y: 62.5 }, { x: 45, y: 62.5 }, { x: 45, y: 88 }, { x: 58, y: 88 } ] },              // Transport-Specific Threshold -> Transport Network
+      { points: [ { x: 19, y: 88 }, { x: 21, y: 88 } ] },                                                     // UKCP18 modelling -> Heat Model
+      { points: [ { x: 19, y: 94.5 }, { x: 21, y: 94.5 } ] },                                                 // Weather Event -> Hydrological Model
+      { points: [ { x: 52, y: 88 }, { x: 55, y: 88 }, { x: 55, y: 91 }, { x: 58, y: 91 } ] },                  // Temporal maps -> Transport Network
+      { points: [ { x: 74, y: 88 }, { x: 74, y: 61.5 }, { x: 61, y: 61.5 } ] }                                 // Transport Network -> Passenger Transport Model
+    ],
+
+    /* Adaptation measures loop back into the upstream demand and hazard
+       modelling assumptions they influence — feedback green, same
+       convention as Level 1 and the DSP diagram above. */
+    feedbackPaths: [
+      { points: [ { x: 82, y: 48 }, { x: 79, y: 48 }, { x: 79, y: 51 }, { x: 77, y: 51 } ] },                  // Soft Adaptation -> Synthetic Travel Demand
+      { points: [ { x: 89, y: 62 }, { x: 89, y: 99 }, { x: 27, y: 99 }, { x: 27, y: 98 } ] }                   // Hard Adaptation -> Climate/Hazard modelling
+    ]
   }
 
 };

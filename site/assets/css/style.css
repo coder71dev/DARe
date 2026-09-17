@@ -291,6 +291,7 @@ a { color: var(--color-sky); }
 .diagram-guide-swatch.swatch-navy { background: var(--color-water); }
 .diagram-guide-swatch.swatch-sky { background: var(--color-sky); }
 .diagram-guide-swatch.swatch-leaf { background: var(--color-leaf); }
+.diagram-guide-swatch.swatch-io { background: var(--color-white); border: 2px solid var(--color-water); }
 
 .diagram-guide-swatch.swatch-dot {
   width: 9px;
@@ -756,6 +757,18 @@ a { color: var(--color-sky); }
   line-height: 1.55;
   white-space: pre-line;
 }
+
+.process-panel-explore {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-weight: 700;
+  color: var(--color-sky);
+  text-decoration: none;
+}
+
+.process-panel-explore:hover { text-decoration: underline; }
+
+.process-panel-explore[hidden] { display: none; }
 
 /* ---------- Popup modal ---------- */
 .modal-backdrop {
