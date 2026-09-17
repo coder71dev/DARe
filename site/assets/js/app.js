@@ -391,24 +391,32 @@
     return el;
   }
 
-  // Guide panel: collapsible legend + interaction hints, rebuilt per view
-  // since the colour legend's meaning shifts slightly between Simple (no
-  // DSP/IMP split) and Extended (colours = process). Collapsed/expanded
-  // state is remembered per browser as a convenience, not load-bearing —
-  // if storage is unavailable the guide just defaults to expanded.
+  /* Guide panel: collapsible legend + interaction hints, rebuilt per view
+     since the colour legend's meaning shifts slightly between Simple (no
+     DSP/IMP split) and Extended (colours = process).
+
+     Collapsed by default: the guide is a reference to open when you want it,
+     not something that stands between the title and the diagram on every
+     visit. Only a real open/close is remembered, so the default still applies
+     to anyone who has never touched it. The key is renamed from
+     "tpraf-guide-collapsed", which the old expanded-by-default start-up wrote
+     for every visitor — they'd otherwise keep getting the old behaviour. */
+  const GUIDE_STORAGE_KEY = "tpraf-guide-open";
+
   function getGuideCollapsed() {
     try {
-      return localStorage.getItem("tpraf-guide-collapsed") === "1";
+      return localStorage.getItem(GUIDE_STORAGE_KEY) !== "1";
     } catch (e) {
-      return false;
+      return true; // no storage available: fall back to the default, not to a preference
     }
   }
 
-  function setGuideCollapsed(collapsed) {
+  function setGuideCollapsed(collapsed, persist) {
     guideEl.dataset.collapsed = collapsed ? "true" : "false";
     guideToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    if (!persist) return;
     try {
-      localStorage.setItem("tpraf-guide-collapsed", collapsed ? "1" : "0");
+      localStorage.setItem(GUIDE_STORAGE_KEY, collapsed ? "0" : "1");
     } catch (e) {
       /* per-viewer convenience only — fine if it can't persist */
     }
@@ -416,9 +424,9 @@
 
   if (guideToggle) {
     guideToggle.addEventListener("click", () => {
-      setGuideCollapsed(guideEl.dataset.collapsed !== "true");
+      setGuideCollapsed(guideEl.dataset.collapsed !== "true", true);
     });
-    setGuideCollapsed(getGuideCollapsed());
+    setGuideCollapsed(getGuideCollapsed(), false);
   }
 
   function escapeHtml(str) {
