@@ -36,6 +36,10 @@
   const guideBody = document.getElementById("diagram-guide-body");
   const stageWrap = document.getElementById("diagram-stage-wrap");
   const cropEl = document.getElementById("diagram-crop");
+  // Optional: the landing page's embedded copy of the diagram omits this,
+  // since it has its own link out and never switches views.
+  const viewNextEl = document.getElementById("view-next");
+  const viewNextLink = document.getElementById("view-next-link");
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -532,6 +536,18 @@
     currentProcessFilter = null;
     setProcessPanel(null);
     applyProcessFilter();
+
+    // Per-view "go deeper" link — the simple form points through to the
+    // extended form. Views without a `next` show nothing.
+    if (viewNextEl) {
+      const next = data.next;
+      viewNextEl.hidden = !next;
+      if (next) {
+        viewNextLink.setAttribute("href", "#" + next.key);
+        viewNextLink.innerHTML = escapeHtml(next.label) +
+          ' <span aria-hidden="true">&rarr;</span>';
+      }
+    }
   }
 
   // Click-and-drag horizontal scroll for mouse users. Touch devices already
@@ -689,8 +705,14 @@
 
   // View switching. Selecting a view also writes it into the URL, so a link
   // can point straight at one level — the landing page's "Explore TPRAF"
-  // button uses this to open the extended form directly.
+  // buttons and this page's own "explore the extended form" link both rely on
+  // it. The hash is also read back, so pasted links and browser Back/Forward
+  // step through views rather than doing nothing.
+  let currentViewKey = null;
+
   function selectView(viewKey) {
+    if (viewKey === currentViewKey) return;
+    currentViewKey = viewKey;
     document.querySelectorAll(".level-tab").forEach((t) => {
       t.setAttribute("aria-selected", String(t.dataset.view === viewKey));
     });
@@ -705,10 +727,15 @@
     });
   });
 
-  // Initial render. A #view hash wins so deep links land on the right level;
-  // anything that isn't a real view key is ignored rather than rendered as an
-  // unknown view — the landing page's own #what-is-tpraf anchor, for
-  // instance, and the landing page's embedded copy of this diagram.
+  // Covers the in-page "next view" link, pasted URLs and Back/Forward. An
+  // unknown key is ignored rather than rendered as an unknown view, which is
+  // what keeps the landing page's own #what-is-tpraf anchor harmless.
+  window.addEventListener("hashchange", () => {
+    const key = location.hash.slice(1);
+    if (TPRAF_CONTENT[key]) selectView(key);
+  });
+
+  // Initial render. A #view hash wins so deep links land on the right level.
   const linkedView = location.hash.slice(1);
   selectView(TPRAF_CONTENT[linkedView] ? linkedView : "simple");
   setupDragToScroll();

@@ -22,6 +22,11 @@ const TPRAF_CONTENT = {
   simple: {
     title: "Overview of TPRAF: Simple Form",
     subtitle: "Level 1",
+    // Where this view leads next. Slide 2 treats the simple form as the
+    // landing step and the extended form as the start of the interactive
+    // diagram, so the simple view offers a way through to it. Becomes a
+    // column pair on tpraf_views at migration (see MIGRATION-NOTES.md).
+    next: { key: "extended", label: "Explore the extended form" },
     boxes: [
       {
         id: "transport-scenarios",
