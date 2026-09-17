@@ -16,14 +16,38 @@ diagram rendering (`app.js`) needs to change.
 
 | Today (static site) | Becomes (Laravel app) | Changes needed |
 |---|---|---|
-| `site/index.html` | `resources/views/index.blade.php` | Wrap `PAGE:CONTENT` block in `@extends('layouts.app')` / `@section('content')` |
+| `site/index.html` | `resources/views/index.blade.php` | Wrap `PAGE:CONTENT` block in `@extends('layouts.app')` / `@section('content')`. Note it also hosts an embedded copy of the diagram markup — see below. |
 | `site/diagram.html` | `resources/views/diagram.blade.php` | Same as above |
 | `<header class="site-header">...</header>` (duplicated in both files, marked `LAYOUT:HEADER`) | `resources/views/layouts/app.blade.php` | Copy once into the shared layout; delete duplicates |
+| `<footer class="site-footer">...</footer>` (duplicated in both files, marked `LAYOUT:FOOTER`) | Same layout partial | Copy once; delete duplicates |
+| Diagram markup + `#modal-backdrop` (duplicated in both files: full version with level tabs on `diagram.html`, tabs removed on `index.html`) | `resources/views/partials/diagram.blade.php` | Extract once and `@include` it on both pages — this duplication is a candidate for collapsing at migration time |
 | `site/assets/css/style.css` | `public/assets/css/style.css` | None — copy as-is |
 | `site/assets/js/app.js` | `public/assets/js/app.js` | None — copy as-is (see note in the file header) |
 | `site/assets/js/content.js` | Database table(s) + a Controller | Rewritten — see below |
 | Asset `href="assets/..."` paths | `{{ asset('assets/...') }}` | One-line swap per `<link>`/`<script>` tag |
 | N/A | `resources/views/admin/*.blade.php` (Inertia+Vue pages) | New — the editing UI, doesn't exist yet |
+
+## The landing page embeds the diagram
+
+`index.html` renders the Level 1 simple form itself, not a picture of it:
+slide 2 asks for the simple form to feature on the landing page, with a
+button into the extended form. It therefore loads `content.js` + `app.js`
+and carries the same stage/guide/modal markup as `diagram.html`, minus the
+level tabs, so it stays pinned to the `simple` view.
+
+Two consequences worth knowing:
+
+- **URL deep links.** `app.js` reads a `#view` hash on load (`#extended`,
+  `#dsp`, `#imp`) and writes one on tab click, so the landing page's
+  "Explore TPRAF" button (`diagram.html#extended`) lands on the extended
+  form. Any hash that isn't a real view key is ignored, which keeps the
+  landing page's own `#what-is-tpraf` anchor working.
+- **Where `TPRAF_CONTENT` comes from.** Both pages read the same global, so
+  the Blade change in the table below covers the embedded instance too —
+  one `@json($tprafContent)` per page, nothing else.
+
+When this becomes Blade, the duplicated block is the obvious thing to
+collapse into one included partial rather than copied twice.
 
 ## `content.js` → database
 

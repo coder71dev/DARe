@@ -21,7 +21,9 @@
       <span class="brand-subtitle">TPRAF</span>
     </div>
     <nav>
-      <a href="diagram.html">Explore TPRAF</a>
+      <!-- same destination as this page's "Explore TPRAF" buttons — two links
+           with the same label must not go to different places -->
+      <a href="diagram.html#extended">Explore TPRAF</a>
     </nav>
   </header>
   <!-- /LAYOUT:HEADER -->
@@ -40,7 +42,7 @@
           <h1 id="hero-title"><span class="hero-owner">DARe&rsquo;s</span> Transport Performance &amp; Risk Analysis Framework</h1>
           <p class="tagline">For people, for place, for a more sustainable future</p>
           <div class="hero-actions">
-            <a class="cta-button" href="diagram.html">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+            <a class="cta-button" href="diagram.html#extended">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
             <a class="ghost-link" href="#what-is-tpraf">What is TPRAF?</a>
           </div>
         </div>
@@ -157,11 +159,81 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="further-title">
+    <!-- The simple form itself, rendered live on the landing page from the
+         same content data and the same renderer the diagram page uses — slide
+         2 asks for the simple form to feature here, with the button leading
+         into the extended form. Same block of markup as diagram.html's
+         PAGE:CONTENT, with the heading levels adjusted for this page's
+         outline and the level tabs left out (this instance is pinned to the
+         simple view). Per-page duplication of a shared block, exactly as the
+         LAYOUT:HEADER / LAYOUT:FOOTER blocks above and below do. -->
+    <section class="section" aria-labelledby="simple-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="simple-title">The simple form</h2>
+          <p class="section-index">03 &middot; Level 1</p>
+        </header>
+
+        <div class="embed-panel">
+          <h3 class="diagram-title" id="diagram-title"></h3>
+          <p class="diagram-subtitle" id="diagram-subtitle"></p>
+
+          <div class="diagram-guide" id="diagram-guide">
+            <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="true" aria-controls="diagram-guide-body">
+              <span class="diagram-guide-toggle-label">
+                <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
+                How to explore this diagram
+              </span>
+              <svg class="diagram-guide-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="diagram-guide-body" id="diagram-guide-body"></div>
+          </div>
+
+          <div class="process-toggle" id="process-toggle" role="group" aria-label="Filter by process" hidden>
+            <button type="button" id="process-btn-all" aria-pressed="true">Show all</button>
+            <button type="button" id="process-btn-dsp" aria-pressed="false">DSP only</button>
+            <button type="button" id="process-btn-imp" aria-pressed="false">IMP only</button>
+          </div>
+
+          <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
+          <div class="diagram-viewport">
+            <div class="zoom-controls" role="group" aria-label="Zoom diagram">
+              <button type="button" id="zoom-out" aria-label="Zoom out">&minus;</button>
+              <span class="zoom-level" id="zoom-level">100%</span>
+              <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+              <div class="zoom-divider"></div>
+              <button type="button" id="zoom-fit" aria-label="Fit diagram to screen">Fit</button>
+              <button type="button" id="zoom-reset" aria-label="Reset zoom">Reset</button>
+            </div>
+            <div class="diagram-stage-wrap" id="diagram-stage-wrap">
+              <div class="zoom-sizer" id="zoom-sizer">
+                <div class="diagram-crop" id="diagram-crop">
+                  <div class="diagram-stage" id="diagram-stage">
+                    <svg class="arrows-layer" id="arrows-layer"></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="process-panel" id="process-panel" hidden>
+            <h4 id="process-panel-title"></h4>
+            <p id="process-panel-text"></p>
+            <a class="process-panel-explore" id="process-panel-explore" href="#" hidden></a>
+          </div>
+        </div>
+
+        <p class="embed-cta">
+          <a class="inline-link" href="diagram.html#extended">Explore the extended form <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+        </p>
+      </div>
+    </section>
+
+    <section class="section band-stone" aria-labelledby="further-title">
       <div class="container">
         <header class="section-head">
           <h2 id="further-title">Further Information</h2>
-          <p class="section-index">03 &middot; More detail</p>
+          <p class="section-index">04 &middot; More detail</p>
         </header>
         <div class="prose">
           <p>Further information and supporting downloads will be added here.</p>
@@ -170,28 +242,37 @@
       </div>
     </section>
 
-    <!-- Bold use of Leaf, the guide's other full-bleed banner colour, with a
-         white panel sitting inside it — the report-cover layout from the
-         Brand Materials pages. -->
+    <!-- Bold use of Leaf, the guide's other full-bleed banner colour. The
+         button carries slide 2's own "explore TPRAF" label and leads into the
+         extended form, which slide 2 calls the start of the interactive
+         diagram. -->
     <section class="cta-band" aria-labelledby="explore-title">
-      <div class="container cta-grid">
-        <div class="cta-copy">
+      <div class="container cta-inner">
+        <div>
           <h2 id="explore-title">Explore the framework</h2>
           <p>
-            A guided, interactive walkthrough. Start with the simple overview, then move through
-            the extended diagram and the Level 2 component maps.
+            A guided, interactive walkthrough. Start with the simple form above, then move
+            through the extended diagram and the Level 2 component maps.
           </p>
-          <a class="cta-button cta-button-inverse" href="diagram.html">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
         </div>
-        <figure class="cta-preview">
-          <img src="assets/img/diagram-preview.png" alt="The interactive TPRAF diagram showing the Level 1 simple overview" width="1600" height="912" />
-          <figcaption>Level 1 &middot; Simple Form</figcaption>
-        </figure>
+        <a class="cta-button cta-button-inverse" href="diagram.html#extended">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
       </div>
     </section>
 
   </main>
   <!-- /PAGE:CONTENT -->
+
+  <!-- Popup used by the embedded diagram's boxes and labels -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <span class="placeholder-note" id="modal-placeholder-note" hidden>Awaiting final text from DARe</span>
+      <br />
+      <a class="modal-handbook-link" id="modal-handbook-link" href="#" hidden>Take me to the Handbook &rarr;</a>
+    </div>
+  </div>
 
   <!-- LAYOUT:FOOTER — identical on every page, same as the header above -->
   <footer class="site-footer">
@@ -202,5 +283,15 @@
     </div>
   </footer>
   <!-- /LAYOUT:FOOTER -->
+
+  <!-- DATA SOURCE — in Laravel this <script src="content.js"> tag is replaced
+       by one inline line the Blade view prints:
+         <script>const TPRAF_CONTENT = @json($tprafContent);</script>
+       Same as diagram.html: app.js reads only the TPRAF_CONTENT global, so a
+       database-backed payload renders this embedded diagram with no code
+       change. Unlike diagram.html, this instance has no level tabs, so it
+       stays on the simple view. -->
+  <script src="assets/js/content.js"></script>
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
