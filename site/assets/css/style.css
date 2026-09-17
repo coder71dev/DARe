@@ -91,11 +91,22 @@ a { color: var(--color-sky); }
 
 .site-header nav a:hover { text-decoration: underline; }
 
-/* Below the guide's mobile threshold the header drops back to the logo alone.
-   The "Explore TPRAF" nav item duplicates the hero button sitting directly
-   beneath it, and at this width it was forcing the header onto two rows. */
+/* Below the guide's mobile threshold the header tightens up so it never wraps
+   onto a second row. The logo keeps the guide's own 195px digital minimum —
+   shrinking it instead would mean switching to the secondary logo — so the
+   width comes from the "TPRAF" suffix and the gutters, and the page label is
+   carried by the heading directly below anyway. The "Explore TPRAF" nav item
+   is dropped here too: it duplicates the hero button sitting directly beneath
+   it. The "Home" item on the diagram page stays, since it's the only route
+   back to the landing page. */
 @media (max-width: 760px) {
+  .site-header { padding: 1rem; }
+
+  .site-header .brand-subtitle { display: none; }
+
   .site-header .nav-cta { display: none; }
+
+  .site-header nav a { margin-left: 0.75rem; }
 }
 
 /* ---------- Site footer ---------- */
@@ -246,26 +257,15 @@ a { color: var(--color-sky); }
   margin-left: auto;
 }
 
-/* There's no room for a second column on a phone, so the mark comes out of
-   the flow entirely and parks in the bottom-right corner of the hero. Extra
-   bottom padding is reserved on the grid to hold it, so it lives in space the
-   copy can never reach and cannot overlap anything however long the copy
-   runs. Keeping it in the flow instead left an orphaned block sitting alone
-   under the buttons and made the hero considerably taller. */
+/* The mark can't share a row with the copy on a phone, and nowhere in the
+   hero is reliably free for it to float — the headline runs nearly the full
+   width at these sizes, so a floating mark either collides with it (as soon
+   as the copy runs longer than the real text) or has to reserve extra hero
+   height to sit in. Reserving that space is what made the hero tall, so the
+   mark is dropped at this size instead and comes back at 820px where it has
+   its own column. */
 @media (max-width: 819px) {
-  .hero-grid { padding-bottom: clamp(9rem, 26vw, 12rem); }
-
-  .hero-graphic {
-    position: absolute;
-    right: clamp(1.25rem, 3.4vw, 4.25rem);
-    bottom: clamp(1.5rem, 4vw, 2.25rem);
-    z-index: 1;
-  }
-
-  .hero-graphic img {
-    width: clamp(64px, 15vw, 104px);
-    margin-left: 0;
-  }
+  .hero-graphic { display: none; }
 }
 
 /* ---------- Brand colour ribbon ---------- */
@@ -516,10 +516,12 @@ a { color: var(--color-sky); }
 .inline-link:hover,
 .inline-link:focus-visible { border-bottom-color: var(--color-sky); }
 
-/* The diagram page's per-view "go deeper" link, below the diagram. */
+/* The diagram page's per-view "go deeper" link, below the diagram. Needs real
+   room on both sides: with only a top margin the link's baseline sat directly
+   on the footer's top border, reading as if it belonged to the footer. */
 .view-next {
   max-width: 900px;
-  margin: 1.5rem auto 0;
+  margin: clamp(2.25rem, 5vw, 3rem) auto clamp(2.75rem, 6vw, 3.5rem);
   text-align: center;
 }
 
@@ -542,16 +544,31 @@ a { color: var(--color-sky); }
 }
 
 /* ---------- Diagram page ---------- */
+/* Horizontally scrollable strip rather than a wrapping block: the four level
+   tabs stay on one row and are swiped (touch) or dragged (mouse, wired up in
+   app.js) instead of dropping onto a second line. The scrollbar is hidden
+   because a partially visible pill already signals there's more to the right,
+   and a track under the tabs reads as heavy furniture. */
 .diagram-toolbar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   align-items: center;
   padding: 1rem 1.5rem;
   background: var(--color-stone);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  cursor: grab;
+  scrollbar-width: none;
 }
 
+.diagram-toolbar::-webkit-scrollbar { display: none; }
+
+.diagram-toolbar.is-dragging { cursor: grabbing; }
+
 .level-tab {
+  flex: 0 0 auto;
   border: none;
   background: var(--color-white);
   color: var(--color-water);
@@ -705,11 +722,19 @@ a { color: var(--color-sky); }
   color: var(--color-water-muted);
 }
 
+/* Scales with the viewport instead of sitting on the browser's fixed 32px h1
+   default — long view titles wrapped to three lines on a phone at that size.
+   Also makes the diagram page's title and the landing page's embedded copy
+   match, since the embedded one is an h3 and would otherwise render at the
+   much smaller h3 default. */
 .diagram-title {
   text-align: center;
   color: var(--color-leaf);
   font-weight: 700;
+  font-size: clamp(1.25rem, 3.2vw, 2rem);
+  line-height: 1.15;
   letter-spacing: -0.02em; /* brand guide: -20 tracking for titles */
+  text-wrap: balance;
   margin: 1.25rem 0 0.25rem;
 }
 
@@ -717,7 +742,7 @@ a { color: var(--color-sky); }
   text-align: center;
   color: var(--color-water-muted);
   margin: 0 0 1rem;
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 1.3vw, 0.95rem);
 }
 
 /* Floating zoom widget, docked in the diagram's bottom-right corner — laid

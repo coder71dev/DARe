@@ -550,49 +550,49 @@
     }
   }
 
-  // Click-and-drag horizontal scroll for mouse users. Touch devices already
-  // get native swipe/momentum scrolling from the CSS above, so this only
-  // engages for mouse pointers (touch scrolling shouldn't be hijacked).
-  function setupDragToScroll() {
-    const wrap = document.getElementById("diagram-stage-wrap");
-    if (!wrap) return;
+  // Click-and-drag horizontal scroll for mouse users, used by both the level
+  // tab toolbar and the diagram stage. Touch devices already get native
+  // swipe/momentum scrolling from the CSS above, so this only engages for
+  // mouse pointers (touch scrolling shouldn't be hijacked).
+  function setupDragToScroll(el) {
+    if (!el) return;
 
     let isDown = false;
     let didDrag = false;
     let startX = 0;
     let startScrollLeft = 0;
 
-    wrap.addEventListener("pointerdown", (e) => {
+    el.addEventListener("pointerdown", (e) => {
       if (e.pointerType !== "mouse") return;
       isDown = true;
       didDrag = false;
       startX = e.clientX;
-      startScrollLeft = wrap.scrollLeft;
-      // NOTE: don't mark "is-dragging" (which disables box pointer-events)
+      startScrollLeft = el.scrollLeft;
+      // NOTE: don't mark "is-dragging" (which disables child pointer-events)
       // here — a plain click also fires pointerdown, and doing it this
       // early would swallow every click, not just real drags.
     });
 
-    wrap.addEventListener("pointermove", (e) => {
+    el.addEventListener("pointermove", (e) => {
       if (!isDown || e.pointerType !== "mouse") return;
       const dx = e.clientX - startX;
       if (Math.abs(dx) > 4 && !didDrag) {
         didDrag = true;
-        wrap.classList.add("is-dragging"); // only now, once it's a real drag
+        el.classList.add("is-dragging"); // only now, once it's a real drag
       }
-      if (didDrag) wrap.scrollLeft = startScrollLeft - dx;
+      if (didDrag) el.scrollLeft = startScrollLeft - dx;
     });
 
     function endDrag() {
       isDown = false;
-      wrap.classList.remove("is-dragging");
+      el.classList.remove("is-dragging");
     }
-    wrap.addEventListener("pointerup", endDrag);
-    wrap.addEventListener("pointerleave", endDrag);
+    el.addEventListener("pointerup", endDrag);
+    el.addEventListener("pointerleave", endDrag);
 
-    // Swallow the click that follows a genuine drag so it doesn't
-    // accidentally open a box's popup.
-    wrap.addEventListener(
+    // Swallow the click that follows a genuine drag so it doesn't switch
+    // level or open a box's popup by accident.
+    el.addEventListener(
       "click",
       (e) => {
         if (didDrag) {
@@ -738,6 +738,7 @@
   // Initial render. A #view hash wins so deep links land on the right level.
   const linkedView = location.hash.slice(1);
   selectView(TPRAF_CONTENT[linkedView] ? linkedView : "simple");
-  setupDragToScroll();
+  setupDragToScroll(document.getElementById("diagram-stage-wrap"));
+  setupDragToScroll(document.getElementById("diagram-toolbar"));
   setupZoomControls();
 })();
