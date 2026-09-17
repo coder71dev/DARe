@@ -697,6 +697,35 @@ a { color: var(--color-sky); }
   line-height: 1.1;
 }
 
+/* Detailed Option Assessment's criteria boxes emanate from the "Multi
+   Criteria / Cost Benefit Analysis" strip on their left — squared left
+   corners so they read as attached to it rather than free-floating. */
+.diagram-box.attach-left {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* The strip itself is squared off too, so its right wall is a straight
+   edge the criteria boxes butt up against. */
+.diagram-box.square-corners {
+  border-radius: 0;
+}
+
+/* Vertical text strip (the "Multi Criteria / Cost Benefit Analysis" label).
+   Rendered as a genuinely upright narrow box with vertical text rather than
+   a rotated wide box — rotation would stretch the strip vertically, because
+   the stage's x/y unit scales differ (see pctX in app.js). */
+.diagram-box.vertical-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding: 0.2rem;
+  letter-spacing: 0.02em;
+}
+.diagram-box.vertical-text:hover,
+.diagram-box.vertical-text:focus-visible {
+  transform: rotate(180deg) translateY(-2px);
+}
+
 /* "Option Ideation (Long List)" / "Interventions" — the source shows these
    as a stack of overlapping cards, signalling "more than one item" rather
    than a single artefact. Approximated with two offset shadow copies. */
