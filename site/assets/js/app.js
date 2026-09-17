@@ -577,6 +577,7 @@
 
     buildAnchorRegions(data);
     if (tourBar) tourBar.hidden = !(data.tour && data.tour.length);
+    setCaption(tourIdleCaption(), false); // this view's own step count
 
     applyCropToStage(data);
     refreshZoom();
@@ -777,7 +778,6 @@
   const tourRestartBtn = document.getElementById("tour-restart");
   const tourStopBtn = document.getElementById("tour-stop");
 
-  const TOUR_CAPTION_IDLE = "Watch the diagram complete itself, step by step.";
   const TOUR_DWELL = 1000;              // ms a step stays centred before moving on
   const TOUR_ANCHOR_TOLERANCE = 3;      // how far off a box/label edge an arrow end may land and still count as joined to it
   const TOUR_CLUSTER_TOLERANCE = 1;     // the same, for a cluster background — kept tight because two clusters can sit only a couple of units apart, and a loose match there joins an arrow to the wrong cluster's boxes
@@ -1064,6 +1064,15 @@
     tourCaption.classList.toggle("is-active", !!active);
   }
 
+  // What the strip reads before (and after) a run. The count comes from the
+  // view on screen, so it always describes the walkthrough that's on offer
+  // rather than a generic label — 8 steps on the simple form, 35 on DSP.
+  function tourIdleCaption() {
+    const data = TPRAF_CONTENT[currentViewKey];
+    const count = ((data && data.tour) || []).length;
+    return count ? "Watch all " + count + " steps in order." : "";
+  }
+
   function setTourControls(state) {
     if (!tourPlayBtn) return;
     tourPlayLabel.textContent =
@@ -1098,7 +1107,7 @@
     tourState.finished = false;
     clearTourMarks();
     setTourControls("idle");
-    setCaption(TOUR_CAPTION_IDLE, false);
+    setCaption(tourIdleCaption(), false);
   }
 
   async function playTour() {
