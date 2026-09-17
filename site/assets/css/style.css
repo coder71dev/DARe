@@ -1316,30 +1316,38 @@ a { color: var(--color-sky); }
 .process-panel-explore[hidden] { display: none; }
 
 /* ---------- Walkthrough / "play" ---------- */
-/* Sits in flow above the diagram. Restart/Stop appear and disappear as the
-   walkthrough is started and stopped, so the bar reserves its own line —
-   pressing play must never nudge the diagram up or down the page. */
+/* A control strip, not a loose row of buttons: it takes the same centred 900px
+   column as the guide card above it, so the playback controls read as part of
+   the page's structure. Tinted like the level toolbar at the top of the page —
+   it's diagram furniture, not content. Sits in flow above the diagram so
+   starting or stopping it can never move the diagram itself. */
 .diagram-tour {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 0.85rem;
-  margin: 1rem 0 0.85rem;
+  gap: 0.6rem 1rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 1.25rem auto 1rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--color-stone);
+  border-radius: 12px;
 }
 
 .diagram-tour[hidden] { display: none; }
 
 .tour-play {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  border: 2px solid var(--color-water);
+  border: none;
   background: var(--color-water);
   color: var(--color-white);
   font-family: var(--font-brand);
   font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.4rem 1.05rem;
+  font-size: 0.82rem;
+  padding: 0.5rem 1.1rem;
   border-radius: 999px;
   cursor: pointer;
   box-shadow: var(--shadow-soft);
@@ -1364,25 +1372,43 @@ a { color: var(--color-sky); }
   background: linear-gradient(to right, currentColor 0 34%, transparent 34% 66%, currentColor 66% 100%);
 }
 
+/* The secondary actions keep to their own right-hand group. The caption's
+   length changes with every step, so without this they would shuffle sideways
+   each time — and on a phone the group stays on the button row while the
+   caption drops below it. */
+.tour-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  margin-left: auto;
+}
+
+/* Styled to match the zoom widget's secondary buttons, so the two sets of
+   diagram controls look like the same family. */
 .tour-btn {
+  flex: 0 0 auto;
   border: none;
   background: none;
-  color: var(--color-water-muted);
+  color: var(--color-water);
   font-family: var(--font-brand);
-  font-weight: 600;
-  font-size: 0.8rem;
-  padding: 0.35rem 0.3rem;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  font-weight: 700;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  height: 30px;
+  padding: 0 0.75rem;
+  border-radius: 999px;
   cursor: pointer;
 }
 
-.tour-btn:hover { color: var(--color-water); }
+.tour-btn:hover { background: var(--color-white); }
 .tour-btn[hidden] { display: none; }
 
 .tour-caption {
+  flex: 0 1 auto;
+  min-width: 0;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   line-height: 1.4;
   color: var(--color-water-muted);
 }
@@ -1393,9 +1419,15 @@ a { color: var(--color-sky); }
 }
 
 @media (max-width: 760px) {
-  /* Its own line on a phone — the step description is the useful part and a
-     squeezed column next to two buttons is worse than a second row. */
-  .tour-caption { flex: 1 0 100%; order: 3; }
+  /* Its own line on a phone — a step name squeezed into a narrow column next
+     to the buttons is worse than a second row. Two lines are always reserved
+     so a longer step name can't change the strip's height mid-walkthrough and
+     nudge the diagram down with it. */
+  .tour-caption {
+    flex: 1 0 100%;
+    order: 3;
+    min-height: calc(2 * 1.4em);
+  }
 }
 
 /* While it runs, the step being described and the ones already covered stay
