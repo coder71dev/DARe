@@ -27,44 +27,179 @@
   <!-- /LAYOUT:HEADER -->
 
   <!-- PAGE:CONTENT — becomes @section('content') in resources/views/index.blade.php -->
-  <main class="landing">
-    <p class="kicker">What is TPRAF?</p>
-    <h1>DARe's Transport Performance &amp; Risk Analysis Framework</h1>
+  <main>
 
-    <p>
-      A validated, usable framework to help decision-makers — at local, regional, and national
-      levels — assess and balance the demands associated with climate resilience, adaptation, and
-      decarbonisation when addressing risks to transport infrastructure performance and operations.
-    </p>
+    <!-- Hero. Full-bleed Water (the brand guide's primary colour, and the
+         colour its own digital palette page leads with), carrying the
+         DARe symbol-derived framework icon, the tagline from the social
+         skin sample, and the "explore TPRAF" button slide 2 asks for. -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">DARe &middot; Interactive Resource</p>
+          <h1 id="hero-title"><span class="hero-owner">DARe&rsquo;s</span> Transport Performance &amp; Risk Analysis Framework</h1>
+          <p class="tagline">For people, for place, for a more sustainable future</p>
+          <div class="hero-actions">
+            <a class="cta-button" href="diagram.html">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+            <a class="ghost-link" href="#what-is-tpraf">What is TPRAF?</a>
+          </div>
+        </div>
+        <div class="hero-graphic">
+          <img src="assets/icons/framework.svg" alt="" width="1482" height="1482" />
+        </div>
+      </div>
+    </section>
 
-    <p>
-      The TPRAF responds to growing challenges across the UK transport sector, including increasing
-      climate risks, ageing assets, evolving travel demand, and constrained investment, while
-      promoting decisions that consider system-wide performance rather than isolated assets.
-    </p>
+    <!-- The guide's palette page shows the four brand colours as four equal
+         panels side by side; this ribbon is that device, used as the page's
+         transition out of the hero. -->
+    <div class="brand-ribbon" aria-hidden="true">
+      <span class="ribbon-water"></span><span class="ribbon-leaf"></span><span class="ribbon-sky"></span><span class="ribbon-stone"></span>
+    </div>
 
-    <p>
-      The TPRAF is designed as a <strong>flexible, modular framework</strong> that can be applied by
-      a wide range of transport decision-makers, including national infrastructure owners, local and
-      combined authorities, transport operators, freight companies, consultancies, and researchers.
-      Rather than replacing existing organisational processes, it is intended to
-      <strong>complement and strengthen current practices</strong>, providing a unifying framework
-      that helps integrate assessments and decision-making processes, enabling smoother data exchange
-      and reducing fragmentation.
-    </p>
+    <section class="section" id="what-is-tpraf" aria-labelledby="what-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="what-title">What is TPRAF?</h2>
+          <p class="section-index">01 &middot; Overview</p>
+        </header>
 
-    <p>
-      This interactive resource offers an accessible introduction to the framework, enabling users to
-      explore its structure, components, and relationships at their own pace.
-    </p>
+        <div class="prose">
+          <p class="definition">
+            <strong>DARe&rsquo;s Transport Performance &amp; Risk Analysis Framework (TPRAF):</strong>
+            a validated, usable framework to help decision-makers — at local, regional, and national
+            levels — assess and balance the demands associated with climate resilience, adaptation,
+            and decarbonisation when addressing risks to transport infrastructure performance and
+            operations.
+          </p>
 
-    <a class="cta-button" href="diagram.html">Explore TPRAF &rarr;</a>
+          <p>
+            The TPRAF responds to growing challenges across the UK transport sector, including
+            increasing climate risks, ageing assets, evolving travel demand, and constrained
+            investment, while promoting decisions that consider system-wide performance rather
+            than isolated assets.
+          </p>
+        </div>
+
+        <div class="audience">
+          <p class="audience-lead">
+            The TPRAF is designed as a <strong>flexible, modular framework</strong> that can be
+            applied by a wide range of transport decision-makers, including:
+          </p>
+          <ul class="audience-list">
+            <li>National infrastructure owners</li>
+            <li>Local and combined authorities</li>
+            <li>Transport operators</li>
+            <li>Freight companies</li>
+            <li>Consultancies</li>
+            <li>Researchers</li>
+          </ul>
+        </div>
+
+        <div class="prose">
+          <p>
+            Rather than replacing existing organisational processes, it is intended to
+            <strong>complement and strengthen current practices</strong>, providing a unifying
+            framework that helps integrate assessments and decision-making processes, enabling
+            smoother data exchange and reducing fragmentation. This consistency supports more
+            joined-up planning, improved information sharing, and better alignment between
+            strategic, operational, and investment decisions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section band-stone" aria-labelledby="about-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="about-title">About the TPRAF Diagram</h2>
+          <p class="section-index">02 &middot; The resource</p>
+        </header>
+
+        <div class="prose">
+          <p>
+            This interactive version of the DARe Transport Performance &amp; Risk Analysis Framework
+            (TPRAF) is one of several resources developed by the DARe Hub. Alongside the full TPRAF
+            report and the DARe Handbook, it is designed to support the transport sector in
+            understanding and applying the framework. The full report explains the purpose,
+            structure, and development of TPRAF, while the DARe Handbook provides detailed guidance
+            on how to operationalise its components in practice.
+          </p>
+        </div>
+
+        <ul class="resource-cards">
+          <li class="resource-card">
+            <img class="resource-icon" src="assets/icons/icon-publications.png" alt="" width="256" height="256" />
+            <h3>Full TPRAF report</h3>
+            <p>The purpose, structure, and development of the framework.</p>
+          </li>
+          <li class="resource-card">
+            <img class="resource-icon resource-icon-tall" src="assets/icons/handbook.svg" alt="" width="1399" height="2024" />
+            <h3>DARe Handbook</h3>
+            <p>Guidance on operationalising the framework&rsquo;s components in practice.</p>
+          </li>
+          <li class="resource-card">
+            <img class="resource-icon" src="assets/icons/icon-search.png" alt="" width="256" height="256" />
+            <h3>This interactive diagram</h3>
+            <p>Explore the framework at your own pace.</p>
+          </li>
+        </ul>
+
+        <div class="prose">
+          <p>
+            This interactive resource offers an accessible introduction to the framework, enabling
+            users to explore its structure, components, and relationships at their own pace. Whether
+            you are encountering TPRAF for the first time or considering how it might support your
+            organisation, this resource is intended to help you navigate the framework before
+            engaging with the more detailed DARe guidance and tools.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="further-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="further-title">Further Information</h2>
+          <p class="section-index">03 &middot; More detail</p>
+        </header>
+        <div class="prose">
+          <p>Further information and supporting downloads will be added here.</p>
+        </div>
+        <p class="pending-note">Awaiting final content from DARe</p>
+      </div>
+    </section>
+
+    <!-- Bold use of Leaf, the guide's other full-bleed banner colour, with a
+         white panel sitting inside it — the report-cover layout from the
+         Brand Materials pages. -->
+    <section class="cta-band" aria-labelledby="explore-title">
+      <div class="container cta-grid">
+        <div class="cta-copy">
+          <h2 id="explore-title">Explore the framework</h2>
+          <p>
+            A guided, interactive walkthrough. Start with the simple overview, then move through
+            the extended diagram and the Level 2 component maps.
+          </p>
+          <a class="cta-button cta-button-inverse" href="diagram.html">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <figure class="cta-preview">
+          <img src="assets/img/diagram-preview.png" alt="The interactive TPRAF diagram showing the Level 1 simple overview" width="1600" height="912" />
+          <figcaption>Level 1 &middot; Simple Form</figcaption>
+        </figure>
+      </div>
+    </section>
+
   </main>
   <!-- /PAGE:CONTENT -->
 
-  <!-- LAYOUT:FOOTER -->
+  <!-- LAYOUT:FOOTER — identical on every page, same as the header above -->
   <footer class="site-footer">
-    <p>DARe &middot; Decarbonised, Adaptable, Resilient Transport Infrastructures Hub &middot; <a href="https://dare.ac.uk">dare.ac.uk</a></p>
+    <div class="container">
+      <p class="footer-label">Funded by &middot; Led by</p>
+      <img class="footer-lockup" src="assets/img/funders-partners.png" alt="Funders and partners of the DARe Hub" width="2160" height="103" loading="lazy" />
+      <p class="footer-line">DARe &middot; Decarbonised, Adaptable, Resilient Transport Infrastructures Hub &middot; <a href="https://dare.ac.uk">dare.ac.uk</a></p>
+    </div>
   </footer>
   <!-- /LAYOUT:FOOTER -->
 </body>
