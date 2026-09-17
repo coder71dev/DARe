@@ -181,6 +181,9 @@
     line.setAttribute("stroke", COLOR_NAVY);
     line.setAttribute("stroke-width", "0.3");
     line.setAttribute("marker-end", "url(#arrowhead)");
+    // Some source-diagram connectors (e.g. DSP's within-cluster steps) are
+    // double-headed, showing free back-and-forth rather than one-way flow.
+    if (arrow.bidirectional) line.setAttribute("marker-start", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(line, arrow.group, "main"));
   }
 
@@ -205,6 +208,7 @@
     polyline.setAttribute("stroke", COLOR_NAVY);
     polyline.setAttribute("stroke-width", "0.3");
     polyline.setAttribute("marker-end", "url(#arrowhead)");
+    if (elbow.bidirectional) polyline.setAttribute("marker-start", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(polyline, elbow.group, "main"));
   }
 
@@ -245,7 +249,12 @@
     el.type = "button";
     const variantClass = box.variant ? ` variant-${box.variant}` : "";
     const compactClass = isCompactBox(box) ? " compact" : "";
-    el.className = "diagram-box" + variantClass + compactClass + (box.isPlaceholder ? " missing-content" : "");
+    // DSP's "Selection/Screened list" decision point is a diamond in the
+    // source diagram — a shape (clip-path), not a rotation, so its label
+    // stays upright and readable inside the point.
+    const shapeClass = box.shape === "diamond" ? " shape-diamond" : "";
+    const stackClass = box.stacked ? " is-stacked" : "";
+    el.className = "diagram-box" + variantClass + compactClass + shapeClass + stackClass + (box.isPlaceholder ? " missing-content" : "");
     el.style.left = pct(box.pos.left);
     el.style.top = pct(box.pos.top);
     el.style.width = pct(box.pos.width);
@@ -272,10 +281,14 @@
   }
 
   // Decorative light-blue cluster background — sits behind the boxes/arrows
-  // it groups, purely visual (no click target, no text).
+  // it groups, purely visual (no click target, no text). A "dashed" style
+  // container (no fill, dashed outline) reproduces the source diagrams'
+  // sub-groupings within a cluster (e.g. DSP's Risk Assessment/Asset
+  // Performance/Resilience Assessment trio) and the outer boundary around
+  // Detailed Option Assessment + Portfolio Optimisation together.
   function makeContainerEl(container) {
     const el = document.createElement("div");
-    el.className = "diagram-cluster-bg";
+    el.className = "diagram-cluster-bg" + (container.style === "dashed" ? " style-dashed" : "");
     el.style.left = pct(container.pos.left);
     el.style.top = pct(container.pos.top);
     el.style.width = pct(container.pos.width);
@@ -285,10 +298,13 @@
   }
 
   // Section titles (e.g. "Transport Scenarios") — plain text, not a
-  // popup-opening control, so a div rather than a button.
+  // popup-opening control, so a div rather than a button. An optional
+  // colour variant renders it as a solid bar (matching the source Level 2
+  // diagrams, where each process stage has its own coloured title bar)
+  // instead of plain text.
   function makeHeadingEl(heading) {
     const el = document.createElement("div");
-    el.className = "diagram-heading";
+    el.className = "diagram-heading" + (heading.variant ? ` variant-${heading.variant}` : "");
     el.style.left = pct(heading.pos.left);
     el.style.top = pct(heading.pos.top);
     el.style.width = pct(heading.pos.width);

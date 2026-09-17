@@ -541,6 +541,15 @@ a { color: var(--color-sky); }
   border-color: var(--color-stone);
 }
 
+/* Dashed, unfilled sub-grouping — e.g. DSP's Risk Assessment/Asset
+   Performance/Resilience Assessment trio, or the outer boundary around
+   Detailed Option Assessment + Portfolio Optimisation together. */
+.diagram-cluster-bg.style-dashed {
+  background: none;
+  border-style: dashed;
+  border-color: var(--color-water-faint);
+}
+
 .diagram-box {
   position: absolute;
   display: flex;
@@ -638,6 +647,23 @@ a { color: var(--color-sky); }
   color: var(--color-water);
 }
 
+/* DSP's "Selection / Screened list" decision point — a diamond in the
+   source diagram, via clip-path rather than rotation so the label stays
+   upright and readable inside the point. */
+.diagram-box.shape-diamond {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  padding: 0.3rem;
+  font-size: clamp(0.5rem, 0.75vw, 0.65rem);
+}
+
+/* "Option Ideation (Long List)" / "Interventions" — the source shows these
+   as a stack of overlapping cards, signalling "more than one item" rather
+   than a single artefact. Approximated with two offset shadow copies. */
+.diagram-box.is-stacked {
+  box-shadow: 3px 3px 0 -1px var(--color-white), 3px 3px 0 0 var(--color-water),
+    6px 6px 0 -1px var(--color-white), 6px 6px 0 0 var(--color-water), var(--shadow-soft);
+}
+
 .diagram-box.missing-content::after {
   content: "";
   position: absolute;
@@ -681,6 +707,23 @@ a { color: var(--color-sky); }
   z-index: 2;
   pointer-events: none;
 }
+
+/* Level 2's process-stage headings render as a solid colour bar (matching
+   the source diagrams, where each stage has its own coloured title bar)
+   rather than plain text — same 4 brand colours as the box legend. */
+.diagram-heading.variant-navy,
+.diagram-heading.variant-sky,
+.diagram-heading.variant-leaf,
+.diagram-heading.variant-stone {
+  border-radius: 8px 8px 0 0;
+  padding: 0.2rem 0.4rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.diagram-heading.variant-navy { background: var(--color-water); color: var(--color-white); }
+.diagram-heading.variant-sky { background: var(--color-sky); color: var(--color-white); }
+.diagram-heading.variant-leaf { background: var(--color-leaf); color: var(--color-water); }
+.diagram-heading.variant-stone { background: var(--color-stone); color: var(--color-water); }
 
 /* Plain text labels (Risk Mitigation / Feedback loop) — no pill/background,
    matching the source PPTX's plain bold caption style. */
