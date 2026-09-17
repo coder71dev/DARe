@@ -27,6 +27,7 @@
   const processPanel = document.getElementById("process-panel");
   const processPanelTitle = document.getElementById("process-panel-title");
   const processPanelText = document.getElementById("process-panel-text");
+  const processPanelExplore = document.getElementById("process-panel-explore");
   const processBtnDsp = document.getElementById("process-btn-dsp");
   const processBtnImp = document.getElementById("process-btn-imp");
   const processBtnAll = document.getElementById("process-btn-all");
@@ -332,7 +333,9 @@
 
   function buildGuideBody(data) {
     const hasProcessGroups = data.boxes.some((b) => b.group);
-    const legend = [
+    // Level 2 views set their own data.legend (different meaning: box type,
+    // not DSP/IMP process) instead of the Level 1 navy/sky/leaf default.
+    const legend = data.legend || [
       ["navy", hasProcessGroups ? "Impact Modelling (IMP) steps" : "Hazard & scenario steps"],
       ["sky", hasProcessGroups ? "Decision Support (DSP) steps" : "Evaluation & risk steps"],
       ["leaf", "Key decision point"]
@@ -340,17 +343,21 @@
     const legendHtml = legend
       .map(([swatch, label]) => `<li><span class="diagram-guide-swatch swatch-${swatch}"></span>${escapeHtml(label)}</li>`)
       .join("");
-    const dotHtml = `<li><span class="diagram-guide-swatch swatch-dot"></span>Wording still coming from DARe</li>`;
-    const lineHtml = `<li><span class="diagram-guide-swatch swatch-line"></span>Feedback loop</li>`;
+    const hasPlaceholders = data.boxes.some((b) => b.isPlaceholder) || (data.labels || []).some((l) => l.isPlaceholder);
+    const hasFeedback = (data.feedbackPaths || []).length > 0;
+    const dotHtml = hasPlaceholders ? `<li><span class="diagram-guide-swatch swatch-dot"></span>Wording still coming from DARe</li>` : "";
+    const lineHtml = hasFeedback ? `<li><span class="diagram-guide-swatch swatch-line"></span>Feedback loop</li>` : "";
 
     const toggleHint = hasProcessGroups
       ? " Use the <strong>DSP only</strong> / <strong>IMP only</strong> buttons above the diagram to follow just one process at a time."
       : "";
 
+    const status = data.status || "Working draft, ready for review — Level 1 is complete below; Level 2 component diagrams are next.";
+
     return `
       <p class="diagram-guide-hint">Click any box or label to see its full detail.${toggleHint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
       <ul class="diagram-guide-legend">${legendHtml}${dotHtml}${lineHtml}</ul>
-      <p class="diagram-guide-status">Working draft, ready for review — Level 1 is complete below; Level 2 component diagrams are next.</p>
+      <p class="diagram-guide-status">${escapeHtml(status)}</p>
     `;
   }
 
@@ -396,6 +403,7 @@
     [processBtnAll, processBtnDsp, processBtnImp].forEach((btn) => btn && btn.setAttribute("aria-pressed", "false"));
     if (!key) {
       processPanel.hidden = true;
+      if (processPanelExplore) processPanelExplore.hidden = true;
       if (processBtnAll) processBtnAll.setAttribute("aria-pressed", "true");
       applyProcessFilter();
       return;
@@ -404,6 +412,15 @@
     if (info) {
       processPanelTitle.textContent = info.title;
       processPanelText.textContent = info.text;
+      if (processPanelExplore) {
+        processPanelExplore.hidden = false;
+        processPanelExplore.textContent = key === "dsp" ? "Explore the DSP component diagram →" : "Explore the IMP component diagram →";
+        processPanelExplore.onclick = (e) => {
+          e.preventDefault();
+          const tab = document.querySelector(`.level-tab[data-view="${key}"]`);
+          if (tab) tab.click();
+        };
+      }
       processPanel.hidden = false;
     }
     const activeBtn = key === "dsp" ? processBtnDsp : processBtnImp;
