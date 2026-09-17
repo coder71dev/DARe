@@ -784,7 +784,13 @@ a { color: var(--color-sky); }
 .diagram-heading.variant-navy,
 .diagram-heading.variant-sky,
 .diagram-heading.variant-leaf,
-.diagram-heading.variant-stone {
+.diagram-heading.variant-stone,
+.diagram-heading.variant-c1,
+.diagram-heading.variant-c2,
+.diagram-heading.variant-c3,
+.diagram-heading.variant-c4,
+.diagram-heading.variant-c5,
+.diagram-heading.variant-c6 {
   border-radius: 8px 8px 0 0;
   padding: 0.2rem 0.4rem;
   box-shadow: var(--shadow-soft);
