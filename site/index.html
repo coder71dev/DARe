@@ -200,6 +200,17 @@
             <button type="button" id="process-btn-imp" aria-pressed="false">IMP only</button>
           </div>
 
+          <!-- Walkthrough — same markup/behaviour as diagram.html's (see there) -->
+          <div class="diagram-tour" id="diagram-tour">
+            <button type="button" class="tour-play" id="tour-play">
+              <span class="tour-play-icon" aria-hidden="true"></span>
+              <span id="tour-play-label">Play walkthrough</span>
+            </button>
+            <p class="tour-caption" id="tour-caption" aria-live="polite">Watch the diagram complete itself, step by step.</p>
+            <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
+            <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
+          </div>
+
           <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
           <div class="diagram-viewport">
             <div class="zoom-controls" role="group" aria-label="Zoom diagram">
