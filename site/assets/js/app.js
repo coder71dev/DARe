@@ -283,7 +283,10 @@
     // stays upright and readable inside the point.
     const shapeClass = box.shape === "diamond" ? " shape-diamond" : "";
     const stackClass = box.stacked ? " is-stacked" : "";
-    el.className = "diagram-box" + variantClass + compactClass + shapeClass + stackClass + (box.isPlaceholder ? " missing-content" : "");
+    const attachClass = box.attachLeft ? " attach-left" : "";
+    const squareClass = box.square ? " square-corners" : "";
+    const verticalClass = box.vertical ? " vertical-text" : "";
+    el.className = "diagram-box" + variantClass + compactClass + shapeClass + stackClass + attachClass + squareClass + verticalClass + (box.isPlaceholder ? " missing-content" : "");
     el.style.left = pctX(box.pos.left);
     el.style.top = pct(box.pos.top);
     el.style.width = pctX(box.pos.width);
@@ -628,8 +631,17 @@
       return Math.min(MAX_NATURAL_WIDTH, Math.max(MIN_NATURAL_WIDTH, availableWidth()));
     }
 
+    // Views whose horizontal coordinate space exceeds 100 (the wider Level 2
+    // layouts) make the canvas itself wider, rather than squeezing the whole
+    // diagram down — so every box keeps the same physical size across views
+    // and the extra width just scrolls. At currentMaxX === 100 this is a
+    // no-op (fullW === naturalWidth()).
+    function fullWidth() {
+      return (naturalWidth() * currentMaxX) / 100;
+    }
+
     function fitZoom() {
-      return Math.max(ABSOLUTE_MIN_ZOOM, Math.min(1, availableWidth() / naturalWidth()));
+      return Math.max(ABSOLUTE_MIN_ZOOM, Math.min(1, availableWidth() / fullWidth()));
     }
 
     // natH/natCropH: the full slide's height at this width, and the
@@ -638,12 +650,13 @@
     function applyZoom() {
       zoom = Math.max(ABSOLUTE_MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
       const natW = naturalWidth();
+      const fullW = fullWidth();
       const natH = (natW * 6858) / 12192;
       const natCropH = natH * currentCropRatio;
-      crop.style.width = Math.round(natW) + "px";
+      crop.style.width = Math.round(fullW) + "px";
       crop.style.height = Math.round(natCropH) + "px";
       crop.style.transform = Math.abs(zoom - 1) < 0.005 ? "" : `scale(${zoom})`;
-      sizer.style.width = Math.round(natW * zoom) + "px";
+      sizer.style.width = Math.round(fullW * zoom) + "px";
       sizer.style.height = Math.round(natCropH * zoom) + "px";
       zoomLevelEl.textContent = Math.round(zoom * 100) + "%";
       zoomInBtn.disabled = zoom >= MAX_ZOOM - 0.001;
