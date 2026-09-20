@@ -1165,15 +1165,20 @@
       if (!dwelt) return;
     }
 
-    // Fully lit, and the last leg has closed the loop back to the start. Drop
-    // the dimming so the finished diagram reads as a whole again, and leave the
-    // route glowing until the visitor stops or replays it.
+    // Fully lit. Drop the dimming so the finished diagram reads as a whole
+    // again, and leave the route glowing until the visitor stops or replays it.
     stage.classList.remove("tour-running");
     stage.classList.add("tour-complete");
     tourState.running = false;
     tourState.finished = true;
     setTourControls("finished");
-    setCaption("Walkthrough complete — " + steps.length + " steps, and the loop closes back to the start.", true);
+    // Only views that really loop back (feedback paths, or a last step that
+    // returns to an earlier box, as IMP's does) say so; a straight-through
+    // view like Level 3 shouldn't claim a loop it doesn't have.
+    const lastBox = steps[steps.length - 1].box;
+    const closesLoop = ((data && data.feedbackPaths) || []).length > 0 ||
+      steps.slice(0, -1).some((s) => s.box === lastBox);
+    setCaption("Walkthrough complete — " + steps.length + " steps" + (closesLoop ? ", and the loop closes back to the start." : "."), true);
   }
 
   if (tourPlayBtn) {

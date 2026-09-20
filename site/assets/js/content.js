@@ -776,6 +776,8 @@ const TPRAF_CONTENT = {
   imp: {
     title: "Overview of IMP Components",
     subtitle: "Level 2 — Integrated Modelling Platform",
+    // Leads on to the Level 3 example module (see the `level3` view below).
+    next: { key: "level3", label: "See the Level 3 example: from rainfall to transport disruption" },
     status: "Redrawn to match the source component map (level_2_slide_12.png) — the slide's own colours, groupings, blocks and connector routing, including its KEY panel. Wording for most steps is still coming from DARe.",
     legend: [
       ["tool", "Tool"],
@@ -971,6 +973,94 @@ const TPRAF_CONTENT = {
       "imp-soft-adaptation",
       "imp-hard-adaptation",
       "imp-hydrological-model"
+    ]
+  },
+
+  /* Level 3 — the one exemplar module for the September milestone.
+     Built from DARe's North East flood case study (Ford & Schooling, LCRIG
+     Innovation and Learning Festival, June 2026 — slides "Flood simulation
+     process" to "Impact quantification"): a rainfall event drives a flood
+     simulation, the flood maps drive a transport model, and the resulting
+     disruption is analysed with and without travellers adapting.
+     Every popup is worded from that deck; nothing is added. The step ORDER
+     follows the deck's slide order and is awaiting DARe's confirmation, and
+     "Impact quantification" has no explanation in the deck, so it stays a
+     placeholder. This replaces an earlier Asset/Network Evaluation shell that
+     was waiting on DARe's Miro board. */
+  level3: {
+    title: "From Rainfall to Transport Disruption",
+    subtitle: "Level 3 — Example module (Integrated Modelling Platform) · North East flood case study · Draft for DARe to confirm",
+    status: "Built from DARe's North East flood case study (Ford & Schooling, LCRIG Innovation and Learning Festival, June 2026). The step order follows that presentation and is awaiting DARe's confirmation.",
+    legend: [
+      ["climate", "Hazard model (flood simulation)"],
+      ["tool", "Transport model"],
+      ["io", "Input or output"]
+    ],
+    boxes: [
+      { id: "l3-rainfall", label: "Rainfall events", startHere: true, pos: { left: 4, top: 45, width: 15, height: 8 }, text: "Rainfall events generated from UKCP18-Local (UK Climate Projections), used to drive the flood simulation. Two rainfall cases were tested: Case 1 has a broader spatial extent, and Case 2 a more spatially concentrated rainfall structure. Each case was run for a current and a future scenario.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-dtm", label: "DTM", pos: { left: 4, top: 15, width: 15, height: 8 }, text: "Digital terrain model (DTM): terrain data used as an input to the CityCAT flood simulation.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-green-spaces", label: "Green Spaces", pos: { left: 4, top: 25, width: 15, height: 8 }, text: "Green space data used as an input to the CityCAT flood simulation.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-buildings", label: "Buildings", pos: { left: 4, top: 35, width: 15, height: 8 }, text: "Building data used as an input to the CityCAT flood simulation.", isPlaceholder: false, handbookUrl: "#" },
+
+      { id: "l3-citycat", label: "CityCAT", pos: { left: 28, top: 30, width: 14, height: 8 }, text: "The flood simulation model (one of the hazard models in the framework). It takes the rainfall, terrain, green space and building inputs and simulates surface water flooding.", isPlaceholder: false, handbookUrl: "#", variant: "model-green" },
+      { id: "l3-settings", label: "Simulation settings", pos: { left: 28, top: 44, width: 14, height: 8 }, text: "Each flood run is set up with three choices: the duration of the rainfall event, the duration of the flood simulation, and the output frequency.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-flood-maps", label: "Flood Maps", pos: { left: 48, top: 30, width: 14, height: 8 }, text: "The spatio-temporal evolution of surface water flooding, generated from UKCP18-Local rainfall. Case 1 leads to relatively more widespread but relatively shallow inundation, whereas Case 2 is characterised by deeper water depth, resulting in more severe but localised flooding.", isPlaceholder: false, handbookUrl: "#" },
+
+      { id: "l3-matsim", label: "MATSim", pos: { left: 74, top: 29, width: 20, height: 10 }, text: "A multimodal agent-based transport model. In the North East case study it simulates around 200,000 travellers (\"agents\") moving across the network while the flood develops.", isPlaceholder: false, handbookUrl: "#", variant: "tool" },
+
+      { id: "l3-disruption", label: "Road network disruption", pos: { left: 5, top: 74, width: 18, height: 10 }, text: "The time evolution of road network disruption under the two rainfall cases, including the number, percentage and total length of roads affected (>0.01 m) and flooded (>0.3 m). Rainfall Case 2 leads to higher numbers and proportions of roads flooded (>300 mm), indicating more severe and localised disruption. Rainfall Case 1, with a broader spatial extent, affects a larger proportion of the road network at shallow flood depths (>1 mm), suggesting more widespread but generally less severe impacts.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-iteration-0", label: "Iteration 0: no adaptation", pos: { left: 32, top: 70, width: 20, height: 8 }, text: "The agents face the rainfall event without the possibility of adapting their behaviour (e.g., change route, avoid travelling) to the flooding event.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-learning", label: "Learning: agents adapt", pos: { left: 32, top: 80, width: 20, height: 8 }, text: "Random agents (20% in each iteration) try different alternatives (e.g., routes, starting times) over a set number of iterations (e.g., 500, 1000) and use previous knowledge to avoid flooded or congested areas.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-impact-quantification", label: "Impact quantification", pos: { left: 62, top: 74, width: 18, height: 10 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" }
+    ],
+
+    containers: [
+      { id: "l3-climate-bg", variant: "imp-climate", pos: { left: 2, top: 12, width: 64, height: 45 } },
+      { id: "l3-impact-bg", variant: "imp-social", pos: { left: 2, top: 66, width: 80, height: 28 } },
+      { id: "l3-behaviour-subgroup", style: "dashed", pos: { left: 30, top: 68, width: 24, height: 22 } }
+    ],
+
+    headings: [
+      { id: "l3-climate-heading", label: "Climate Scenario, Weather Variables & Hazard Models", pos: { left: 2, top: 8, width: 64, height: 4 } },
+      { id: "l3-impact-heading", label: "Transport Impact Analysis (IMP applied)", pos: { left: 2, top: 62, width: 80, height: 4 } }
+    ],
+
+    arrows: [
+      { from: { x: 23.5, y: 34 }, to: { x: 28, y: 34 } },     // shared input line -> CityCAT
+      { from: { x: 35, y: 44 }, to: { x: 35, y: 38 } },       // Simulation settings -> CityCAT
+      { from: { x: 42, y: 34 }, to: { x: 48, y: 34 } },       // CityCAT -> Flood Maps
+      { from: { x: 62, y: 34 }, to: { x: 74, y: 34 } }        // Flood Maps -> MATSim
+    ],
+
+    elbowPaths: [
+      // The four inputs join one line into CityCAT (a shared bus: only the
+      // final arrow above carries a head).
+      { points: [ { x: 19, y: 19 }, { x: 23.5, y: 19 }, { x: 23.5, y: 34 } ], head: false },   // DTM
+      { points: [ { x: 19, y: 29 }, { x: 23.5, y: 29 }, { x: 23.5, y: 34 } ], head: false },   // Green Spaces
+      { points: [ { x: 19, y: 39 }, { x: 23.5, y: 39 }, { x: 23.5, y: 34 } ], head: false },   // Buildings
+      { points: [ { x: 19, y: 49 }, { x: 23.5, y: 49 }, { x: 23.5, y: 34 } ], head: false },   // Rainfall events
+      // MATSim into the impact-analysis group, along the gap between the rows.
+      { points: [ { x: 84, y: 39 }, { x: 84, y: 59.5 }, { x: 14, y: 59.5 }, { x: 14, y: 62 } ] },
+      // Disruption -> the two behaviour runs -> impact quantification.
+      { points: [ { x: 23, y: 79 }, { x: 27, y: 79 }, { x: 27, y: 74 }, { x: 32, y: 74 } ] },
+      { points: [ { x: 23, y: 79 }, { x: 27, y: 79 }, { x: 27, y: 84 }, { x: 32, y: 84 } ] },
+      { points: [ { x: 52, y: 74 }, { x: 57, y: 74 }, { x: 57, y: 79 }, { x: 62, y: 79 } ] },
+      { points: [ { x: 52, y: 84 }, { x: 57, y: 84 }, { x: 57, y: 79 }, { x: 62, y: 79 } ] }
+    ],
+
+    tour: [
+      "l3-rainfall",
+      "l3-dtm",
+      "l3-green-spaces",
+      "l3-buildings",
+      "l3-settings",
+      "l3-citycat",
+      "l3-flood-maps",
+      "l3-matsim",
+      "l3-disruption",
+      "l3-iteration-0",
+      "l3-learning",
+      "l3-impact-quantification"
     ]
   }
 
