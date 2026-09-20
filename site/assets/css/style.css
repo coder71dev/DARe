@@ -693,6 +693,19 @@ a { color: var(--color-sky); }
 .diagram-guide-swatch.swatch-leaf { background: var(--color-leaf); }
 .diagram-guide-swatch.swatch-io { background: var(--color-white); border: 2px solid var(--color-water); }
 
+/* IMP's key is the source slide's own nine-entry key (domain, not process),
+   so the legend reproduces those swatch colours rather than the brand four.
+   The pale ones carry a hairline outline purely so they stay visible against
+   the white guide card — the source's own key swatches do the same. */
+.diagram-guide-swatch.swatch-tool { background: #000000; }
+.diagram-guide-swatch.swatch-social { background: #f2f2f2; border: 1px solid #c9c9c9; }
+.diagram-guide-swatch.swatch-threshold { background: #f2cfee; border: 1px solid #d9a8d4; }
+.diagram-guide-swatch.swatch-climate { background: #d9f2d0; border: 1px solid #a8d9a0; }
+.diagram-guide-swatch.swatch-demand { background: #dceaf7; border: 1px solid #a8c8e0; }
+.diagram-guide-swatch.swatch-supply { background: #fbe3d6; border: 1px solid #e0b8a0; }
+.diagram-guide-swatch.swatch-freight { background: #fef3e2; border: 1px solid #e0cfa8; }
+.diagram-guide-swatch.swatch-adapt { background: #f0ffff; border: 1px solid #a8dcdc; }
+
 .diagram-guide-swatch.swatch-dot {
   width: 9px;
   height: 9px;
@@ -743,12 +756,25 @@ a { color: var(--color-sky); }
    it stays compact. It used to dock top-right, which worked while the
    stage showed the full source-PPTX canvas (empty margin up there), but
    once the stage got cropped to its actual content that corner had real
-   boxes in it. Bottom-right stays clear in both Simple and Extended (the
-   last row of boxes on the right side always ends well above the diagram's
+   boxes in it. Bottom-right stays clear in Simple and Extended (the last
+   row of boxes on the right side always ends well above the diagram's
    cropped bottom edge — Outcome Assessment in Simple, Cost benefit/
-   Portfolio/Outcome Assessment in Extended), so it floats there instead. */
+   Portfolio/Outcome Assessment in Extended) and in DSP, so it floats there
+   by default. */
 .diagram-viewport {
   position: relative;
+}
+
+/* IMP is the exception: its layout is the source slide's own, and the slide
+   puts its Hard Adaptation box in exactly the bottom-right corner this
+   widget docks to — which covered the end of its label at every width below
+   ~1440px. The source leaves its bottom-left corner empty (the hazard block
+   stops short of it, and the adaptation loop's return line runs across at
+   the top of it), so for this one view the widget docks there instead. The
+   viewport carries data-view = the active view's key for this. */
+.diagram-viewport[data-view="imp"] .zoom-controls {
+  left: 1.5rem;
+  right: auto;
 }
 
 .zoom-controls {
@@ -988,6 +1014,27 @@ a { color: var(--color-sky); }
   border-radius: 0 0 14px 14px;
 }
 
+/* IMP cluster backgrounds — the fills from level_2_slide_12.png itself.
+   Unlike the DSP clusters these have no outline and no title bar: the slide
+   draws a plain tinted block and writes the domain's name straight inside
+   it, so the domain name is a transparent heading rather than a colour bar.
+   A few of the slide's blocks are L-shaped (the demand spine runs on down
+   past the wide block; the climate block widens out below its first box),
+   which is why some are split into two overlapping divs — same fill, no
+   border, so the join is invisible. */
+.diagram-cluster-bg.variant-imp-demand { background: #dceaf7; border: none; }
+.diagram-cluster-bg.variant-imp-supply { background: #fbe3d6; border: none; }
+.diagram-cluster-bg.variant-imp-freight { background: #fef3e2; border: none; }
+.diagram-cluster-bg.variant-imp-climate { background: #d9f2d0; border: none; }
+.diagram-cluster-bg.variant-imp-threshold { background: #f2cfee; border: none; }
+.diagram-cluster-bg.variant-imp-social { background: #f2f2f2; border: none; }
+.diagram-cluster-bg.variant-imp-adapt { background: #f0ffff; border: none; }
+
+/* The adaptation block on the slide is a ring, not a solid block: an inner
+   rectangle is left white. Painted after the block above at the same
+   stacking level, so it reads as a cut-out. */
+.diagram-cluster-bg.variant-imp-cover { background: var(--color-white); border: none; border-radius: 0; }
+
 .diagram-box {
   position: absolute;
   display: flex;
@@ -1106,6 +1153,21 @@ a { color: var(--color-sky); }
   border-color: var(--color-water-faint);
   color: var(--color-water);
 }
+
+/* IMP box colours — the source component map's own per-domain palette
+   (level_2_slide_12.png), reproduced exactly rather than re-tinted into
+   brand colours, so the diagram reads as the slide does. Plain white (the
+   default .diagram-box styling) is the slide's "Input / Output" fill and
+   needs no variant. */
+.diagram-box.variant-tool { background: #156082; border-color: #0d4159; color: var(--color-white); }
+.diagram-box.variant-model-green { background: #196b24; border-color: #0f4717; color: var(--color-white); }
+.diagram-box.variant-threshold-magenta { background: #a02b93; border-color: #71206a; color: var(--color-white); }
+.diagram-box.variant-passenger-red { background: #c00000; border-color: #8b0000; color: var(--color-white); }
+.diagram-box.variant-multi-orange { background: #e97132; border-color: #b5541f; color: var(--color-white); }
+.diagram-box.variant-freight-sand { background: #f0ce78; border-color: #c9a445; color: #3d2f08; }
+.diagram-box.variant-adapt-teal { background: #007d7a; border-color: #005c5a; color: var(--color-white); }
+.diagram-box.variant-grey-box { background: #bfbfbf; border-color: #6f6f6f; color: #333333; }
+.diagram-box.variant-cyan-box { background: #cdffff; border-color: #156082; color: var(--color-water); }
 
 /* DSP's "Selection/Screened list" decision point — a diamond in the
    source diagram, via clip-path rather than rotation so the label stays
@@ -1226,6 +1288,41 @@ a { color: var(--color-sky); }
 .diagram-heading.variant-c4 { background: #b0e0a0; color: var(--color-water); }
 .diagram-heading.variant-c5 { background: #f8e0b0; color: var(--color-water); }
 .diagram-heading.variant-c6 { background: #88b0c0; color: var(--color-white); }
+
+/* The source slide's KEY panel, drawn on the canvas. It sits in the one
+   block the rest of the diagram leaves empty, and it is the same
+   non-clickable heading element the cluster titles use — the key is a
+   reference, not a step, so it never opens a popup. */
+.diagram-heading.variant-key-title {
+  font-size: clamp(0.9rem, 1.6vw, 1.5rem);
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+}
+
+.diagram-heading.variant-key-tool,
+.diagram-heading.variant-key-io,
+.diagram-heading.variant-key-social,
+.diagram-heading.variant-key-threshold,
+.diagram-heading.variant-key-climate,
+.diagram-heading.variant-key-demand,
+.diagram-heading.variant-key-supply,
+.diagram-heading.variant-key-freight,
+.diagram-heading.variant-key-adapt {
+  border-radius: 6px;
+  padding: 0.15rem 0.3rem;
+  font-size: clamp(0.6rem, 0.9vw, 0.94rem);
+  line-height: 1.12;
+}
+
+.diagram-heading.variant-key-tool { background: #000000; color: var(--color-white); }
+.diagram-heading.variant-key-io { background: var(--color-white); color: #333333; border: 1px solid #156082; }
+.diagram-heading.variant-key-social { background: #f2f2f2; }
+.diagram-heading.variant-key-threshold { background: #f2cfee; }
+.diagram-heading.variant-key-climate { background: #d9f2d0; }
+.diagram-heading.variant-key-demand { background: #dceaf7; }
+.diagram-heading.variant-key-supply { background: #fbe3d6; }
+.diagram-heading.variant-key-freight { background: #fef3e2; }
+.diagram-heading.variant-key-adapt { background: #f0ffff; }
 
 /* Plain text labels (Risk Mitigation / Feedback loop) — no pill/background,
    matching the source PPTX's plain bold caption style. */

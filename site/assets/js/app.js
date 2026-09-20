@@ -232,7 +232,11 @@
     line.setAttribute("y2", arrow.to.y);
     line.setAttribute("stroke", COLOR_NAVY);
     line.setAttribute("stroke-width", "0.18");
-    line.setAttribute("marker-end", "url(#arrowhead)");
+    // A connector that is only a leg of a shared bus (see "head: false" in
+    // content.js) draws no arrowhead of its own — the single head sits at the
+    // far end of the run instead, so the branch reads as one arrival rather
+    // than several overlapping ones.
+    if (arrow.head !== false) line.setAttribute("marker-end", "url(#arrowhead)");
     // Some source-diagram connectors (e.g. DSP's within-cluster steps) are
     // double-headed, showing free back-and-forth rather than one-way flow.
     if (arrow.bidirectional) line.setAttribute("marker-start", "url(#arrowhead)");
@@ -261,7 +265,7 @@
     polyline.setAttribute("fill", "none");
     polyline.setAttribute("stroke", COLOR_NAVY);
     polyline.setAttribute("stroke-width", "0.18");
-    polyline.setAttribute("marker-end", "url(#arrowhead)");
+    if (elbow.head !== false) polyline.setAttribute("marker-end", "url(#arrowhead)");
     if (elbow.bidirectional) polyline.setAttribute("marker-start", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(polyline, elbow.group, "main"));
     recordConnector(polyline, "main", elbow.points);
@@ -312,9 +316,11 @@
 
   // Simple's boxes are all generously sized; Extended packs in smaller,
   // narrower ones (e.g. width ~9-10%, height ~6.8%) where the default font/
-  // padding budget doesn't leave room for longer wrapped labels.
+  // padding budget doesn't leave room for longer wrapped labels. A view can
+  // also ask for it explicitly (box.compact), for a box that clears the size
+  // rule above but still carries more text than the default size fits.
   function isCompactBox(box) {
-    return box.pos.width < 12 || box.pos.height < 8;
+    return box.compact === true || box.pos.width < 12 || box.pos.height < 8;
   }
 
   function makeBoxEl(box) {
@@ -371,6 +377,10 @@
     el.style.top = pct(container.pos.top);
     el.style.width = pctX(container.pos.width);
     el.style.height = pct(container.pos.height);
+    // A block whose corners differ from the 14px default (IMP's L-shaped
+    // clusters, where only the outer end of the run is rounded) states its
+    // own radius rather than needing a class per combination.
+    if (container.radius) el.style.borderRadius = container.radius;
     if (container.group) el.dataset.group = container.group;
     return el;
   }
@@ -556,6 +566,10 @@
 
     titleEl.textContent = data.title;
     subtitleEl.textContent = data.subtitle;
+    // Lets CSS adapt page furniture to a specific view's geometry — the zoom
+    // widget docks bottom-left on IMP, whose bottom-right corner is occupied
+    // by a box from the source slide (see style.css).
+    stageWrap.parentElement.dataset.view = viewKey;
     guideEl.hidden = false;
     guideBody.innerHTML = buildGuideBody(data);
 

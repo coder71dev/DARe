@@ -754,143 +754,223 @@ const TPRAF_CONTENT = {
     ]
   },
 
-  /* Level 2 — IMP components. Built 20 Sept. Same redesign basis as the
-     DSP diagram above — source slide 12 is a flat screenshot with its own
-     colour-per-domain key (Transport Demand/Supply/Freight/Climate/Social/
-     Threshold/Adaptation, each a different colour, plus Tool=black vs
-     Input/Output=white). That many colours doesn't fit the brand's 4-colour
-     palette, so domain identity is kept through the labelled cluster
-     backgrounds (same as DSP and Level 1 Extended) while box colour is
-     simplified to the same navy/sky/leaf/white legend as DSP, so the two
-     Level 2 diagrams read as one consistent system. */
+  /* Level 2 — IMP components. Redrawn 20 Sept from level_2_slide_12.png as a
+     direct reproduction rather than a brand-palette reinterpretation: the
+     slide's own box colours (its key runs Tool / Input-Output plus one colour
+     per modelling domain), its own cluster blocks and their shapes, its
+     connector routing, and its KEY panel all appear here as drawn. The slide
+     is a flat pasted screenshot with no extractable shape geometry, so every
+     position below was measured off the image itself — one pixel scan per
+     fill colour, each bounding box converted into the 0-100 slide space the
+     renderer works in.
+
+     Two consequences of that worth knowing before editing:
+     - The KEY panel is built from containers plus headings, not boxes. It is
+       a reference, so it must not look like something you can click into.
+     - The slide's blocks are unlabelled tints with the domain's name written
+       inside them, so those names are transparent headings here rather than
+       the colour-bar titles DSP uses. Three of the blocks aren't plain
+       rectangles — the demand and climate blocks are L-shaped and the
+       adaptation block is a ring — so they are assembled from overlapping
+       divs plus a white cut-out; see the containers array. */
   imp: {
     title: "Overview of IMP Components",
     subtitle: "Level 2 — Integrated Modelling Platform",
-    status: "Redesigned from the source component map in brand colors — box color shows tool vs. input/output, groups show which modelling domain each step belongs to. Wording for most steps is still coming from DARe.",
+    status: "Redrawn to match the source component map (level_2_slide_12.png) — the slide's own colours, groupings, blocks and connector routing, including its KEY panel. Wording for most steps is still coming from DARe.",
     legend: [
-      ["navy", "Tool or model step"],
-      ["sky", "Final adaptation output"],
-      ["leaf", "Key convergence point"],
-      ["io", "Input or output artefact"]
+      ["tool", "Tool"],
+      ["io", "Input / Output"],
+      ["social", "Social Behavioural Impacts"],
+      ["demand", "Transport Demand"],
+      ["threshold", "Transport-specific Threshold"],
+      ["supply", "Transport Supply"],
+      ["climate", "Climate Scenario, Weather Variables & Hazard Models"],
+      ["freight", "Freight"],
+      ["adapt", "Adaptation Measures"]
     ],
+
     boxes: [
-      // Transport Demand cluster (top right)
-      { id: "imp-ntem", label: "National Trip End Model (NTEM)", startHere: true, pos: { left: 61, top: 15, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "imp-building-dev-model", label: "Building Development Model", pos: { left: 79, top: 15, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "imp-projected-population", label: "Projected Synthetic Population", pos: { left: 61, top: 25, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      // Climate Scenario, Weather Variables & Hazard Models (bottom left).
+      { id: "imp-atmospheric-fields", label: "Atmospheric fields, soil fields, sea surface temperature etc.", startHere: true, compact: true, pos: { left: 3.04, top: 49.16, width: 13.22, height: 9.52 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-ukcp18-modelling", label: "UKCP18-Local Modelling of the atmosphere", pos: { left: 3.27, top: 65.27, width: 12.99, height: 7.42 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "model-green" },
+      { id: "imp-weather-event", label: "Weather Event", pos: { left: 3.19, top: 78.43, width: 13.07, height: 5.04 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-heat-model", label: "Heat Model", pos: { left: 21.25, top: 74.23, width: 8.4, height: 4.62 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "model-green" },
+      { id: "imp-hydrological-model", label: "Hydrological Model", pos: { left: 21.25, top: 82.35, width: 8.4, height: 4.62 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "model-green" },
+      { id: "imp-temporal-temp-maps", label: "Temporal air and surface temperature maps", pos: { left: 32.06, top: 67.37, width: 8.95, height: 12.74 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-temporal-flood-maps", label: "Temporal flood maps", pos: { left: 32.22, top: 81.93, width: 8.79, height: 5.04 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
 
-      // Main spine
-      { id: "imp-activity-plans", label: "Activity Plans Assignment", pos: { left: 61, top: 38, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-synthetic-travel-demand", label: "Synthetic Travel Demand", pos: { left: 61, top: 48, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-passenger-transport-model", label: "Passenger Transport Model", pos: { left: 61, top: 58, width: 16, height: 7 }, text: "The central simulation step — brings together transport demand, transport supply/freight, and weather/hazard effects to model how passenger journeys are actually made and disrupted.", isPlaceholder: true, handbookUrl: "#", variant: "leaf", highlight: true },
-      { id: "imp-impact-assessment", label: "Impact Assessment / Performance Metrics", pos: { left: 61, top: 69, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-adaptation-measures", label: "Adaptation Measures", pos: { left: 80, top: 69, width: 15, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky" },
+      // Social behavioural impacts and the travel-demand threshold.
+      { id: "imp-weather-trip-decisions", label: "Weather impacts on trip decisions", pos: { left: 31.13, top: 37.96, width: 8.79, height: 7.84 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "grey-box" },
+      { id: "imp-transport-specific-threshold", label: "Transport-Specific Threshold", pos: { left: 30.51, top: 53.08, width: 8.79, height: 7.14 }, text: "Analysis of the impacts of weather conditions (e.g., rain, heat) on different modes of transport (e.g., car, public transport, active modes).", isPlaceholder: false, handbookUrl: "#", variant: "threshold-magenta" },
 
-      // Social Behavioural Impacts cluster
-      { id: "imp-weather-trip-decisions", label: "Weather Impacts on Trip Decisions", pos: { left: 5, top: 43, width: 24, height: 7 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      // Transport Demand (top right), running down the spine.
+      { id: "imp-ntem", label: "National Trip End Model (NTEM)", pos: { left: 57.12, top: 4.9, width: 9.81, height: 4.62 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "tool" },
+      { id: "imp-building-dev-model", label: "Building Development Model", pos: { left: 81.09, top: 14.43, width: 14.16, height: 4.62 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "tool" },
+      { id: "imp-projected-population", label: "Projected Synthetic Population", pos: { left: 56.19, top: 24.79, width: 11.75, height: 5.04 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "tool" },
+      { id: "imp-activity-plans", label: "Activity Plans assignment", pos: { left: 57.51, top: 39.64, width: 9.18, height: 4.62 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "tool" },
+      { id: "imp-synthetic-travel-demand", label: "Synthetic travel demand", pos: { left: 57.12, top: 50.28, width: 9.73, height: 5.04 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
 
-      // Transport-Specific Threshold cluster
-      { id: "imp-transport-specific-threshold", label: "Transport-Specific Threshold", pos: { left: 5, top: 59, width: 24, height: 7 }, text: "Analysis of the impacts of weather conditions (e.g., rain, heat) on different modes of transport (e.g., car, public transport, active modes).", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      // Transport supply and freight — two separate blocks in the source.
+      { id: "imp-transport-network", label: "Transport Network", pos: { left: 47.08, top: 66.81, width: 8.1, height: 5.04 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-multimodal-network", label: "Multi-modal Network", pos: { left: 47.08, top: 74.65, width: 8.1, height: 4.62 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "multi-orange" },
+      { id: "imp-freight-transport-model", label: "Freight Transport Model", pos: { left: 58.52, top: 78.71, width: 7.16, height: 6.86 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "freight-sand" },
 
-      // Climate Scenario, Weather Variables & Hazard Models cluster
-      { id: "imp-atmospheric-fields", label: "Atmospheric Fields, Soil Fields, Sea Surface Temperature etc.", pos: { left: 4, top: 75, width: 15, height: 8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-ukcp18-modelling", label: "UKCP18-Local Modelling of the Atmosphere", pos: { left: 4, top: 85, width: 15, height: 6 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "imp-weather-event", label: "Weather Event", pos: { left: 4, top: 92, width: 15, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-heat-model", label: "Heat Model", pos: { left: 21, top: 85, width: 12, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "imp-hydrological-model", label: "Hydrological Model", pos: { left: 21, top: 92, width: 12, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "imp-temporal-temp-maps", label: "Temporal Air and Surface Temperature Maps", pos: { left: 35, top: 85, width: 17, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-temporal-flood-maps", label: "Temporal Flood Maps", pos: { left: 35, top: 92, width: 17, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-
-      // Transport Supply & Freight cluster
-      { id: "imp-transport-network", label: "Transport Network", pos: { left: 58, top: 85, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-multimodal-network", label: "Multi-modal Network", pos: { left: 58, top: 92, width: 16, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "imp-freight-transport-model", label: "Freight Transport Model", pos: { left: 76, top: 85, width: 16, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-
-      // Adaptation Measures (options) cluster
-      { id: "imp-soft-adaptation", label: "Soft Adaptation — e.g. Early Warning", pos: { left: 82, top: 44, width: 14, height: 8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "imp-hard-adaptation", label: "Hard Adaptation — e.g. Green/Grey Infrastructure", pos: { left: 82, top: 54, width: 14, height: 8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" }
+      // The convergence point, then appraisal and the adaptation outputs.
+      { id: "imp-passenger-transport-model", label: "Passenger Transport Model", pos: { left: 58.52, top: 65.13, width: 7.16, height: 8.4 }, text: "The central simulation step — brings together transport demand, transport supply/freight, and weather/hazard effects to model how passenger journeys are actually made and disrupted.", isPlaceholder: true, handbookUrl: "#", variant: "passenger-red" },
+      { id: "imp-impact-assessment", label: "Impact Assessment/\nPerformance Metrics", pos: { left: 70.58, top: 66.95, width: 12.61, height: 4.9 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-adaptation-measures", label: "Adaptation Measures", pos: { left: 88.79, top: 66.39, width: 7.32, height: 6.16 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "adapt-teal" },
+      { id: "imp-soft-adaptation", label: "Soft Adaptation\ne.g. early warning", pos: { left: 71.52, top: 50.56, width: 18.05, height: 4.76 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "cyan-box" },
+      { id: "imp-hard-adaptation", label: "Hard Adaptation\ne.g. green/grey infrastructure", pos: { left: 71.52, top: 91.6, width: 18.05, height: 4.76 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "cyan-box" }
     ],
 
+    /* Painted in array order, so a later block covers an earlier one — that
+       is how the L-shapes and the adaptation ring are assembled. The two
+       halves of an L overlap by roughly a unit so the join can't show. */
     containers: [
-      { id: "imp-transport-demand-bg", pos: { left: 58, top: 8, width: 39, height: 26 } },
-      { id: "imp-social-behavioural-bg", pos: { left: 2, top: 38, width: 30, height: 14 } },
-      { id: "imp-threshold-bg", pos: { left: 2, top: 54, width: 30, height: 14 } },
-      { id: "imp-climate-bg", pos: { left: 2, top: 70, width: 52, height: 28 } },
-      { id: "imp-supply-freight-bg", pos: { left: 56, top: 80, width: 40, height: 18 } },
-      { id: "imp-adaptation-options-bg", pos: { left: 80, top: 38, width: 18, height: 26 } }
+      // The slide's own dashed key outline. The swatches inside it are
+      // headings (see below), not containers.
+      { id: "imp-key-bg", style: "dashed", pos: { left: 2.3, top: 2.8, width: 44.2, height: 32.2 } },
+
+      // Transport Demand: the wide block, then the spine continuing down
+      // through Activity Plans assignment and Synthetic travel demand.
+      { id: "imp-demand-bg", variant: "imp-demand", radius: "14px 14px 14px 0", pos: { left: 55.6, top: 1.6, width: 42.4, height: 32.9 } },
+      { id: "imp-demand-spine-bg", variant: "imp-demand", radius: "0 0 14px 14px", pos: { left: 55.6, top: 33.0, width: 12.4, height: 24.5 } },
+
+      { id: "imp-social-bg", variant: "imp-social", pos: { left: 23.74, top: 35.71, width: 17.43, height: 12.33 } },
+      { id: "imp-threshold-bg", variant: "imp-threshold", pos: { left: 23.81, top: 50.3, width: 17.44, height: 12.5 } },
+
+      // Climate Scenario, Weather Variables & Hazard Models: narrow at the
+      // top (the two boxes above the hazard models), widening below them.
+      { id: "imp-climate-top-bg", variant: "imp-climate", radius: "14px 14px 0 0", pos: { left: 2.1, top: 45.38, width: 14.9, height: 20.6 } },
+      { id: "imp-climate-bg", variant: "imp-climate", radius: "0 0 14px 14px", pos: { left: 2.1, top: 64.0, width: 40.7, height: 27.0 } },
+
+      { id: "imp-supply-bg", variant: "imp-supply", pos: { left: 45.21, top: 64.15, width: 11.6, height: 26.85 } },
+      { id: "imp-freight-bg", variant: "imp-freight", pos: { left: 57.82, top: 76.05, width: 9.18, height: 14.85 } },
+
+      // The adaptation block is a ring: the band runs across the top, down
+      // the right-hand side and across the bottom, with the middle left
+      // white. The cut-out is painted over the tint to carve it out.
+      { id: "imp-adapt-bg", variant: "imp-adapt", pos: { left: 69.96, top: 48.74, width: 26.93, height: 49.86 } },
+      { id: "imp-adapt-cutout", variant: "imp-cover", pos: { left: 69.96, top: 58.8, width: 17.59, height: 27.7 } }
     ],
 
     headings: [
-      { id: "imp-transport-demand-heading", label: "Transport Demand", pos: { left: 58, top: 9, width: 39, height: 4 } },
-      { id: "imp-social-behavioural-heading", label: "Social Behavioural Impacts", pos: { left: 2, top: 38, width: 30, height: 4 } },
-      { id: "imp-threshold-heading", label: "Transport-Specific Threshold", pos: { left: 2, top: 54, width: 30, height: 4 } },
-      { id: "imp-climate-heading", label: "Climate Scenario, Weather Variables & Hazard Models", pos: { left: 2, top: 70, width: 52, height: 4 } },
-      { id: "imp-supply-freight-heading", label: "Transport Supply & Freight", pos: { left: 56, top: 80, width: 40, height: 4 } },
-      { id: "imp-adaptation-options-heading", label: "Adaptation Measures (Options)", pos: { left: 80, top: 39, width: 18, height: 8 } }
+      // The KEY panel: its title, then the nine swatches of the slide's key.
+      { id: "imp-key-title", label: "KEY", variant: "key-title", pos: { left: 20.0, top: 3.0, width: 8.0, height: 4.6 } },
+      { id: "imp-key-tool", label: "Tool", variant: "key-tool", pos: { left: 3.19, top: 9.66, width: 13.07, height: 5.19 } },
+      { id: "imp-key-io", label: "Input / Output", variant: "key-io", pos: { left: 3.19, top: 15.55, width: 13.07, height: 4.9 } },
+      { id: "imp-key-social", label: "Social Behavioural Impacts", variant: "key-social", pos: { left: 17.67, top: 9.52, width: 13.46, height: 5.19 } },
+      { id: "imp-key-threshold", label: "Transport-specific Threshold", variant: "key-threshold", pos: { left: 17.67, top: 15.83, width: 13.38, height: 5.04 } },
+      { id: "imp-key-climate", label: "Climate Scenario, Weather Variables & Hazard Models", variant: "key-climate", pos: { left: 17.67, top: 21.99, width: 13.38, height: 8.54 } },
+      { id: "imp-key-demand", label: "Transport Demand", variant: "key-demand", pos: { left: 32.06, top: 9.8, width: 13.39, height: 5.19 } },
+      { id: "imp-key-supply", label: "Transport Supply", variant: "key-supply", pos: { left: 32.22, top: 15.69, width: 13.38, height: 5.18 } },
+      { id: "imp-key-freight", label: "Freight", variant: "key-freight", pos: { left: 32.06, top: 21.85, width: 13.47, height: 5.18 } },
+      { id: "imp-key-adapt", label: "Adaptation Measures", variant: "key-adapt", pos: { left: 32.06, top: 27.59, width: 13.47, height: 5.46 } },
+
+      // Each block's domain name, written inside the block itself — plain
+      // text, no bar behind it, as on the slide.
+      { id: "imp-demand-heading", label: "Transport Demand", pos: { left: 74.0, top: 30.0, width: 14.0, height: 3.6 } },
+      { id: "imp-social-heading", label: "Social Behavioural Impacts", pos: { left: 23.9, top: 37.6, width: 7.1, height: 8.6 } },
+      { id: "imp-threshold-heading", label: "Transport-Specific Threshold", pos: { left: 23.9, top: 52.5, width: 6.5, height: 7.4 } },
+      { id: "imp-climate-heading", label: "Climate Scenario, Weather Variables & Hazard Models", pos: { left: 4.4, top: 83.4, width: 12.6, height: 7.5 } },
+      { id: "imp-supply-heading", label: "Transport supply", pos: { left: 45.4, top: 81.4, width: 11.2, height: 5.6 } },
+      { id: "imp-freight-heading", label: "Freight", pos: { left: 57.9, top: 85.6, width: 9.0, height: 4.4 } },
+      { id: "imp-adapt-heading", label: "Adaptation Measures", pos: { left: 71.6, top: 87.8, width: 17.8, height: 3.6 } }
     ],
 
     arrows: [
-      { from: { x: 69, y: 21 }, to: { x: 69, y: 25 } },     // NTEM -> Projected Synthetic Population
-      { from: { x: 69, y: 31 }, to: { x: 69, y: 38 } },     // Projected Synthetic Population -> Activity Plans
-      { from: { x: 69, y: 44 }, to: { x: 69, y: 48 } },     // Activity Plans -> Synthetic Travel Demand
-      { from: { x: 69, y: 54 }, to: { x: 69, y: 58 } },     // Synthetic Travel Demand -> Passenger Transport Model
-      { from: { x: 69, y: 65 }, to: { x: 69, y: 69 } },     // Passenger Transport Model -> Impact Assessment
-      { from: { x: 77, y: 72 }, to: { x: 80, y: 72 } },     // Impact Assessment -> Adaptation Measures
-      { from: { x: 11.5, y: 83 }, to: { x: 11.5, y: 85 } }, // Atmospheric fields -> UKCP18 modelling
-      { from: { x: 11.5, y: 91 }, to: { x: 11.5, y: 92 } }, // UKCP18 modelling -> Weather Event
-      { from: { x: 33, y: 88 }, to: { x: 35, y: 88 } },     // Heat Model -> Temporal air/surface maps
-      { from: { x: 33, y: 94.5 }, to: { x: 35, y: 94.5 } }, // Hydrological Model -> Temporal flood maps
-      { from: { x: 66, y: 92 }, to: { x: 66, y: 91 } }      // Multi-modal Network -> Transport Network
+      // Transport demand down its spine.
+      { from: { x: 61.95, y: 9.52 }, to: { x: 61.95, y: 24.79 } },    // NTEM -> Projected Synthetic Population
+      { from: { x: 62.02, y: 29.83 }, to: { x: 62.02, y: 39.64 } },   // Projected Synthetic Population -> Activity Plans assignment
+      { from: { x: 62.02, y: 44.26 }, to: { x: 62.02, y: 50.28 } },   // Activity Plans assignment -> Synthetic travel demand
+      { from: { x: 39.92, y: 41.9 }, to: { x: 57.51, y: 41.9 } },     // Weather impacts on trip decisions -> Activity Plans assignment
+      { from: { x: 62.02, y: 55.32 }, to: { x: 62.02, y: 65.13 } },   // Synthetic travel demand -> Passenger Transport Model
+      { from: { x: 71.52, y: 52.9 }, to: { x: 66.85, y: 52.9 } },     // Soft Adaptation -> Synthetic travel demand
+
+      // The hazard chain and its two map outputs.
+      { from: { x: 9.65, y: 58.68 }, to: { x: 9.65, y: 65.27 } },     // Atmospheric fields -> UKCP18-Local modelling
+      { from: { x: 9.73, y: 72.69 }, to: { x: 9.73, y: 78.43 } },     // UKCP18-Local modelling -> Weather Event
+      { from: { x: 29.65, y: 76.54 }, to: { x: 32.06, y: 76.54 } },   // Heat Model -> Temporal air and surface temperature maps
+      { from: { x: 29.65, y: 84.66 }, to: { x: 32.22, y: 84.66 } },   // Hydrological Model -> Temporal flood maps
+
+      // Supply and freight into the passenger model.
+      { from: { x: 51.13, y: 74.65 }, to: { x: 51.13, y: 71.85 } },   // Multi-modal Network -> Transport Network
+      { from: { x: 55.18, y: 69.33 }, to: { x: 58.52, y: 69.33 } },   // Transport Network -> Passenger Transport Model
+      { from: { x: 61.73, y: 76.05 }, to: { x: 61.73, y: 73.53 } },   // Freight Transport Model -> Passenger Transport Model
+
+      // Appraisal, then the adaptation outputs.
+      { from: { x: 65.68, y: 69.4 }, to: { x: 70.58, y: 69.4 } },     // Passenger Transport Model -> Impact Assessment/Performance Metrics
+      { from: { x: 83.19, y: 69.4 }, to: { x: 88.79, y: 69.4 } },     // Impact Assessment/Performance Metrics -> Adaptation Measures
+
+      // The adaptation loop's riser into the Transport supply block. The
+      // loop itself is an elbowPath; its other riser lands on the hazard
+      // block's lower edge.
+      { from: { x: 50.9, y: 93.98 }, to: { x: 50.9, y: 91.0 } }       // Hard Adaptation loop -> Transport supply
     ],
 
     elbowPaths: [
-      { points: [ { x: 77, y: 18 }, { x: 87, y: 18 }, { x: 87, y: 21 } ] },                                    // NTEM -> Building Development Model
-      { points: [ { x: 87, y: 21 }, { x: 87, y: 28 }, { x: 77, y: 28 } ] },                                    // Building Development Model -> Projected Synthetic Population
-      { points: [ { x: 29, y: 46.5 }, { x: 45, y: 46.5 }, { x: 45, y: 41 }, { x: 61, y: 41 } ] },              // Weather impacts on trip decisions -> Activity Plans
-      { points: [ { x: 29, y: 62.5 }, { x: 45, y: 62.5 }, { x: 45, y: 88 }, { x: 58, y: 88 } ] },              // Transport-Specific Threshold -> Transport Network
-      { points: [ { x: 19, y: 88 }, { x: 21, y: 88 } ] },                                                     // UKCP18 modelling -> Heat Model
-      { points: [ { x: 19, y: 94.5 }, { x: 21, y: 94.5 } ] },                                                 // Weather Event -> Hydrological Model
-      { points: [ { x: 52, y: 88 }, { x: 55, y: 88 }, { x: 55, y: 91 }, { x: 58, y: 91 } ] },                  // Temporal maps -> Transport Network
-      { points: [ { x: 74, y: 88 }, { x: 74, y: 61.5 }, { x: 61, y: 61.5 } ] },                                // Transport Network -> Passenger Transport Model
-      { points: [ { x: 84, y: 85 }, { x: 84, y: 65 }, { x: 69, y: 65 } ] },                                    // Freight Transport Model -> Passenger Transport Model
-      // Adaptation measures loop back into the upstream demand/hazard
-      // assumptions they influence — plain navy, matching the source (no
-      // distinct feedback colour in the IMP diagram, unlike Level 1/DSP).
-      { points: [ { x: 82, y: 48 }, { x: 79, y: 48 }, { x: 79, y: 51 }, { x: 77, y: 51 } ] },                  // Soft Adaptation -> Synthetic Travel Demand
-      { points: [ { x: 89, y: 62 }, { x: 89, y: 99 }, { x: 27, y: 99 }, { x: 27, y: 98 } ] }                   // Hard Adaptation -> Climate/Hazard modelling
+      // Transport Demand's own loop out to the Building Development Model
+      // and back into Projected Synthetic Population.
+      { points: [ { x: 66.93, y: 7.1 }, { x: 88.09, y: 7.1 }, { x: 88.09, y: 14.43 } ] },                        // NTEM -> Building Development Model
+      { points: [ { x: 88.09, y: 19.05 }, { x: 88.09, y: 27.31 }, { x: 67.94, y: 27.31 } ] },                    // Building Development Model -> Projected Synthetic Population
+
+      // Weather Event splits four ways: up the shared riser into Social
+      // Behavioural Impacts and on to the threshold, and out to the two
+      // hazard models.
+      { points: [ { x: 16.26, y: 80.9 }, { x: 18.0, y: 80.9 }, { x: 18.0, y: 41.9 }, { x: 23.74, y: 41.9 } ] },  // Weather Event -> Social Behavioural Impacts
+      { points: [ { x: 16.26, y: 80.9 }, { x: 18.0, y: 80.9 }, { x: 18.0, y: 56.66 }, { x: 23.81, y: 56.66 } ] },// Weather Event -> Transport-Specific Threshold
+      { points: [ { x: 16.26, y: 80.9 }, { x: 18.68, y: 80.9 }, { x: 18.68, y: 76.54 }, { x: 21.25, y: 76.54 } ] },  // Weather Event -> Heat Model
+      { points: [ { x: 16.26, y: 80.9 }, { x: 18.68, y: 80.9 }, { x: 18.68, y: 84.66 }, { x: 21.25, y: 84.66 } ] },  // Weather Event -> Hydrological Model
+
+      // The threshold and both map outputs share one vertical bus down into
+      // Transport Network — so only the run that arrives carries a head
+      // (head: false on the legs that merely join it), otherwise the bus
+      // would sprout three separate arrowheads.
+      { points: [ { x: 39.3, y: 56.66 }, { x: 43.97, y: 56.66 }, { x: 43.97, y: 69.33 }, { x: 47.08, y: 69.33 } ] },  // Transport-Specific Threshold -> Transport Network
+      { points: [ { x: 43.97, y: 56.66 }, { x: 43.97, y: 84.45 } ], head: false },                              // the bus
+      { points: [ { x: 41.01, y: 73.74 }, { x: 43.97, y: 73.74 } ], head: false },                               // Temporal air and surface temperature maps -> bus
+      { points: [ { x: 41.01, y: 84.45 }, { x: 43.97, y: 84.45 } ], head: false },                               // Temporal flood maps -> bus
+
+      // Adaptation Measures feeds both options; Hard Adaptation's learning
+      // then loops back onto the hazard models it was built from and onto
+      // the transport supply network.
+      { points: [ { x: 92.3, y: 66.39 }, { x: 92.3, y: 52.94 }, { x: 89.57, y: 52.94 } ] },                     // Adaptation Measures -> Soft Adaptation
+      { points: [ { x: 92.3, y: 72.55 }, { x: 92.3, y: 93.98 }, { x: 89.57, y: 93.98 } ] },                     // Adaptation Measures -> Hard Adaptation
+      { points: [ { x: 71.52, y: 93.98 }, { x: 24.4, y: 93.98 }, { x: 24.4, y: 91.0 } ] }                       // Hard Adaptation -> Climate Scenario, Weather Variables & Hazard Models
     ],
 
-    /* Demand chain top-down, then Transport Supply & Freight, then the
-       climate/hazard chain, then the two adaptation loops that feed learning
-       back into the start of the chain. The parallel inputs (the two
-       adaptation options, Weather Impacts on Trip Decisions, the
-       Transport-Specific Threshold) sit on their own with no arrow into them,
-       so they are highlighted in turn. */
+    /* The hazard chain first — it is the diagram's most upstream input, and
+       it is what the adaptation loop closes back onto. Then transport demand
+       down its spine, supply and freight into the passenger model, appraisal,
+       and the two adaptation options. The closing leg is Hard Adaptation's
+       loop back into the hazard models, so the walk ends on a lit loop rather
+       than stopping halfway. Where two consecutive steps have no connector
+       between them (the parallel inputs), the step is highlighted in turn
+       rather than a connection being invented. */
     tour: [
+      "imp-atmospheric-fields",
+      "imp-ukcp18-modelling",
+      "imp-weather-event",
+      "imp-heat-model",
+      "imp-temporal-temp-maps",
+      "imp-hydrological-model",
+      "imp-temporal-flood-maps",
       "imp-ntem",
       "imp-building-dev-model",
       "imp-projected-population",
       "imp-weather-trip-decisions",
       "imp-activity-plans",
       "imp-synthetic-travel-demand",
+      "imp-transport-specific-threshold",
+      "imp-transport-network",
+      "imp-multimodal-network",
+      "imp-freight-transport-model",
       "imp-passenger-transport-model",
       "imp-impact-assessment",
       "imp-adaptation-measures",
       "imp-soft-adaptation",
       "imp-hard-adaptation",
-      "imp-transport-specific-threshold",
-      "imp-transport-network",
-      "imp-multimodal-network",
-      "imp-freight-transport-model",
-      "imp-atmospheric-fields",
-      "imp-ukcp18-modelling",
-      "imp-heat-model",
-      "imp-temporal-temp-maps",
-      "imp-weather-event",
-      "imp-hydrological-model",
-      "imp-temporal-flood-maps",
-      { box: "imp-synthetic-travel-demand", via: { from: "imp-soft-adaptation", to: "imp-synthetic-travel-demand" } },
-      { box: "imp-hydrological-model", via: { from: "imp-hard-adaptation", to: "imp-hydrological-model" } }
+      "imp-hydrological-model"
     ]
   }
 
