@@ -1671,3 +1671,462 @@ a { color: var(--color-sky); }
 }
 
 .modal-handbook-link[hidden] { display: none; }
+
+/* ---------- Guided tour (Level 3) ---------- */
+/* A product-style onboarding tour: the page dims, a spotlight is cut out around
+   the box being explained, and a card is placed beside that box with an arrow
+   pointing at it. Positions are set by app.js. Nothing here exists on a view
+   without a tour: the launcher strip, spotlight and card all stay hidden. */
+
+.lesson-launch[hidden] { display: none; }
+
+/* The spotlight: a box the size of the target whose enormous shadow dims the
+   rest of the page. Clicks pass straight through it, so the diagram stays
+   usable (clicking another box jumps the tour to it). */
+.tour-spot {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 45;
+  border-radius: 12px;
+  box-shadow: 0 0 0 3px rgba(94, 207, 112, 0.95), 0 0 0 200vmax rgba(0, 41, 94, 0.62);
+  pointer-events: none;
+  will-change: transform, width, height;
+}
+
+.tour-spot[hidden] { display: none; }
+
+/* No target (the welcome and closing cards): dim everything, no ring. */
+.tour-spot.is-empty { box-shadow: 0 0 0 200vmax rgba(0, 41, 94, 0.62); }
+
+/* The card. Fixed and moved with a transform so it can follow the box. */
+.lesson-card {
+  --arrow-offset: 28px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 46;
+  display: flex;
+  flex-direction: column;
+  width: min(390px, calc(100vw - 1.5rem));
+  max-height: calc(100vh - 1.5rem);
+  max-height: calc(100dvh - 1.5rem);
+  padding: 1rem 1.15rem 0;
+  border-radius: 16px;
+  background: var(--color-white);
+  color: var(--color-water);
+  box-shadow: 0 18px 50px rgba(0, 41, 94, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+.lesson-card[hidden] { display: none; }
+.lesson-card.is-ready { opacity: 1; pointer-events: auto; }
+
+/* The arrow: a rotated square on the edge facing the box. */
+.lesson-card::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--color-white);
+  transform: rotate(45deg);
+  display: none;
+}
+
+.lesson-card[data-placement="right"]::before { display: block; left: -8px; top: calc(var(--arrow-offset) - 8px); }
+.lesson-card[data-placement="left"]::before { display: block; right: -8px; top: calc(var(--arrow-offset) - 8px); }
+.lesson-card[data-placement="bottom"]::before { display: block; top: -8px; left: calc(var(--arrow-offset) - 8px); }
+.lesson-card[data-placement="top"]::before { display: block; bottom: -8px; left: calc(var(--arrow-offset) - 8px); }
+
+/* One segment per step: covered ones green, the current one navy. */
+.lesson-progress {
+  display: flex;
+  gap: 3px;
+  margin: 0 2.2rem 0.6rem 0;
+}
+
+.lesson-progress-seg {
+  flex: 1 1 0;
+  height: 14px;
+  padding: 5px 0;
+  border: none;
+  background: var(--color-stone);
+  background-clip: content-box;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.lesson-progress-seg.is-done { background-color: var(--color-leaf); }
+.lesson-progress-seg.is-current { background-color: var(--color-water); }
+.lesson-progress-seg:hover { filter: brightness(0.92); }
+
+/* Skip the tour. */
+.lesson-close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.65rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-stone);
+  cursor: pointer;
+}
+
+.lesson-close::before,
+.lesson-close::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.85rem;
+  height: 2px;
+  margin: -1px 0 0 -0.425rem;
+  background: var(--color-water);
+  transform: rotate(45deg);
+}
+
+.lesson-close::after { transform: rotate(-45deg); }
+.lesson-close:hover { background: #d3d3d3; }
+
+/* The text scrolls on its own if a step is taller than the screen; the arrow
+   and the Back/Next bar stay put. */
+.lesson-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 0.4rem;
+}
+
+.lesson-stage {
+  display: inline-block;
+  align-self: flex-start;
+  margin: 0 0 0.45rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  background: var(--color-stone);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.lesson-stage[data-stage="climate"] { background: rgba(94, 207, 112, 0.28); }
+.lesson-stage[data-stage="transport"] { background: var(--color-water); color: var(--color-white); }
+.lesson-stage[data-stage="impact"] { background: var(--color-stone); }
+
+.lesson-title {
+  margin: 0 0 0.7rem;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--color-water);
+}
+
+.lesson-figure { margin: 0 0 0.85rem; }
+.lesson-figure[hidden] { display: none; }
+
+.lesson-figure-grid { display: grid; gap: 6px; }
+.lesson-figure-grid.is-pair { grid-template-columns: 1fr 1fr; }
+.lesson-figure-item { margin: 0; }
+
+.lesson-figure-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--color-stone);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-white);
+  cursor: zoom-in;
+}
+
+.lesson-figure-btn img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 12rem;
+  object-fit: contain;
+}
+
+.lesson-figure-item figcaption {
+  margin-top: 0.25rem;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-water-muted);
+}
+
+.lesson-caption {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-water-muted);
+}
+
+.lesson-text {
+  margin: 0 0 0.75rem;
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.lesson-example {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-left: 4px solid var(--color-leaf);
+  border-radius: 0 8px 8px 0;
+  background: rgba(94, 207, 112, 0.14);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.lesson-example[hidden],
+.lesson-credit[hidden],
+.lesson-card .placeholder-note[hidden] { display: none; }
+
+.lesson-credit {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-water-muted);
+}
+
+.lesson-card .placeholder-note {
+  align-self: flex-start;
+  margin: 0 0 0.75rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--color-stone);
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+/* Welcome card: the three stages, in the same colours as the step tags. */
+.lesson-stage-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+
+.lesson-stage-list li {
+  counter-increment: stage;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--color-stone);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.lesson-stage-list li::before { content: counter(stage) ". "; }
+.lesson-stage-list li[data-stage="climate"] { background: rgba(94, 207, 112, 0.28); }
+.lesson-stage-list li[data-stage="transport"] { background: var(--color-water); color: var(--color-white); }
+
+.lesson-extra { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+
+.lesson-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-sky);
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+}
+
+.lesson-handbook { margin-top: 0.25rem; align-self: flex-start; }
+
+.lesson-nav {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0 -1.15rem;
+  padding: 0.7rem 1.15rem 0.9rem;
+  border-top: 1px solid var(--color-stone);
+  border-radius: 0 0 16px 16px;
+  background: var(--color-white);
+}
+
+.lesson-btn {
+  flex: 0 0 auto;
+  border: none;
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.3rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.lesson-btn[hidden] { display: none; }
+
+.lesson-btn-back {
+  background: var(--color-stone);
+  color: var(--color-water);
+}
+
+.lesson-btn-next {
+  flex: 1 1 auto;
+  background: var(--color-water);
+  color: var(--color-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.lesson-btn-next.has-arrow::after { content: " \2192"; }
+.lesson-btn:hover { filter: brightness(1.12); }
+.lesson-btn:focus-visible,
+.lesson-close:focus-visible,
+.lesson-progress-seg:focus-visible,
+.lesson-figure-btn:focus-visible {
+  outline: 3px solid var(--color-sky);
+  outline-offset: 2px;
+}
+
+/* While the tour runs, the boxes it hasn't reached yet are only softened, not
+   hidden: the page is already dimmed, so fading them further would make the
+   diagram unreadable. Covered boxes keep their green ring. */
+.diagram-stage.is-lesson.tour-running .diagram-box { opacity: 0.85; }
+.diagram-stage.is-lesson.tour-running .diagram-box.tour-visited,
+.diagram-stage.is-lesson.tour-running .diagram-box.tour-focus { opacity: 1; }
+
+/* Full-size picture. */
+.lesson-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 41, 94, 0.82);
+}
+
+.lesson-lightbox[hidden] { display: none; }
+
+.lesson-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  background: var(--color-white);
+  border-radius: 8px;
+}
+
+.lesson-lightbox-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-water);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-card { transition: none; }
+}
+
+/* On a phone the card shares a short screen with the diagram, so pictures are
+   kept shorter to leave room for the explanation under them. */
+@media (max-width: 760px) {
+  .lesson-figure-btn img { max-height: 8.5rem; }
+  .lesson-title { font-size: 1.15rem; margin-bottom: 0.5rem; }
+}
+
+/* ---------- DSP-only / IMP-only explanation: the peek sheet ---------- */
+/* Only the diagram page's panel carries .process-sheet; the home page's copy
+   keeps the plain in-flow styling above (it is never shown there). */
+.process-panel.process-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  width: min(720px, calc(100vw - 1.5rem));
+  max-width: none;
+  max-height: 70vh;
+  max-height: 70dvh;
+  margin: 0 auto;
+  padding: 0.95rem 1.2rem 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Opaque, so the diagram doesn't show through: the brand's blue tint laid
+     over white. */
+  background: linear-gradient(var(--color-sky-tint-bg), var(--color-sky-tint-bg)), var(--color-white);
+  border: 1px solid var(--color-sky-tint-border);
+  border-top: 4px solid var(--color-leaf);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 41, 94, 0.3);
+  animation: sheet-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+}
+
+.process-panel.process-sheet[hidden] { display: none; }
+
+/* A colour cue that matches the diagram's legend: DSP steps are the sky-blue
+   boxes, IMP steps the navy ones. */
+.process-sheet[data-process="dsp"] { border-top-color: var(--color-sky); }
+.process-sheet[data-process="imp"] { border-top-color: var(--color-water); }
+
+@keyframes sheet-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+.process-sheet h2 { padding-right: 2.4rem; } /* clear of the close button */
+
+/* Peek: the first sentence or two. Opened: everything. */
+.process-sheet:not(.is-expanded) #process-panel-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.process-sheet-more { display: none; }
+
+.process-sheet.is-expanded .process-sheet-more {
+  display: block;
+  margin-top: 0.65rem;
+  color: var(--color-water);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.process-sheet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.1rem;
+  margin-top: 0.7rem;
+}
+
+.process-sheet-actions .process-panel-explore { margin-top: 0; }
+
+.process-sheet-toggle {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-water);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.process-sheet-toggle[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .process-panel.process-sheet { animation: none; }
+}

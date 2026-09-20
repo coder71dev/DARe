@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="Rain falling on a district, with flood water gathering in the low ground"><title>Rain falling on a district, with flood water gathering in the low ground</title><style>text{font-family:Calibri,"Segoe UI",Arial,sans-serif;fill:#00295e}
+    .d{animation:fall 1.6s linear infinite;opacity:0}
+    @keyframes fall{0%{opacity:0;transform:translateY(0)}15%{opacity:1}100%{opacity:0;transform:translateY(78px)}}
+    .w{transform-box:fill-box;transform-origin:50% 100%;animation:fill 6s ease-in-out infinite}
+    @keyframes fill{0%{transform:scaleY(.05)}55%,80%{transform:scaleY(1)}100%{transform:scaleY(.05)}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important}}</style><rect width="320" height="180" fill="#f2f6fb"/>
+    <path d="M0 122 H92 C108 122 112 150 128 150 H192 C208 150 212 118 228 118 H320 V180 H0Z" fill="#0096ff" opacity=".18"/>
+    <rect class="w" x="106" y="118" width="108" height="32" fill="#0096ff" opacity=".6"/>
+    <path d="M0 122 H92 C108 122 112 150 128 150 H192 C208 150 212 118 228 118 H320 V180 H0Z" fill="none" stroke="#00295e" stroke-width="2"/>
+    <rect x="18" y="96" width="22" height="26" rx="2" fill="#00295e"/>
+    <rect x="46" y="86" width="20" height="36" rx="2" fill="#00295e"/>
+    <rect x="246" y="92" width="24" height="26" rx="2" fill="#00295e"/>
+    <rect x="276" y="100" width="20" height="18" rx="2" fill="#00295e"/>
+    <circle cx="70" cy="114" r="8" fill="#5ecf70"/>
+    <circle cx="228" cy="112" r="7" fill="#5ecf70"/>
+    <path d="M40 14 q-14 0 -14 -8 q0 -7 10 -7 q4 -9 16 -6 q9 -6 18 2 q10 0 10 8 q0 11 -12 11z" transform="translate(120 12)" fill="#e6e6e6" stroke="#00295e" stroke-width="1.5"/>
+    <line class="d" style="animation-delay:0.00s" x1="28" y1="18" x2="24" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.37s" x1="53" y1="18" x2="49" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.74s" x1="78" y1="18" x2="74" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:1.11s" x1="103" y1="18" x2="99" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:1.48s" x1="128" y1="18" x2="124" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.25s" x1="153" y1="18" x2="149" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.62s" x1="178" y1="18" x2="174" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.99s" x1="203" y1="18" x2="199" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:1.36s" x1="228" y1="18" x2="224" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.13s" x1="253" y1="18" x2="249" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.50s" x1="278" y1="18" x2="274" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/><line class="d" style="animation-delay:0.87s" x1="303" y1="18" x2="299" y2="34" stroke="#0096ff" stroke-width="2.2" stroke-linecap="round"/>
+    <text x="14" y="172" font-size="11" opacity=".7">rain in, flood water out</text>
+    </svg>

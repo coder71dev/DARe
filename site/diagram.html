@@ -74,6 +74,15 @@
     </div>
   </div>
 
+  <!-- Guided tour launcher. Shown only on a view that has a tour (Level 3). -->
+  <div class="diagram-tour lesson-launch" id="lesson-launch" hidden>
+    <button type="button" class="tour-play" id="lesson-start">
+      <span class="tour-play-icon" aria-hidden="true"></span>
+      <span id="lesson-start-label">Take the guided tour</span>
+    </button>
+    <p class="tour-caption" id="lesson-launch-caption">Or click any box to have it explained.</p>
+  </div>
+
   <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
   <div class="diagram-viewport">
     <div class="zoom-controls" role="group" aria-label="Zoom diagram">
@@ -95,6 +104,37 @@
     </div>
   </div>
 
+  <!-- Guided tour (Level 3 only): the page dims, a spotlight cuts out around the
+       current box, and this card is placed next to that box with an arrow
+       pointing at it. Both are positioned by app.js and stay hidden on every
+       other view. -->
+  <div class="tour-spot" id="tour-spot" aria-hidden="true" hidden></div>
+  <aside class="lesson-card" id="lesson-card" role="dialog" aria-label="Guided tour" hidden>
+    <div class="lesson-progress" id="lesson-progress"></div>
+    <button type="button" class="lesson-close" id="lesson-close" aria-label="Skip the tour"></button>
+    <div class="lesson-body" id="lesson-body">
+      <p class="lesson-stage" id="lesson-stage"></p>
+      <h2 class="lesson-title" id="lesson-title"></h2>
+      <div class="lesson-figure" id="lesson-figure" hidden></div>
+      <p class="lesson-text" id="lesson-text" aria-live="polite"></p>
+      <p class="lesson-example" id="lesson-example" hidden></p>
+      <p class="lesson-credit" id="lesson-credit" hidden></p>
+      <span class="placeholder-note" id="lesson-placeholder-note" hidden>Awaiting final text from DARe</span>
+      <div class="lesson-extra" id="lesson-extra"></div>
+      <a class="modal-handbook-link lesson-handbook" id="lesson-handbook" href="#" hidden>Take me to the Handbook &rarr;</a>
+    </div>
+    <div class="lesson-nav">
+      <button type="button" class="lesson-btn lesson-btn-back" id="lesson-back">&larr; Back</button>
+      <button type="button" class="lesson-btn lesson-btn-next" id="lesson-next">Start</button>
+    </div>
+  </aside>
+
+  <!-- Full-size view of a tour picture. -->
+  <div class="lesson-lightbox" id="lesson-lightbox" role="dialog" aria-modal="true" aria-label="Enlarged picture" hidden>
+    <button type="button" class="lesson-lightbox-close" id="lesson-lightbox-close" aria-label="Close picture">&times;</button>
+    <img id="lesson-lightbox-img" alt="" />
+  </div>
+
   <!-- Sits below the diagram, not above it: the simple form should be read
        first and this offered as the way on, rather than pulling visitors
        past the thing they came for. Populated per view from content.js. -->
@@ -105,10 +145,22 @@
        DSP/IMP shoved the diagram (and whatever the visitor was looking at)
        down the page, off-screen on a phone. Down here it can never move
        the diagram at all. -->
-  <div class="process-panel" id="process-panel" hidden>
+  <!-- DSP-only / IMP-only explanation. A bottom sheet rather than a block in the
+       page flow: in the flow it sat below the diagram where nobody saw it open,
+       and above the diagram it would push the diagram off screen. Fixed to the
+       bottom of the screen it appears where the visitor is already looking
+       (they have just pressed a button), covers nothing permanently (it can be
+       closed, and the page gains matching space underneath), and starts as a
+       short peek that opens to the full text. Filled in by app.js. -->
+  <div class="process-panel process-sheet" id="process-panel" role="region" aria-labelledby="process-panel-title" hidden>
+    <button type="button" class="lesson-close process-sheet-close" id="process-panel-close" aria-label="Close this explanation"></button>
     <h2 id="process-panel-title"></h2>
     <p id="process-panel-text"></p>
-    <a class="process-panel-explore" id="process-panel-explore" href="#" hidden></a>
+    <div class="process-sheet-more" id="process-panel-more"></div>
+    <div class="process-sheet-actions">
+      <button type="button" class="process-sheet-toggle" id="process-panel-toggle" aria-expanded="false" aria-controls="process-panel-more" hidden>Read more</button>
+      <a class="process-panel-explore" id="process-panel-explore" href="#" hidden></a>
+    </div>
   </div>
 
   <div class="modal-backdrop" id="modal-backdrop" hidden>

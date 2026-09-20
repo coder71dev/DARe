@@ -28,6 +28,11 @@
   const processPanelTitle = document.getElementById("process-panel-title");
   const processPanelText = document.getElementById("process-panel-text");
   const processPanelExplore = document.getElementById("process-panel-explore");
+  // The diagram page's panel is a bottom sheet with these extras; the home
+  // page's copy has none of them and is never shown.
+  const processPanelMore = document.getElementById("process-panel-more");
+  const processPanelToggle = document.getElementById("process-panel-toggle");
+  const processPanelClose = document.getElementById("process-panel-close");
   const processBtnDsp = document.getElementById("process-btn-dsp");
   const processBtnImp = document.getElementById("process-btn-imp");
   const processBtnAll = document.getElementById("process-btn-all");
@@ -74,8 +79,10 @@
   });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
+    const popupWasOpen = !modalBackdrop.hidden;
     closeModal();
     if (tourState.running) stopTour();
+    if (!popupWasOpen) hideProcessSheet();
   });
 
   function pct(n) {
@@ -92,6 +99,7 @@
 
   let currentCropRatio = 1; // fraction of the full 0-100 stage height that's actually visible
   let refreshZoom = function () {}; // replaced with the real thing once setupZoomControls runs
+  let setZoomLevel = function () {}; // likewise: sets an exact zoom (the guided tour uses it on phones)
 
   // The source PPTX's box/label positions are percentages of the *full
   // slide*, but most views only use the middle portion of it vertically —
@@ -346,8 +354,17 @@
     if (box.group) el.dataset.group = box.group;
     if (box.rotate) el.style.setProperty("--box-rotate", box.rotate + "deg");
     if (box.startHere) el.classList.add("is-start");
-    el.addEventListener("click", () => openModal(box));
+    el.addEventListener("click", () => onBoxClick(box));
     return el;
+  }
+
+  // On a view with a tour (Level 3), a box starts the tour at its step, or moves
+  // a running tour to it; everywhere else it opens the popup exactly as before.
+  function onBoxClick(box) {
+    const index = lessonStepIndexOfBox(box.id);
+    if (index < 0) openModal(box);
+    else if (lessonState.running) lessonGoTo(index, index === lessonState.index + 1);
+    else startLesson(index);
   }
 
   function makeLabelEl(label) {
@@ -470,8 +487,13 @@
       ? " Or press <strong>Play walkthrough</strong> to watch the steps light up in order, and see how the diagram loops back on itself."
       : "";
 
+    // A lesson view is read with the step card, not by opening popups.
+    const hint = data.lesson
+      ? "Press <strong>Take the guided tour</strong> to have each step explained in turn, or click any box to have just that one explained."
+      : "Click any box or label to see its full detail." + toggleHint + tourHint;
+
     return `
-      <p class="diagram-guide-hint">Click any box or label to see its full detail.${toggleHint}${tourHint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
+      <p class="diagram-guide-hint">${hint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
       <ul class="diagram-guide-legend">${legendHtml}${dotHtml}${lineHtml}</ul>
       <p class="diagram-guide-status">${escapeHtml(status)}</p>
     `;
@@ -519,6 +541,7 @@
     [processBtnAll, processBtnDsp, processBtnImp].forEach((btn) => btn && btn.setAttribute("aria-pressed", "false"));
     if (!key) {
       processPanel.hidden = true;
+      syncProcessSheetSpace();
       if (processPanelExplore) processPanelExplore.hidden = true;
       if (processBtnAll) processBtnAll.setAttribute("aria-pressed", "true");
       applyProcessFilter();
@@ -527,7 +550,19 @@
     const info = (typeof TPRAF_DSP_IMP !== "undefined" && TPRAF_DSP_IMP[key]) || null;
     if (info) {
       processPanelTitle.textContent = info.title;
-      processPanelText.textContent = info.text;
+      // The sheet shows the first paragraph as a peek and the rest on "Read
+      // more"; without the extra elements (the home page's copy) it is all
+      // one block, as before.
+      const paragraphs = info.text.split("\n\n");
+      if (processPanelMore && processPanelToggle) {
+        processPanelText.textContent = paragraphs[0];
+        processPanelMore.textContent = paragraphs.slice(1).join("\n\n");
+        processPanelToggle.hidden = paragraphs.length < 2;
+        setProcessSheetExpanded(false);
+      } else {
+        processPanelText.textContent = info.text;
+      }
+      processPanel.dataset.process = key;
       if (processPanelExplore) {
         processPanelExplore.hidden = false;
         processPanelExplore.textContent = key === "dsp" ? "Explore the DSP component diagram →" : "Explore the IMP component diagram →";
@@ -538,11 +573,61 @@
         };
       }
       processPanel.hidden = false;
+      syncProcessSheetSpace();
+      keepDiagramAboveProcessSheet();
     }
     const activeBtn = key === "dsp" ? processBtnDsp : processBtnImp;
     if (activeBtn) activeBtn.setAttribute("aria-pressed", "true");
     applyProcessFilter();
   }
+
+  /* The sheet is fixed to the bottom of the screen, so the page is given the
+     same amount of room underneath (nothing on the page is ever unreachable
+     behind it), and it is scrolled just enough that the toggle and the top of
+     the diagram stay in the part of the screen above the sheet. */
+  function isProcessSheet() {
+    return processPanel.classList.contains("process-sheet");
+  }
+
+  function syncProcessSheetSpace() {
+    document.body.style.paddingBottom = isProcessSheet() && !processPanel.hidden ? processPanel.offsetHeight + 16 + "px" : "";
+  }
+
+  function keepDiagramAboveProcessSheet() {
+    if (!isProcessSheet() || !processToggle) return;
+    const toggle = processToggle.getBoundingClientRect();
+    const diagramTop = stageWrap.getBoundingClientRect().top;
+    const sheetTop = processPanel.getBoundingClientRect().top;
+    // Want at least a decent strip of the diagram showing above the sheet, with
+    // the buttons that were just pressed still on screen; otherwise bring the
+    // buttons to the top of the screen, which lifts the diagram up with them.
+    if (toggle.top < 0 || diagramTop > sheetTop - 250) {
+      window.scrollBy({ top: toggle.top - 8, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    }
+  }
+
+  function setProcessSheetExpanded(expanded) {
+    processPanel.classList.toggle("is-expanded", expanded);
+    if (processPanelToggle) {
+      processPanelToggle.setAttribute("aria-expanded", String(expanded));
+      processPanelToggle.textContent = expanded ? "Show less" : "Read more";
+    }
+    syncProcessSheetSpace();
+  }
+
+  // Closes just the text; the DSP-only / IMP-only view stays as it is, and
+  // pressing the same button again brings the text back.
+  function hideProcessSheet() {
+    if (!isProcessSheet() || processPanel.hidden) return;
+    processPanel.hidden = true;
+    syncProcessSheetSpace();
+  }
+
+  if (processPanelToggle) {
+    processPanelToggle.addEventListener("click", () => setProcessSheetExpanded(!processPanel.classList.contains("is-expanded")));
+  }
+  if (processPanelClose) processPanelClose.addEventListener("click", hideProcessSheet);
+  window.addEventListener("resize", syncProcessSheetSpace);
 
   if (processBtnAll) processBtnAll.addEventListener("click", () => setProcessPanel(null));
   if (processBtnDsp) processBtnDsp.addEventListener("click", () => setProcessPanel("dsp"));
@@ -552,6 +637,7 @@
     // A walkthrough belongs to one view's own step order, so it can't survive
     // a switch — the boxes it's lighting up are about to be thrown away.
     if (tourState.running || tourState.finished) stopTour();
+    resetLesson();
 
     const data = TPRAF_CONTENT[viewKey];
     if (!data) {
@@ -603,6 +689,7 @@
 
     applyCropToStage(data);
     refreshZoom();
+    setupLesson(data);
 
     // Fade the new view in rather than snapping straight to it.
     stageWrap.classList.remove("is-entering");
@@ -778,6 +865,11 @@
     window.addEventListener("resize", applyZoom);
 
     refreshZoom = applyZoom;
+    setZoomLevel = function (level) {
+      zoom = level;
+      wrap.scrollLeft = 0;
+      applyZoom();
+    };
     applyZoom();
   }
 
@@ -1194,6 +1286,646 @@
   }
   if (tourRestartBtn) tourRestartBtn.addEventListener("click", () => playTour());
   if (tourStopBtn) tourStopBtn.addEventListener("click", () => stopTour());
+
+  /* ==========================================================================
+     Guided tour — the Level 3 onboarding walkthrough.
+
+     A view whose content carries a `lesson` can be taken as a product-style
+     tour: the page dims, a spotlight is cut out around the box being
+     explained, and a card is placed beside that box with an arrow pointing at
+     it. "Next" moves on, and the diagram follows along — the boxes already
+     covered stay ringed in green, and the glow travels down the arrow that
+     leads into the new step. Views without a `lesson` never touch any of this.
+
+     It leans on the walkthrough above for the visuals (focusStep, travelLeg,
+     connectorBetween, the tour-* classes) but is driven by the visitor's
+     clicks instead of a timer. A line lights once both boxes it joins have
+     been reached, which is what lights every input line into CityCAT together
+     when CityCAT is reached, while only the line from the previous step
+     animates.
+
+     The spotlight and card are measured against the box every frame while the
+     tour runs, so they stay put through scrolling, panning, zooming and
+     resizing. First-time visitors get the tour offered automatically once
+     (remembered in localStorage); after that it is one button away.
+     ========================================================================== */
+
+  const lessonLaunch = document.getElementById("lesson-launch");
+  const lessonStartBtn = document.getElementById("lesson-start");
+  const lessonStartLabel = document.getElementById("lesson-start-label");
+  const tourSpot = document.getElementById("tour-spot");
+  const lessonCard = document.getElementById("lesson-card");
+  const lessonProgress = document.getElementById("lesson-progress");
+  const lessonCloseBtn = document.getElementById("lesson-close");
+  const lessonBodyEl = document.getElementById("lesson-body");
+  const lessonStageEl = document.getElementById("lesson-stage");
+  const lessonTitleEl = document.getElementById("lesson-title");
+  const lessonFigureEl = document.getElementById("lesson-figure");
+  const lessonTextEl = document.getElementById("lesson-text");
+  const lessonExampleEl = document.getElementById("lesson-example");
+  const lessonCreditEl = document.getElementById("lesson-credit");
+  const lessonPlaceholderNote = document.getElementById("lesson-placeholder-note");
+  const lessonExtraEl = document.getElementById("lesson-extra");
+  const lessonHandbookEl = document.getElementById("lesson-handbook");
+  const lessonBackBtn = document.getElementById("lesson-back");
+  const lessonNextBtn = document.getElementById("lesson-next");
+  const lightboxEl = document.getElementById("lesson-lightbox");
+  const lightboxImg = document.getElementById("lesson-lightbox-img");
+  const lightboxClose = document.getElementById("lesson-lightbox-close");
+  const phoneQuery = window.matchMedia("(max-width: 760px)");
+
+  const LESSON_SEEN_KEY = "tpraf-level3-tour-seen";
+  const AUTO_START_TOUR = true;   // offer the tour once, on a first visit
+  const AUTO_START_DELAY = 700;   // ms — lets the page settle first
+  const PHONE_TOUR_ZOOM = 0.8;    // a box is far too small to spotlight at "fit" on a phone
+  const SPOT_PAD = 6;             // px of breathing room around the spotlighted box
+  const CARD_GAP = 14;            // px between the spotlight and the card
+  const CARD_MARGIN = 12;         // px the card keeps clear of the screen edge
+  const ARROW_INSET = 22;         // how close the arrow may sit to a card corner
+
+  // index -1 is the welcome card, `total` is the closing card.
+  const lessonState = { active: false, running: false, index: -1, total: 0 };
+  const spot = { x: 0, y: 0, w: 0, h: 0, init: false };
+  let trackFrame = 0;
+  let lastTrackTime = 0;
+  let stepStartedAt = 0;
+  let cardShown = false;
+  let autoStartTimer = 0;
+  let lightboxOpener = null;
+
+  // "?tour=1" on the page's address always offers the tour (handy for demos and
+  // for sharing a link that opens straight into it); "?tour=0" never does.
+  function tourUrlOverride() {
+    try {
+      return new URLSearchParams(window.location.search).get("tour");
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Has this visitor already finished or skipped the tour? Only then is it
+  // not offered again on its own.
+  function tourSeen() {
+    const override = tourUrlOverride();
+    if (override === "1") return false;
+    if (override === "0") return true;
+    try {
+      return localStorage.getItem(LESSON_SEEN_KEY) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function markTourSeen() {
+    try {
+      localStorage.setItem(LESSON_SEEN_KEY, "1");
+    } catch (e) {
+      /* per-viewer convenience only — fine if it can't persist */
+    }
+  }
+
+  function currentLesson() {
+    const data = TPRAF_CONTENT[currentViewKey];
+    return data && data.lesson ? data.lesson : null;
+  }
+
+  function lessonStepIndexOfBox(id) {
+    const lesson = lessonState.active ? currentLesson() : null;
+    return lesson ? lesson.steps.findIndex((step) => step.box === id) : -1;
+  }
+
+  function tourTargetEl() {
+    const lesson = currentLesson();
+    if (!lesson) return null;
+    const index = lessonState.index;
+    if (index < 0 || index >= lesson.steps.length) return null;
+    return tourBoxEl(lesson.steps[index].box);
+  }
+
+  function setupLesson(data) {
+    const lesson = data.lesson || null;
+    lessonState.active = !!lesson;
+    lessonState.running = false;
+    lessonState.index = -1;
+    lessonState.total = lesson ? lesson.steps.length : 0;
+    if (lessonLaunch) lessonLaunch.hidden = !lesson;
+    if (!lesson || !lessonCard) return;
+
+    lessonStartLabel.textContent = tourSeen() ? "Take the tour again" : "Take the guided tour";
+
+    // One segment per step; clicking one jumps there.
+    lessonProgress.textContent = "";
+    lesson.steps.forEach((step, k) => {
+      const seg = document.createElement("button");
+      seg.type = "button";
+      seg.className = "lesson-progress-seg";
+      seg.setAttribute("aria-label", "Go to step " + (k + 1) + ": " + labelForBox(data, step.box));
+      seg.addEventListener("click", () => lessonGoTo(k, k === lessonState.index + 1));
+      lessonProgress.appendChild(seg);
+    });
+
+    window.clearTimeout(autoStartTimer);
+    if (AUTO_START_TOUR && !tourSeen()) autoStartTimer = window.setTimeout(offerTour, AUTO_START_DELAY);
+  }
+
+  // Starts the tour for a first-time visitor — but only once the page is
+  // actually on screen (a tab opened in the background waits until it is
+  // looked at, rather than running the tour unseen).
+  function offerTour() {
+    if (!lessonState.active || lessonState.running || tourSeen()) return;
+    if (document.hidden) {
+      // Wait for the page to be shown. Some embedded browsers keep reporting
+      // "hidden" even while they are on screen, so a focus or a first click
+      // also counts as the page being looked at.
+      const retry = () => {
+        document.removeEventListener("visibilitychange", retry);
+        window.removeEventListener("focus", retry);
+        document.removeEventListener("pointerdown", retry);
+        offerTour();
+      };
+      document.addEventListener("visibilitychange", retry);
+      window.addEventListener("focus", retry);
+      document.addEventListener("pointerdown", retry);
+      return;
+    }
+    startLesson(-1);
+  }
+
+  // Leaving a tour view: put the diagram back the way every other view
+  // expects it (no dimming, no lit route, no overlay).
+  function resetLesson() {
+    if (!lessonState.active) return;
+    window.clearTimeout(autoStartTimer);
+    endLesson(false);
+    lessonState.active = false;
+    lessonState.index = -1;
+    if (lessonLaunch) lessonLaunch.hidden = true;
+    stage.classList.remove("is-lesson");
+    clearTourMarks();
+  }
+
+  function startLesson(index) {
+    if (!lessonState.active || !currentLesson()) return;
+    window.clearTimeout(autoStartTimer);
+    if (!lessonState.running) {
+      lessonState.running = true;
+      spot.init = false;
+      lastTrackTime = 0;
+      cardShown = false;
+      stage.classList.add("is-lesson");
+      tourSpot.hidden = false;
+      lessonCard.hidden = false;
+      lessonCard.classList.remove("is-ready");
+      // A phone shows the whole diagram tiny at "fit"; zoom in so the box being
+      // explained is big enough to see, and let the tour pan along.
+      if (phoneQuery.matches) {
+        setZoomLevel(PHONE_TOUR_ZOOM);
+      } else {
+        const fit = document.getElementById("zoom-fit");
+        if (fit) fit.click();
+      }
+      trackFrame = requestAnimationFrame(trackTour);
+    }
+    lessonGoTo(index, false);
+  }
+
+  /* Ends the tour. `keepRoute` leaves the finished diagram with its whole
+     route lit (used when the visitor reaches the end); skipping part-way
+     puts the diagram back to plain. */
+  function endLesson(keepRoute) {
+    if (!lessonState.running) return;
+    lessonState.running = false;
+    tourState.runId += 1;
+    cancelAnimationFrame(trackFrame);
+    trackFrame = 0;
+    tourSpot.hidden = true;
+    lessonCard.hidden = true;
+    lessonCard.classList.remove("is-ready");
+    closeLightbox();
+    stage.classList.remove("is-lesson");
+    if (!(keepRoute && lessonState.index >= lessonState.total)) clearTourMarks();
+    lessonState.index = -1;
+    if (lessonStartLabel) lessonStartLabel.textContent = "Take the tour again";
+    const fit = document.getElementById("zoom-fit");
+    if (fit) fit.click();
+  }
+
+  function buildLessonFigure(figure) {
+    lessonFigureEl.textContent = "";
+    lessonFigureEl.hidden = !figure;
+    if (!figure) return;
+    const grid = document.createElement("div");
+    grid.className = "lesson-figure-grid" + (figure.images.length > 1 ? " is-pair" : "");
+    figure.images.forEach((image) => {
+      const item = document.createElement("figure");
+      item.className = "lesson-figure-item";
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "lesson-figure-btn";
+      button.setAttribute("aria-label", "Enlarge picture: " + image.alt);
+      const img = document.createElement("img");
+      img.src = image.src;
+      img.alt = image.alt;
+      img.decoding = "async";
+      button.appendChild(img);
+      button.addEventListener("click", () => openLightbox(image, button));
+      item.appendChild(button);
+      if (image.label) {
+        const caption = document.createElement("figcaption");
+        caption.textContent = image.label;
+        item.appendChild(caption);
+      }
+      grid.appendChild(item);
+    });
+    lessonFigureEl.appendChild(grid);
+    if (figure.caption) {
+      const caption = document.createElement("p");
+      caption.className = "lesson-caption";
+      caption.textContent = figure.caption;
+      lessonFigureEl.appendChild(caption);
+    }
+  }
+
+  function setOptionalText(el, text) {
+    el.hidden = !text;
+    el.textContent = text || "";
+  }
+
+  function renderLessonCard() {
+    const lesson = currentLesson();
+    if (!lesson || !lessonCard) return;
+    const data = TPRAF_CONTENT[currentViewKey];
+    const total = lesson.steps.length;
+    const index = lessonState.index;
+    const isIntro = index < 0;
+    const isOutro = index >= total;
+
+    Array.from(lessonProgress.children).forEach((seg, k) => {
+      seg.classList.toggle("is-done", k < index);
+      seg.classList.toggle("is-current", k === index);
+      seg.setAttribute("aria-current", k === index ? "step" : "false");
+    });
+
+    let stageKey = "";
+    let stageText;
+    let title;
+    let text;
+    let example = "";
+    let credit = "";
+    let figure = null;
+    let handbookUrl = "";
+    let placeholder = false;
+
+    if (isIntro) {
+      stageText = "Guided tour · " + total + " short steps";
+      title = lesson.intro.title;
+      text = lesson.intro.text;
+    } else if (isOutro) {
+      stageText = "Finished";
+      title = lesson.outro.title;
+      text = lesson.outro.text;
+    } else {
+      const step = lesson.steps[index];
+      const box = data.boxes.find((b) => b.id === step.box);
+      stageKey = step.stage || "";
+      stageText = "Step " + (index + 1) + " of " + total + (lesson.stages && lesson.stages[stageKey] ? " · " + lesson.stages[stageKey] : "");
+      title = labelForBox(data, step.box);
+      text = step.text;
+      example = step.example || "";
+      credit = step.credit || "";
+      figure = step.figure || null;
+      handbookUrl = box && box.handbookUrl ? box.handbookUrl : "";
+      placeholder = !!(box && box.isPlaceholder);
+    }
+
+    lessonStageEl.textContent = stageText;
+    lessonStageEl.dataset.stage = stageKey;
+    lessonTitleEl.textContent = title;
+    buildLessonFigure(figure);
+    lessonTextEl.textContent = text;
+    setOptionalText(lessonExampleEl, example ? "In this example: " + example : "");
+    setOptionalText(lessonCreditEl, credit);
+    lessonPlaceholderNote.hidden = !placeholder;
+    lessonHandbookEl.hidden = !handbookUrl;
+    if (handbookUrl) lessonHandbookEl.href = handbookUrl;
+    lessonBodyEl.scrollTop = 0;
+
+    // The welcome card shows the stages ahead; the closing card offers a way on.
+    lessonExtraEl.textContent = "";
+    if (isIntro) {
+      const list = document.createElement("ol");
+      list.className = "lesson-stage-list";
+      Object.keys(lesson.stages || {}).forEach((key) => {
+        const item = document.createElement("li");
+        item.dataset.stage = key;
+        item.textContent = lesson.stages[key];
+        list.appendChild(item);
+      });
+      lessonExtraEl.appendChild(list);
+    } else if (isOutro) {
+      const replay = document.createElement("button");
+      replay.type = "button";
+      replay.className = "lesson-link";
+      replay.textContent = "Take the tour again";
+      replay.addEventListener("click", () => lessonGoTo(-1, false));
+      lessonExtraEl.appendChild(replay);
+      const onward = document.createElement("button");
+      onward.type = "button";
+      onward.className = "lesson-link";
+      onward.textContent = "Back to the Level 2 IMP diagram";
+      onward.addEventListener("click", () => {
+        markTourSeen();
+        endLesson(false);
+        const tab = document.querySelector('.level-tab[data-view="imp"]');
+        if (tab) tab.click();
+      });
+      lessonExtraEl.appendChild(onward);
+    }
+
+    lessonBackBtn.hidden = isIntro;
+    lessonNextBtn.textContent = isIntro ? "Start the tour" : isOutro ? "Finish" : "Next";
+    lessonNextBtn.classList.toggle("has-arrow", !isIntro && !isOutro);
+  }
+
+  // Every connector whose two ends both touch boxes in `ids` (two different
+  // boxes, so a line doesn't light off a single box).
+  function connectorsAmong(ids) {
+    const touching = (point) => ids.filter((id) => {
+      const regions = boxRegions.get(id);
+      return regions && distanceToRegions(regions, point) <= TOUR_ANCHOR_TOLERANCE;
+    });
+    return connectors.filter((connector) => {
+      const from = touching(connector.points[0]);
+      const to = touching(connector.points[connector.points.length - 1]);
+      return from.length > 0 && to.length > 0 && (from.length > 1 || to.length > 1 || from[0] !== to[0]);
+    });
+  }
+
+  function lightConnectors(ids) {
+    connectorsAmong(ids).forEach((connector) => connector.el.classList.add("tour-flow"));
+  }
+
+  // Bring the box into view before the spotlight goes to it: centre it in the
+  // diagram, and scroll the page if it sits too near the top or bottom of the
+  // screen for the card to have room.
+  function panToBox(el) {
+    const wrapRect = stageWrap.getBoundingClientRect();
+    const boxRect = el.getBoundingClientRect();
+    const left = stageWrap.scrollLeft + (boxRect.left + boxRect.width / 2) - (wrapRect.left + wrapRect.width / 2);
+    const behavior = prefersReducedMotion ? "auto" : "smooth";
+    stageWrap.scrollTo({ left: Math.max(0, left), behavior: behavior });
+    const vh = window.innerHeight;
+    const centre = boxRect.top + boxRect.height / 2;
+    if (centre < vh * 0.15 || centre > vh * 0.75) {
+      window.scrollBy({ top: centre - vh * (phoneQuery.matches ? 0.3 : 0.42), behavior: behavior });
+    }
+  }
+
+  /* Moves the tour to step `target` (-1 welcome, `total` closing card).
+     `animate` is true only for a plain step forward: then the glow travels
+     down the arrow into the new box. Anything else (back, a jump, the
+     progress bar) snaps straight to the right state. A fresh run id on every
+     call means a quick second click simply takes over from a glow still
+     travelling. */
+  async function lessonGoTo(target, animate) {
+    const lesson = currentLesson();
+    if (!lesson || !lessonState.active || !lessonState.running) return;
+    const steps = lesson.steps;
+    target = Math.max(-1, Math.min(steps.length, target));
+    const previous = lessonState.index;
+    lessonState.index = target;
+    tourState.runId += 1;
+    const runId = tourState.runId;
+
+    // The card comes back once the spotlight has settled on the new box.
+    cardShown = false;
+    lessonCard.classList.remove("is-ready");
+    stepStartedAt = performance.now();
+    renderLessonCard();
+    clearTourMarks();
+    if (target < 0) return; // welcome card: the plain diagram, nothing ringed
+
+    const ids = steps.map((step) => step.box);
+    if (target >= steps.length) { // closing card: the whole route, lit
+      lightConnectors(ids);
+      stage.classList.add("tour-complete");
+      return;
+    }
+
+    stage.classList.add("tour-running");
+    const covered = ids.slice(0, target);
+    covered.forEach((id) => {
+      const el = tourBoxEl(id);
+      if (el) el.classList.add("tour-visited");
+    });
+    lightConnectors(covered);
+    const targetEl = tourBoxEl(ids[target]);
+    if (targetEl) panToBox(targetEl);
+
+    if (animate && target === previous + 1 && target > 0) {
+      const from = tourBoxEl(ids[target - 1]);
+      if (from) from.classList.add("tour-focus");
+      const arrived = await travelLeg(runId, connectorBetween(ids[target - 1], ids[target]));
+      if (!arrived) return; // another click took over mid-glow
+    }
+    focusStep(ids[target]);
+    lightConnectors(ids.slice(0, target + 1));
+  }
+
+  function lessonNext() {
+    if (!lessonState.running) return;
+    if (lessonState.index >= lessonState.total) {  // "Finish"
+      markTourSeen();
+      endLesson(true);
+    } else {
+      lessonGoTo(lessonState.index + 1, true);
+    }
+  }
+
+  function lessonBack() {
+    if (lessonState.running && lessonState.index > -1) lessonGoTo(lessonState.index - 1, false);
+  }
+
+  // Skipping (or closing on the last card) — the last card keeps its lit route.
+  function closeTour() {
+    markTourSeen(); // skipping counts: the tour isn't pushed on them again
+    endLesson(lessonState.index >= lessonState.total);
+  }
+
+  /* Runs every frame while the tour is up: eases the spotlight to the box
+     (wherever scrolling, panning or zooming has put it) and, once it has
+     settled, places the card beside it. */
+  function trackTour() {
+    trackFrame = 0;
+    if (!lessonState.running) return;
+
+    const el = tourTargetEl();
+    let target;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      target = { x: r.left - SPOT_PAD, y: r.top - SPOT_PAD, w: r.width + SPOT_PAD * 2, h: r.height + SPOT_PAD * 2 };
+    } else {
+      target = { x: window.innerWidth / 2, y: window.innerHeight / 2, w: 0, h: 0 };
+    }
+    if (!spot.init) {
+      spot.x = target.x; spot.y = target.y; spot.w = target.w; spot.h = target.h;
+      spot.init = true;
+    }
+    // Eased by elapsed time, not by frame count, so the glide takes the same
+    // moment on a slow or busy device (a long gap between frames just snaps).
+    const now = performance.now();
+    const dt = lastTrackTime ? now - lastTrackTime : 16;
+    lastTrackTime = now;
+    const ease = prefersReducedMotion ? 1 : 1 - Math.exp(-dt / 90);
+    spot.x += (target.x - spot.x) * ease;
+    spot.y += (target.y - spot.y) * ease;
+    spot.w += (target.w - spot.w) * ease;
+    spot.h += (target.h - spot.h) * ease;
+    const off = Math.abs(target.x - spot.x) + Math.abs(target.y - spot.y) + Math.abs(target.w - spot.w) + Math.abs(target.h - spot.h);
+    const settled = off < 0.8;
+    if (settled) {
+      spot.x = target.x; spot.y = target.y; spot.w = target.w; spot.h = target.h;
+    }
+
+    tourSpot.classList.toggle("is-empty", !el);
+    tourSpot.style.width = spot.w + "px";
+    tourSpot.style.height = spot.h + "px";
+    tourSpot.style.transform = "translate(" + spot.x + "px, " + spot.y + "px)";
+
+    const elapsed = performance.now() - stepStartedAt;
+    if (!cardShown && ((settled && elapsed > 120) || elapsed > 1200)) {
+      cardShown = true;
+      lessonCard.classList.add("is-ready");
+      lessonNextBtn.focus({ preventScroll: true });
+    }
+    if (cardShown) placeLessonCard(el ? target : null);
+
+    trackFrame = requestAnimationFrame(trackTour);
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  /* Puts the card beside the spotlight, on whichever side has room (right or
+     left first on a wide screen, below or above first on a phone), with its
+     arrow aimed at the box. If nothing fits without covering the box, it takes
+     the roomier of above and below and lets its text scroll. With no target
+     (welcome / closing card) it sits in the middle of the screen. */
+  function placeLessonCard(target) {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    lessonCard.style.maxHeight = "";
+    const width = lessonCard.offsetWidth;
+    let height = lessonCard.offsetHeight;
+    let left;
+    let top;
+    let placement = "";
+    let arrow = ARROW_INSET;
+
+    if (!target) {
+      left = (vw - width) / 2;
+      top = (vh - height) / 2;
+    } else {
+      const right = target.x + target.w;
+      const bottom = target.y + target.h;
+      const space = {
+        right: vw - right - CARD_GAP - CARD_MARGIN,
+        left: target.x - CARD_GAP - CARD_MARGIN,
+        bottom: vh - bottom - CARD_GAP - CARD_MARGIN,
+        top: target.y - CARD_GAP - CARD_MARGIN
+      };
+      const order = phoneQuery.matches ? ["bottom", "top", "right", "left"] : ["right", "left", "bottom", "top"];
+      placement = order.find((side) => (side === "right" || side === "left" ? space[side] >= width : space[side] >= height)) || "";
+      if (!placement) {
+        placement = space.bottom >= space.top ? "bottom" : "top";
+        lessonCard.style.maxHeight = Math.max(160, space[placement]) + "px";
+        height = lessonCard.offsetHeight;
+      }
+      const centreX = target.x + target.w / 2;
+      const centreY = target.y + target.h / 2;
+      if (placement === "right" || placement === "left") {
+        left = placement === "right" ? right + CARD_GAP : target.x - CARD_GAP - width;
+        top = clamp(centreY - height / 2, CARD_MARGIN, Math.max(CARD_MARGIN, vh - height - CARD_MARGIN));
+        arrow = clamp(centreY - top, ARROW_INSET, height - ARROW_INSET);
+      } else {
+        top = placement === "bottom" ? bottom + CARD_GAP : target.y - CARD_GAP - height;
+        left = clamp(centreX - width / 2, CARD_MARGIN, Math.max(CARD_MARGIN, vw - width - CARD_MARGIN));
+        arrow = clamp(centreX - left, ARROW_INSET, width - ARROW_INSET);
+      }
+    }
+
+    lessonCard.style.transform = "translate(" + Math.round(left) + "px, " + Math.round(top) + "px)";
+    lessonCard.style.setProperty("--arrow-offset", Math.round(arrow) + "px");
+    if (lessonCard.dataset.placement !== placement) lessonCard.dataset.placement = placement;
+  }
+
+  function openLightbox(image, opener) {
+    if (!lightboxEl) return;
+    lightboxOpener = opener || null;
+    lightboxImg.src = image.src;
+    lightboxImg.alt = image.alt;
+    lightboxEl.hidden = false;
+    lightboxClose.focus();
+  }
+
+  function closeLightbox() {
+    if (!lightboxEl || lightboxEl.hidden) return;
+    lightboxEl.hidden = true;
+    lightboxImg.removeAttribute("src");
+    if (lightboxOpener && lightboxOpener.isConnected) lightboxOpener.focus();
+    lightboxOpener = null;
+  }
+
+  if (lessonStartBtn) lessonStartBtn.addEventListener("click", () => startLesson(-1));
+  if (lessonCloseBtn) lessonCloseBtn.addEventListener("click", closeTour);
+  if (lessonNextBtn) lessonNextBtn.addEventListener("click", lessonNext);
+  if (lessonBackBtn) lessonBackBtn.addEventListener("click", lessonBack);
+  if (lightboxClose) lightboxClose.addEventListener("click", closeLightbox);
+  if (lightboxEl) {
+    lightboxEl.addEventListener("click", (e) => {
+      if (e.target === lightboxEl) closeLightbox();
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    const lightboxOpen = lightboxEl && !lightboxEl.hidden;
+    if (e.key === "Escape") {
+      if (lightboxOpen) closeLightbox();
+      else if (lessonState.running) closeTour();
+      return;
+    }
+    if (!lessonState.running || lightboxOpen || !modalBackdrop.hidden) return;
+
+    // Keep Tab inside the card while the tour is up.
+    if (e.key === "Tab") {
+      const focusable = Array.from(lessonCard.querySelectorAll("button, a[href]")).filter((el) => !el.hidden && el.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!lessonCard.contains(document.activeElement)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || "")) return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      lessonNext();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      lessonBack();
+    }
+  });
 
   // View switching. Selecting a view also writes it into the URL, so a link
   // can point straight at one level — the landing page's "Explore TPRAF"

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="Three settings being adjusted before a flood run"><title>Three settings being adjusted before a flood run</title><style>text{font-family:Calibri,"Segoe UI",Arial,sans-serif;fill:#00295e}
+    .k0{animation:s0 4.4s ease-in-out infinite alternate}
+    .k1{animation:s1 5.2s ease-in-out infinite alternate}
+    .k2{animation:s2 3.8s ease-in-out infinite alternate}
+    @keyframes s0{from{transform:translateX(0)}to{transform:translateX(120px)}}
+    @keyframes s1{from{transform:translateX(0)}to{transform:translateX(-90px)}}
+    @keyframes s2{from{transform:translateX(0)}to{transform:translateX(150px)}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important}}</style><rect width="320" height="180" fill="#f2f6fb"/>
+    <text x="20" y="40" font-size="12" font-weight="700">How long the rain lasts</text>
+    <rect x="20" y="48" width="280" height="8" rx="4" fill="#e6e6e6"/>
+    <circle class="k0" cx="90" cy="52" r="9" fill="#0096ff" stroke="#00295e" stroke-width="1.5"/>
+    
+    <text x="20" y="88" font-size="12" font-weight="700">How long the flood is simulated</text>
+    <rect x="20" y="96" width="280" height="8" rx="4" fill="#e6e6e6"/>
+    <circle class="k1" cx="200" cy="100" r="9" fill="#0096ff" stroke="#00295e" stroke-width="1.5"/>
+    
+    <text x="20" y="136" font-size="12" font-weight="700">How often results are saved</text>
+    <rect x="20" y="144" width="280" height="8" rx="4" fill="#e6e6e6"/>
+    <circle class="k2" cx="60" cy="148" r="9" fill="#0096ff" stroke="#00295e" stroke-width="1.5"/>
+    </svg>

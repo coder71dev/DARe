@@ -1026,19 +1026,21 @@ const TPRAF_CONTENT = {
     ],
 
     arrows: [
-      { from: { x: 23.5, y: 34 }, to: { x: 28, y: 34 } },     // shared input line -> CityCAT
       { from: { x: 35, y: 44 }, to: { x: 35, y: 38 } },       // Simulation settings -> CityCAT
       { from: { x: 42, y: 34 }, to: { x: 48, y: 34 } },       // CityCAT -> Flood Maps
       { from: { x: 62, y: 34 }, to: { x: 74, y: 34 } }        // Flood Maps -> MATSim
     ],
 
     elbowPaths: [
-      // The four inputs join one line into CityCAT (a shared bus: only the
-      // final arrow above carries a head).
-      { points: [ { x: 19, y: 19 }, { x: 23.5, y: 19 }, { x: 23.5, y: 34 } ], head: false },   // DTM
-      { points: [ { x: 19, y: 29 }, { x: 23.5, y: 29 }, { x: 23.5, y: 34 } ], head: false },   // Green Spaces
-      { points: [ { x: 19, y: 39 }, { x: 23.5, y: 39 }, { x: 23.5, y: 34 } ], head: false },   // Buildings
-      { points: [ { x: 19, y: 49 }, { x: 23.5, y: 49 }, { x: 23.5, y: 34 } ], head: false },   // Rainfall events
+      // The four inputs join one line into CityCAT. Each is drawn as its own
+      // path all the way to CityCAT's edge (their shared last stretch overlaps
+      // exactly, so it reads as one line with one arrowhead) — that way the
+      // lesson can tell which input a line belongs to and light it when that
+      // input is reached.
+      { points: [ { x: 19, y: 19 }, { x: 23.5, y: 19 }, { x: 23.5, y: 34 }, { x: 28, y: 34 } ] },   // DTM
+      { points: [ { x: 19, y: 29 }, { x: 23.5, y: 29 }, { x: 23.5, y: 34 }, { x: 28, y: 34 } ] },   // Green Spaces
+      { points: [ { x: 19, y: 39 }, { x: 23.5, y: 39 }, { x: 23.5, y: 34 }, { x: 28, y: 34 } ] },   // Buildings
+      { points: [ { x: 19, y: 49 }, { x: 23.5, y: 49 }, { x: 23.5, y: 34 }, { x: 28, y: 34 } ] },   // Rainfall events
       // MATSim into the impact-analysis group, along the gap between the rows.
       { points: [ { x: 84, y: 39 }, { x: 84, y: 59.5 }, { x: 14, y: 59.5 }, { x: 14, y: 62 } ] },
       // Disruption -> the two behaviour runs -> impact quantification.
@@ -1048,20 +1050,108 @@ const TPRAF_CONTENT = {
       { points: [ { x: 52, y: 84 }, { x: 57, y: 84 }, { x: 57, y: 79 }, { x: 62, y: 79 } ] }
     ],
 
-    tour: [
-      "l3-rainfall",
-      "l3-dtm",
-      "l3-green-spaces",
-      "l3-buildings",
-      "l3-settings",
-      "l3-citycat",
-      "l3-flood-maps",
-      "l3-matsim",
-      "l3-disruption",
-      "l3-iteration-0",
-      "l3-learning",
-      "l3-impact-quantification"
-    ]
+    /* The lesson: this view is read one step at a time. A card beside the
+       diagram (below it on a phone) explains the step's box in plain words and
+       shows a picture of it, while the diagram lights the box and the line
+       that leads to it. Steps run in the order below; each names its box and
+       which stage it belongs to. Pictures are DARe's own figures from the case
+       study deck, or small drawings where the deck has none (files in
+       assets/img/level3/). Wording of the plain explanations for DTM, Green
+       Spaces, Buildings, Simulation settings and CityCAT goes a little beyond
+       the deck (it only names them) and is for DARe to confirm. */
+    lesson: {
+      stages: {
+        climate: "Climate & flood modelling",
+        transport: "Transport model",
+        impact: "Impact analysis"
+      },
+      intro: {
+        title: "Follow a flood through the transport system",
+        text: "This example follows one rainfall event in the North East, from raw data to what it means for the people travelling. Each step lights up a box in the diagram and explains it. Use Next to move on, click any box to jump to it, or skip the tour at any time."
+      },
+      steps: [
+        {
+          box: "l3-rainfall",
+          stage: "climate",
+          text: "Everything starts with the weather. The rainfall is generated from UKCP18-Local, the UK Climate Projections.",
+          example: "Two rainfall cases are tested. Case 1 spreads over a wide area; Case 2 is more concentrated. Each is run for today's climate and for a future one.",
+          figure: { images: [ { src: "assets/img/level3/rainfall.jpg", alt: "A map of a rainfall event over the North East, coloured by how heavy the rain is" } ], caption: "A rainfall event over the North East (precipitation in mm per hour)." }
+        },
+        {
+          box: "l3-dtm",
+          stage: "climate",
+          text: "The digital terrain model (DTM) is a map of the height of the ground. It is the first of the other three inputs the flood model needs.",
+          figure: { images: [ { src: "assets/img/level3/dtm.svg", alt: "A cross-section of hilly ground with a marker reading its height" } ] }
+        },
+        {
+          box: "l3-green-spaces",
+          stage: "climate",
+          text: "A map of the parks, gardens and other green areas. It is the second input to the flood model.",
+          figure: { images: [ { src: "assets/img/level3/green-spaces.svg", alt: "A map in which parks and other green areas are highlighted" } ] }
+        },
+        {
+          box: "l3-buildings",
+          stage: "climate",
+          text: "A map of where the buildings stand. It is the third input to the flood model.",
+          figure: { images: [ { src: "assets/img/level3/buildings.svg", alt: "A street grid with building footprints marked" } ] }
+        },
+        {
+          box: "l3-settings",
+          stage: "climate",
+          text: "Before each flood run, three choices are made: how long the rain lasts, how long the flood is simulated for, and how often results are saved (the output frequency).",
+          figure: { images: [ { src: "assets/img/level3/settings.svg", alt: "Three settings being adjusted before a flood run" } ] }
+        },
+        {
+          box: "l3-citycat",
+          stage: "climate",
+          text: "CityCAT is the flood model — one of the “hazard models” in the framework. It takes the rainfall, terrain, green spaces and buildings and works out where surface water flooding happens.",
+          figure: { images: [ { src: "assets/img/level3/citycat.svg", alt: "Rain falling on a district, with flood water gathering in the low ground" } ] }
+        },
+        {
+          box: "l3-flood-maps",
+          stage: "climate",
+          text: "The result is a set of flood maps that show how the flooding grows and drains over time.",
+          example: "Case 1 gives flooding that is more widespread but relatively shallow. Case 2 gives deeper water, so it is more severe but more localised.",
+          figure: { images: [ { src: "assets/img/level3/flood-maps.jpg", alt: "Flood maps of the Tyne area at 1, 3, 6, 12 and 16 hours after the start of rain, for Case 1 (top) and Case 2 (bottom)" } ], caption: "Water depth at 1, 3, 6, 12 and 16 hours after the rain starts. Case 1 above, Case 2 below (current climate). Click to enlarge." }
+        },
+        {
+          box: "l3-matsim",
+          stage: "transport",
+          text: "MATSim is an agent-based transport model. Rather than working with averages, it simulates individual travellers, called agents, each making their own trips across the network while the flood develops.",
+          example: "In the North East case study there are around 200,000 agents.",
+          figure: { images: [ { src: "assets/img/level3/matsim.jpg", alt: "The road network of the North East drawn as a dark map, with red dots for slow traffic" } ], caption: "The MATSim road network at the start of the run (iteration 0)." }
+        },
+        {
+          box: "l3-disruption",
+          stage: "impact",
+          text: "The flood maps are laid over the road network to see which roads are hit. Roads are counted as “affected” (more than 1 cm of water) or “flooded” (more than 30 cm).",
+          example: "Case 2 floods more roads deeply, so its disruption is more severe but localised. Case 1 touches more of the network, but only shallowly.",
+          figure: { images: [ { src: "assets/img/level3/disruption.jpg", alt: "Two line charts showing, over time, the number of roads affected and the number of roads flooded in each rainfall case" } ], caption: "Number of roads affected (left) and flooded (right) over time, for both rainfall cases. Click to enlarge." }
+        },
+        {
+          box: "l3-iteration-0",
+          stage: "impact",
+          text: "The first run is the “before” picture. The travellers meet the rain and the flood with no chance to change what they do: they cannot change route or avoid travelling.",
+          figure: { images: [ { src: "assets/img/level3/iteration-0.jpg", alt: "The MATSim network in the first run, before travellers have adapted", label: "Iteration 0" } ] }
+        },
+        {
+          box: "l3-learning",
+          stage: "impact",
+          text: "Then the travellers learn. In every round, a random 20% of them try something different, such as another route or another start time, and use what they have learned to steer clear of flooded or congested areas. This is repeated for a set number of rounds, for example 500 or 1,000.",
+          figure: { images: [ { src: "assets/img/level3/iteration-0.jpg", alt: "The first run, with no adaptation", label: "Iteration 0" }, { src: "assets/img/level3/learning.jpg", alt: "The same network after the travellers have learned", label: "Learning" } ], caption: "The same event, before and after the travellers learn." }
+        },
+        {
+          box: "l3-impact-quantification",
+          stage: "impact",
+          text: "The last step puts numbers on the impact of the flooding on travel.",
+          credit: "Impact quantification is work by Dr Wei Bi."
+        }
+      ],
+      outro: {
+        title: "That is the whole journey",
+        text: "One rainfall event became a flood, the flood became disrupted roads, and the disruption became a difference in how people travel, with and without adapting. DARe is using case studies like this one to show the IMP's value, particularly for stress-testing adaptation and resilience measures under different climate and hazard scenarios."
+      }
+    }
   }
 
 };
