@@ -63,6 +63,12 @@
        Restart/Stop sit in their own right-hand group: the caption's length
        changes with every step, and they must not shuffle sideways with it. -->
   <div class="diagram-tour" id="diagram-tour">
+    <!-- The interactive guided tour (spotlight + explanation card), offered on
+         every diagram beside the hands-off walkthrough below. -->
+    <button type="button" class="tour-play tour-guide" id="lesson-start-inline" hidden>
+      <span class="tour-play-icon" aria-hidden="true"></span>
+      <span id="lesson-start-inline-label">Take the guided tour</span>
+    </button>
     <button type="button" class="tour-play" id="tour-play">
       <span class="tour-play-icon" aria-hidden="true"></span>
       <span id="tour-play-label">Play walkthrough</span>

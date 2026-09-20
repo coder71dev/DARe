@@ -2130,3 +2130,39 @@ a { color: var(--color-sky); }
 @media (prefers-reduced-motion: reduce) {
   .process-panel.process-sheet { animation: none; }
 }
+
+/* ---------- Guided tour on every diagram ---------- */
+/* The interactive tour's button sits beside "Play walkthrough" in the same
+   strip. Brand green with navy text, so it reads as the main way in and is not
+   mistaken for the hands-off walkthrough next to it. */
+.tour-guide {
+  background: var(--color-leaf);
+  color: var(--color-water);
+}
+
+.tour-guide[hidden] { display: none; }
+
+/* A long tour (DSP has 35 steps) shows one smooth progress bar: a segment per
+   step would be too small to see or press. */
+.lesson-progress.is-continuous {
+  display: block;
+  height: 6px;
+  margin: 0.4rem 2.2rem 1rem 0;
+  border-radius: 3px;
+  background: var(--color-stone);
+  overflow: hidden;
+}
+
+.lesson-progress-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--color-leaf);
+  transition: width 0.3s ease;
+}
+
+/* Step tags coloured by the process a box belongs to, matching the diagrams'
+   legend: DSP steps are the sky-blue boxes, IMP steps the navy ones. */
+.lesson-stage[data-stage="dsp"] { background: rgba(0, 150, 255, 0.2); }
+.lesson-stage[data-stage="imp"] { background: var(--color-water); color: var(--color-white); }
+.lesson-stage[data-stage="both"] { background: rgba(94, 207, 112, 0.35); }

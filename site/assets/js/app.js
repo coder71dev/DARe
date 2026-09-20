@@ -358,13 +358,14 @@
     return el;
   }
 
-  // On a view with a tour (Level 3), a box starts the tour at its step, or moves
-  // a running tour to it; everywhere else it opens the popup exactly as before.
+  // While a tour runs, a box moves it to that box's step. Otherwise a box opens
+  // its popup, as it always has — except on Level 3, which has no popups and
+  // starts its tour at the box instead.
   function onBoxClick(box) {
     const index = lessonStepIndexOfBox(box.id);
-    if (index < 0) openModal(box);
-    else if (lessonState.running) lessonGoTo(index, index === lessonState.index + 1);
-    else startLesson(index);
+    if (index >= 0 && lessonState.running) lessonGoTo(index, index === lessonState.index + 1);
+    else if (index >= 0 && currentLesson().clickStartsTour) startLesson(index);
+    else openModal(box);
   }
 
   function makeLabelEl(label) {
@@ -488,9 +489,10 @@
       : "";
 
     // A lesson view is read with the step card, not by opening popups.
-    const hint = data.lesson
+    const guidedHint = " Or press <strong>Take the guided tour</strong> for a step-by-step explanation.";
+    const hint = data.lesson && data.lesson.clickStartsTour
       ? "Press <strong>Take the guided tour</strong> to have each step explained in turn, or click any box to have just that one explained."
-      : "Click any box or label to see its full detail." + toggleHint + tourHint;
+      : "Click any box or label to see its full detail." + toggleHint + tourHint + guidedHint;
 
     return `
       <p class="diagram-guide-hint">${hint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
@@ -1225,6 +1227,7 @@
   }
 
   async function playTour() {
+    if (lessonState.running) return; // the guided tour is in charge
     const data = TPRAF_CONTENT[currentViewKey];
     const steps = ((data && data.tour) || []).map((step) => (typeof step === "string" ? { box: step } : step));
     if (!steps.length) return;
@@ -1313,6 +1316,10 @@
   const lessonLaunch = document.getElementById("lesson-launch");
   const lessonStartBtn = document.getElementById("lesson-start");
   const lessonStartLabel = document.getElementById("lesson-start-label");
+  // On views with the walkthrough bar the guided-tour button sits inside it;
+  // Level 3 (no walkthrough) uses the standalone strip above instead.
+  const lessonStartInline = document.getElementById("lesson-start-inline");
+  const lessonStartInlineLabel = document.getElementById("lesson-start-inline-label");
   const tourSpot = document.getElementById("tour-spot");
   const lessonCard = document.getElementById("lesson-card");
   const lessonProgress = document.getElementById("lesson-progress");
@@ -1334,8 +1341,12 @@
   const lightboxClose = document.getElementById("lesson-lightbox-close");
   const phoneQuery = window.matchMedia("(max-width: 760px)");
 
-  const LESSON_SEEN_KEY = "tpraf-level3-tour-seen";
-  const AUTO_START_TOUR = true;   // offer the tour once, on a first visit
+  const LESSON_SEEN_KEY = "tpraf-tour-seen"; // set once a visitor finishes or skips any tour
+  const AUTO_START_TOUR = true;   // offer the tour on its own to a first-time visitor (on views flagged autoTour)
+  const CONTINUOUS_PROGRESS_ABOVE = 14; // a longer tour gets one smooth progress bar, not a segment per step
+  const PROCESS_LABELS = { dsp: "Decision support (DSP)", imp: "Impact modelling (IMP)", both: "DSP and IMP" };
+  // The home page embeds the simple form and has no level tabs; it never opens a tour by itself.
+  const isLandingPage = !document.querySelector(".level-tab");
   const AUTO_START_DELAY = 700;   // ms — lets the page settle first
   const PHONE_TOUR_ZOOM = 0.8;    // a box is far too small to spotlight at "fit" on a phone
   const SPOT_PAD = 6;             // px of breathing room around the spotlighted box
@@ -1344,13 +1355,15 @@
   const ARROW_INSET = 22;         // how close the arrow may sit to a card corner
 
   // index -1 is the welcome card, `total` is the closing card.
-  const lessonState = { active: false, running: false, index: -1, total: 0 };
+  const lessonState = { active: false, running: false, index: -1, total: 0, lesson: null };
   const spot = { x: 0, y: 0, w: 0, h: 0, init: false };
   let trackFrame = 0;
   let lastTrackTime = 0;
   let stepStartedAt = 0;
   let cardShown = false;
   let autoStartTimer = 0;
+  let offerPending = false;     // a tour is due to be offered once the page is on screen
+  let forcedTourUsed = false;   // ?tour=1 opens the first view's tour only, not every later one
   let lightboxOpener = null;
 
   // "?tour=1" on the page's address always offers the tour (handy for demos and
@@ -1363,12 +1376,9 @@
     }
   }
 
-  // Has this visitor already finished or skipped the tour? Only then is it
+  // Has this visitor already finished or skipped a tour? Only then is it
   // not offered again on its own.
   function tourSeen() {
-    const override = tourUrlOverride();
-    if (override === "1") return false;
-    if (override === "0") return true;
     try {
       return localStorage.getItem(LESSON_SEEN_KEY) === "1";
     } catch (e) {
@@ -1385,8 +1395,7 @@
   }
 
   function currentLesson() {
-    const data = TPRAF_CONTENT[currentViewKey];
-    return data && data.lesson ? data.lesson : null;
+    return lessonState.lesson;
   }
 
   function lessonStepIndexOfBox(id) {
@@ -1402,37 +1411,142 @@
     return tourBoxEl(lesson.steps[index].box);
   }
 
+  // The section title the diagram draws over the group a box sits in (for
+  // example "Business as usual / Do nothing"), used as the step's tag.
+  function sectionLabelForBox(data, box) {
+    const headings = (data.headings || []).filter((h) => !(h.variant || "").startsWith("key"));
+    const containers = (data.containers || []).filter((c) => c.style !== "dashed");
+    if (!headings.length || !containers.length) return "";
+    const cx = box.pos.left + box.pos.width / 2;
+    const cy = box.pos.top + box.pos.height / 2;
+    const holding = containers
+      .filter((c) => cx >= c.pos.left && cx <= c.pos.left + c.pos.width && cy >= c.pos.top && cy <= c.pos.top + c.pos.height)
+      .sort((a, b) => a.pos.width * a.pos.height - b.pos.width * b.pos.height);
+    for (const container of holding) {
+      const near = headings
+        .map((h) => ({ heading: h, gap: rectToRectGap(rectOfPos(h.pos), rectOfPos(container.pos)) }))
+        .filter((x) => x.gap <= 8 && Math.min(x.heading.pos.left + x.heading.pos.width, container.pos.left + container.pos.width) - Math.max(x.heading.pos.left, container.pos.left) > 0)
+        .sort((a, b) => a.gap - b.gap);
+      if (near.length) return near[0].heading.label;
+    }
+    return "";
+  }
+
+  /* Builds the tour for a view that has no hand-written `lesson`, straight from
+     the view's own reading order (`tour`) and box text. It stays in step with
+     the diagram: a box that gains its wording gains it in the tour too, and the
+     feedback-loop legs and repeated boxes in the reading order carry over. */
+  function buildAutoLesson(data) {
+    const raw = (data.tour || []).map((step) => (typeof step === "string" ? { box: step } : step));
+    if (!raw.length) return null;
+    const seen = new Set();
+    const steps = raw.map((step) => {
+      const box = data.boxes.find((b) => b.id === step.box);
+      const repeat = seen.has(step.box);
+      seen.add(step.box);
+      const process = box && box.group && PROCESS_LABELS[box.group] ? box.group : "";
+      const section = box ? sectionLabelForBox(data, box) : "";
+      let text;
+      if (repeat) text = "The route loops back to this box, so the diagram works as a cycle rather than a straight line.";
+      else if (!box || box.isPlaceholder) text = "The explanation for this step is coming soon.";
+      else text = box.text;
+      return { box: step.box, via: step.via, stage: process, stageLabel: section || (process ? PROCESS_LABELS[process] : ""), text: text };
+    });
+    const loops = (data.feedbackPaths || []).length > 0 || steps.some((step, i) => steps.findIndex((t) => t.box === step.box) < i);
+    const links = [];
+    if (data.next) links.push({ label: data.next.label, view: data.next.key });
+    if (data.boxes.some((b) => b.group)) {
+      links.push({ label: "See the DSP component diagram", view: "dsp" }, { label: "See the IMP component diagram", view: "imp" });
+    }
+    return {
+      intro: {
+        title: "Take a guided tour",
+        text: "Follow this diagram one box at a time. Each step lights up a box and explains it, and the route lights up behind you as you go. Use Next to move on, click any box to jump to it, or skip the tour at any time."
+      },
+      steps: steps,
+      outro: {
+        title: "That is the end of the route",
+        text: loops ? "The lit route shows how the boxes connect, and the green lines show where the process loops back." : "The lit route shows how the boxes connect.",
+        links: links
+      }
+    };
+  }
+
+  function setStartLabels(text) {
+    [lessonStartLabel, lessonStartInlineLabel].forEach((el) => {
+      if (el) el.textContent = text;
+    });
+  }
+
+  // Moves to another diagram: a level tab on the diagram page, or a link to the
+  // diagram page from the home page (which has no tabs).
+  function goToView(view) {
+    const tab = document.querySelector('.level-tab[data-view="' + view + '"]');
+    if (tab) tab.click();
+    else window.location.href = "diagram.html#" + view;
+  }
+
+  // Every diagram has a tour. It is also offered on its own, once, to a
+  // first-time visitor — on the short introductory diagrams only, and never on
+  // the home page. "?tour=1" opens it on the first diagram shown whatever the
+  // browser remembers; "?tour=0" never does.
+  function shouldOfferTour(data) {
+    const override = tourUrlOverride();
+    if (override === "0") return false;
+    if (override === "1" && !forcedTourUsed) {
+      forcedTourUsed = true;
+      return true;
+    }
+    return AUTO_START_TOUR && !isLandingPage && !!data.autoTour && !tourSeen();
+  }
+
   function setupLesson(data) {
-    const lesson = data.lesson || null;
+    const lesson = data.lesson || buildAutoLesson(data);
+    lessonState.lesson = lesson;
     lessonState.active = !!lesson;
     lessonState.running = false;
     lessonState.index = -1;
     lessonState.total = lesson ? lesson.steps.length : 0;
-    if (lessonLaunch) lessonLaunch.hidden = !lesson;
+    const barShown = !!tourBar && !tourBar.hidden;
+    if (lessonStartInline) lessonStartInline.hidden = !(lesson && barShown);
+    if (lessonLaunch) lessonLaunch.hidden = !(lesson && !barShown);
     if (!lesson || !lessonCard) return;
 
-    lessonStartLabel.textContent = tourSeen() ? "Take the tour again" : "Take the guided tour";
+    setStartLabels(tourSeen() ? "Take the tour again" : "Take the guided tour");
 
-    // One segment per step; clicking one jumps there.
+    // Progress: one clickable segment per step, or a single smooth bar on a long
+    // tour (35 segments would be too small to see or press).
     lessonProgress.textContent = "";
-    lesson.steps.forEach((step, k) => {
-      const seg = document.createElement("button");
-      seg.type = "button";
-      seg.className = "lesson-progress-seg";
-      seg.setAttribute("aria-label", "Go to step " + (k + 1) + ": " + labelForBox(data, step.box));
-      seg.addEventListener("click", () => lessonGoTo(k, k === lessonState.index + 1));
-      lessonProgress.appendChild(seg);
-    });
+    const continuous = lesson.steps.length > CONTINUOUS_PROGRESS_ABOVE;
+    lessonProgress.classList.toggle("is-continuous", continuous);
+    if (continuous) {
+      const fill = document.createElement("span");
+      fill.className = "lesson-progress-fill";
+      lessonProgress.appendChild(fill);
+    } else {
+      lesson.steps.forEach((step, k) => {
+        const seg = document.createElement("button");
+        seg.type = "button";
+        seg.className = "lesson-progress-seg";
+        seg.setAttribute("aria-label", "Go to step " + (k + 1) + ": " + labelForBox(data, step.box));
+        seg.addEventListener("click", () => lessonGoTo(k, k === lessonState.index + 1));
+        lessonProgress.appendChild(seg);
+      });
+    }
 
     window.clearTimeout(autoStartTimer);
-    if (AUTO_START_TOUR && !tourSeen()) autoStartTimer = window.setTimeout(offerTour, AUTO_START_DELAY);
+    offerPending = false;
+    if (shouldOfferTour(data)) {
+      offerPending = true;
+      autoStartTimer = window.setTimeout(offerTour, AUTO_START_DELAY);
+    }
   }
 
   // Starts the tour for a first-time visitor — but only once the page is
   // actually on screen (a tab opened in the background waits until it is
   // looked at, rather than running the tour unseen).
   function offerTour() {
-    if (!lessonState.active || lessonState.running || tourSeen()) return;
+    if (!offerPending || !lessonState.active || lessonState.running) return;
     if (document.hidden) {
       // Wait for the page to be shown. Some embedded browsers keep reporting
       // "hidden" even while they are on screen, so a focus or a first click
@@ -1456,10 +1570,13 @@
   function resetLesson() {
     if (!lessonState.active) return;
     window.clearTimeout(autoStartTimer);
+    offerPending = false;
     endLesson(false);
     lessonState.active = false;
+    lessonState.lesson = null;
     lessonState.index = -1;
     if (lessonLaunch) lessonLaunch.hidden = true;
+    if (lessonStartInline) lessonStartInline.hidden = true;
     stage.classList.remove("is-lesson");
     clearTourMarks();
   }
@@ -1468,6 +1585,11 @@
     if (!lessonState.active || !currentLesson()) return;
     window.clearTimeout(autoStartTimer);
     if (!lessonState.running) {
+      offerPending = false;
+      // The hands-off walkthrough and a half-greyed DSP/IMP view would both
+      // contradict the tour, so they step aside for it.
+      if (tourState.running || tourState.finished) stopTour();
+      if (processToggle && !processToggle.hidden) setProcessPanel(null);
       lessonState.running = true;
       spot.init = false;
       lastTrackTime = 0;
@@ -1505,7 +1627,7 @@
     stage.classList.remove("is-lesson");
     if (!(keepRoute && lessonState.index >= lessonState.total)) clearTourMarks();
     lessonState.index = -1;
-    if (lessonStartLabel) lessonStartLabel.textContent = "Take the tour again";
+    setStartLabels("Take the tour again");
     const fit = document.getElementById("zoom-fit");
     if (fit) fit.click();
   }
@@ -1560,11 +1682,16 @@
     const isIntro = index < 0;
     const isOutro = index >= total;
 
-    Array.from(lessonProgress.children).forEach((seg, k) => {
-      seg.classList.toggle("is-done", k < index);
-      seg.classList.toggle("is-current", k === index);
-      seg.setAttribute("aria-current", k === index ? "step" : "false");
-    });
+    if (lessonProgress.classList.contains("is-continuous")) {
+      const fill = lessonProgress.firstElementChild;
+      if (fill) fill.style.width = Math.max(0, Math.min(100, ((index + 1) / total) * 100)) + "%";
+    } else {
+      Array.from(lessonProgress.children).forEach((seg, k) => {
+        seg.classList.toggle("is-done", k < index);
+        seg.classList.toggle("is-current", k === index);
+        seg.setAttribute("aria-current", k === index ? "step" : "false");
+      });
+    }
 
     let stageKey = "";
     let stageText;
@@ -1577,7 +1704,7 @@
     let placeholder = false;
 
     if (isIntro) {
-      stageText = "Guided tour · " + total + " short steps";
+      stageText = "Guided tour · " + total + " steps";
       title = lesson.intro.title;
       text = lesson.intro.text;
     } else if (isOutro) {
@@ -1588,7 +1715,8 @@
       const step = lesson.steps[index];
       const box = data.boxes.find((b) => b.id === step.box);
       stageKey = step.stage || "";
-      stageText = "Step " + (index + 1) + " of " + total + (lesson.stages && lesson.stages[stageKey] ? " · " + lesson.stages[stageKey] : "");
+      const stageLabel = step.stageLabel || (lesson.stages && lesson.stages[stageKey]) || "";
+      stageText = "Step " + (index + 1) + " of " + total + (stageLabel ? " · " + stageLabel : "");
       title = labelForBox(data, step.box);
       text = step.text;
       example = step.example || "";
@@ -1612,7 +1740,7 @@
 
     // The welcome card shows the stages ahead; the closing card offers a way on.
     lessonExtraEl.textContent = "";
-    if (isIntro) {
+    if (isIntro && lesson.stages) {
       const list = document.createElement("ol");
       list.className = "lesson-stage-list";
       Object.keys(lesson.stages || {}).forEach((key) => {
@@ -1629,17 +1757,18 @@
       replay.textContent = "Take the tour again";
       replay.addEventListener("click", () => lessonGoTo(-1, false));
       lessonExtraEl.appendChild(replay);
-      const onward = document.createElement("button");
-      onward.type = "button";
-      onward.className = "lesson-link";
-      onward.textContent = "Back to the Level 2 IMP diagram";
-      onward.addEventListener("click", () => {
-        markTourSeen();
-        endLesson(false);
-        const tab = document.querySelector('.level-tab[data-view="imp"]');
-        if (tab) tab.click();
+      ((lesson.outro && lesson.outro.links) || []).forEach((link) => {
+        const onward = document.createElement("button");
+        onward.type = "button";
+        onward.className = "lesson-link";
+        onward.textContent = link.label;
+        onward.addEventListener("click", () => {
+          markTourSeen();
+          endLesson(false);
+          goToView(link.view);
+        });
+        lessonExtraEl.appendChild(onward);
       });
-      lessonExtraEl.appendChild(onward);
     }
 
     lessonBackBtn.hidden = isIntro;
@@ -1723,9 +1852,13 @@
     if (targetEl) panToBox(targetEl);
 
     if (animate && target === previous + 1 && target > 0) {
-      const from = tourBoxEl(ids[target - 1]);
+      // A feedback-loop step names the one connector it travels, which starts
+      // from a box other than the previous step's.
+      const via = steps[target].via;
+      const fromId = via ? via.from : ids[target - 1];
+      const from = tourBoxEl(fromId);
       if (from) from.classList.add("tour-focus");
-      const arrived = await travelLeg(runId, connectorBetween(ids[target - 1], ids[target]));
+      const arrived = await travelLeg(runId, via ? connectorBetween(via.from, via.to) : connectorBetween(fromId, ids[target]));
       if (!arrived) return; // another click took over mid-glow
     }
     focusStep(ids[target]);
@@ -1877,7 +2010,9 @@
     lightboxOpener = null;
   }
 
-  if (lessonStartBtn) lessonStartBtn.addEventListener("click", () => startLesson(-1));
+  [lessonStartBtn, lessonStartInline].forEach((btn) => {
+    if (btn) btn.addEventListener("click", () => startLesson(-1));
+  });
   if (lessonCloseBtn) lessonCloseBtn.addEventListener("click", closeTour);
   if (lessonNextBtn) lessonNextBtn.addEventListener("click", lessonNext);
   if (lessonBackBtn) lessonBackBtn.addEventListener("click", lessonBack);

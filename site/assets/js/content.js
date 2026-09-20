@@ -34,6 +34,10 @@ const TPRAF_CONTENT = {
   simple: {
     title: "Overview of TPRAF: Simple Form",
     subtitle: "Level 1",
+    // Guided tour: every view gets one, built from its `tour` order and box text.
+    // `autoTour` also offers it on its own to a first-time visitor; it is set on
+    // the short introductory diagrams only (not the long Level 2 ones).
+    autoTour: true,
     // Where this view leads next. Slide 2 treats the simple form as the
     // landing step and the extended form as the start of the interactive
     // diagram, so the simple view offers a way through to it. Becomes a
@@ -201,6 +205,7 @@ const TPRAF_CONTENT = {
   extended: {
     title: "Overview of TPRAF: Extended Form",
     subtitle: "Level 1 — Extended",
+    autoTour: true,
     boxes: [
       {
         id: "transport-demand",
@@ -990,6 +995,7 @@ const TPRAF_CONTENT = {
   level3: {
     title: "From Rainfall to Transport Disruption",
     subtitle: "Level 3 — Example module (Integrated Modelling Platform) · North East flood case study · Draft for DARe to confirm",
+    autoTour: true,
     status: "Built from DARe's North East flood case study (Ford & Schooling, LCRIG Innovation and Learning Festival, June 2026). The step order follows that presentation and is awaiting DARe's confirmation.",
     legend: [
       ["climate", "Hazard model (flood simulation)"],
@@ -1060,6 +1066,9 @@ const TPRAF_CONTENT = {
        Spaces, Buildings, Simulation settings and CityCAT goes a little beyond
        the deck (it only names them) and is for DARe to confirm. */
     lesson: {
+      // Level 3 has no popups: a box click opens the tour at that box. (Every
+      // other diagram keeps its popups; there a click still opens the popup.)
+      clickStartsTour: true,
       stages: {
         climate: "Climate & flood modelling",
         transport: "Transport model",
@@ -1149,7 +1158,8 @@ const TPRAF_CONTENT = {
       ],
       outro: {
         title: "That is the whole journey",
-        text: "One rainfall event became a flood, the flood became disrupted roads, and the disruption became a difference in how people travel, with and without adapting. DARe is using case studies like this one to show the IMP's value, particularly for stress-testing adaptation and resilience measures under different climate and hazard scenarios."
+        text: "One rainfall event became a flood, the flood became disrupted roads, and the disruption became a difference in how people travel, with and without adapting. DARe is using case studies like this one to show the IMP's value, particularly for stress-testing adaptation and resilience measures under different climate and hazard scenarios.",
+        links: [ { label: "Back to the Level 2 IMP diagram", view: "imp" } ]
       }
     }
   }
