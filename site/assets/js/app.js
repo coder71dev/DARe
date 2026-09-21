@@ -1309,8 +1309,8 @@
 
      The spotlight and card are measured against the box every frame while the
      tour runs, so they stay put through scrolling, panning, zooming and
-     resizing. First-time visitors get the tour offered automatically once
-     (remembered in localStorage); after that it is one button away.
+     resizing. The tour opens by itself each time a diagram is shown (except on
+     the home page) and can be skipped, or replayed with one button.
      ========================================================================== */
 
   const lessonLaunch = document.getElementById("lesson-launch");
@@ -1342,7 +1342,7 @@
   const phoneQuery = window.matchMedia("(max-width: 760px)");
 
   const LESSON_SEEN_KEY = "tpraf-tour-seen"; // set once a visitor finishes or skips any tour
-  const AUTO_START_TOUR = true;   // offer the tour on its own to a first-time visitor (on views flagged autoTour)
+  const AUTO_START_TOUR = true;   // open the tour on its own each time a diagram is shown (not on the home page)
   const CONTINUOUS_PROGRESS_ABOVE = 14; // a longer tour gets one smooth progress bar, not a segment per step
   const PROCESS_LABELS = { dsp: "Decision support (DSP)", imp: "Impact modelling (IMP)", both: "DSP and IMP" };
   // The home page embeds the simple form and has no level tabs; it never opens a tour by itself.
@@ -1363,7 +1363,6 @@
   let cardShown = false;
   let autoStartTimer = 0;
   let offerPending = false;     // a tour is due to be offered once the page is on screen
-  let forcedTourUsed = false;   // ?tour=1 opens the first view's tour only, not every later one
   let lightboxOpener = null;
 
   // "?tour=1" on the page's address always offers the tour (handy for demos and
@@ -1486,18 +1485,13 @@
     else window.location.href = "diagram.html#" + view;
   }
 
-  // Every diagram has a tour. It is also offered on its own, once, to a
-  // first-time visitor — on the short introductory diagrams only, and never on
-  // the home page. "?tour=1" opens it on the first diagram shown whatever the
-  // browser remembers; "?tour=0" never does.
-  function shouldOfferTour(data) {
-    const override = tourUrlOverride();
-    if (override === "0") return false;
-    if (override === "1" && !forcedTourUsed) {
-      forcedTourUsed = true;
-      return true;
-    }
-    return AUTO_START_TOUR && !isLandingPage && !!data.autoTour && !tourSeen();
+  // Every diagram has a tour, and it opens on its own every time a diagram is
+  // shown: on each page load and each time a level tab is picked. Only the home
+  // page is left alone (its diagram sits far down the page, and scrolling a
+  // visitor past the hero on arrival would be jarring). "?tour=0" turns it off.
+  function shouldOfferTour() {
+    if (tourUrlOverride() === "0") return false;
+    return AUTO_START_TOUR && !isLandingPage;
   }
 
   function setupLesson(data) {
@@ -1536,13 +1530,13 @@
 
     window.clearTimeout(autoStartTimer);
     offerPending = false;
-    if (shouldOfferTour(data)) {
+    if (shouldOfferTour()) {
       offerPending = true;
       autoStartTimer = window.setTimeout(offerTour, AUTO_START_DELAY);
     }
   }
 
-  // Starts the tour for a first-time visitor — but only once the page is
+  // Starts the tour on its own — but only once the page is
   // actually on screen (a tab opened in the background waits until it is
   // looked at, rather than running the tour unseen).
   function offerTour() {

@@ -34,10 +34,8 @@ const TPRAF_CONTENT = {
   simple: {
     title: "Overview of TPRAF: Simple Form",
     subtitle: "Level 1",
-    // Guided tour: every view gets one, built from its `tour` order and box text.
-    // `autoTour` also offers it on its own to a first-time visitor; it is set on
-    // the short introductory diagrams only (not the long Level 2 ones).
-    autoTour: true,
+    // Guided tour: every view gets one, built from its `tour` order and box text,
+    // and it opens on its own each time the view is shown.
     // Where this view leads next. Slide 2 treats the simple form as the
     // landing step and the extended form as the start of the interactive
     // diagram, so the simple view offers a way through to it. Becomes a
@@ -49,8 +47,8 @@ const TPRAF_CONTENT = {
         label: "Transport Scenarios",
         startHere: true,
         pos: { left: 4.42, top: 29.65, width: 15.79, height: 8.77 },
-        text: "Content coming soon — awaiting text from DARe.",
-        isPlaceholder: true,
+        text: "The transport system being tested: the combination of transport demand (the people and goods that need to travel) and transport supply (the roads, railways, cycleways and footways they travel on). For future scenarios, this is the transport system envisaged under a set of decarbonisation policies, which may include modal shift, technological change, or demand change.",
+        isPlaceholder: false,
         handbookUrl: "#",
         variant: "navy"
       },
@@ -58,8 +56,8 @@ const TPRAF_CONTENT = {
         id: "impact-assessment",
         label: "Impact Assessment",
         pos: { left: 4.42, top: 45.62, width: 15.79, height: 8.77 },
-        text: "Content coming soon — awaiting text from DARe.",
-        isPlaceholder: true,
+        text: "Analysis of the impact of the climate hazard (e.g. flooding, high temperatures) on the transport system. This is simulated by changing the supply (performance of transport links in the network) and observing the response of users. Performance metrics measure how well the system is able to continue operation and withstand the impacts, but also the cost of the disruption to the system and its users.",
+        isPlaceholder: false,
         handbookUrl: "#",
         variant: "navy"
       },
@@ -205,7 +203,6 @@ const TPRAF_CONTENT = {
   extended: {
     title: "Overview of TPRAF: Extended Form",
     subtitle: "Level 1 — Extended",
-    autoTour: true,
     boxes: [
       {
         id: "transport-demand",
@@ -824,7 +821,7 @@ const TPRAF_CONTENT = {
 
       // The convergence point, then appraisal and the adaptation outputs.
       { id: "imp-passenger-transport-model", label: "Passenger Transport Model", pos: { left: 58.52, top: 65.13, width: 7.16, height: 8.4 }, text: "The central simulation step — brings together transport demand, transport supply/freight, and weather/hazard effects to model how passenger journeys are actually made and disrupted.", isPlaceholder: true, handbookUrl: "#", variant: "passenger-red" },
-      { id: "imp-impact-assessment", label: "Impact Assessment/\nPerformance Metrics", pos: { left: 70.58, top: 66.95, width: 12.61, height: 4.9 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-impact-assessment", label: "Impact Assessment/\nPerformance Metrics", pos: { left: 70.58, top: 66.95, width: 12.61, height: 4.9 }, text: "Analysis of the impact of the climate hazard (e.g. flooding, high temperatures) on the transport system. This is simulated by changing the supply (performance of transport links in the network) and observing the response of users. Performance metrics measure how well the system is able to continue operation and withstand the impacts, but also the cost of the disruption to the system and its users.", isPlaceholder: false, handbookUrl: "#" },
       { id: "imp-adaptation-measures", label: "Adaptation Measures", pos: { left: 88.79, top: 66.39, width: 7.32, height: 6.16 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "adapt-teal" },
       { id: "imp-soft-adaptation", label: "Soft Adaptation\ne.g. early warning", pos: { left: 71.52, top: 50.56, width: 18.05, height: 4.76 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "cyan-box" },
       { id: "imp-hard-adaptation", label: "Hard Adaptation\ne.g. green/grey infrastructure", pos: { left: 71.52, top: 91.6, width: 18.05, height: 4.76 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "cyan-box" }
@@ -995,7 +992,6 @@ const TPRAF_CONTENT = {
   level3: {
     title: "From Rainfall to Transport Disruption",
     subtitle: "Level 3 — Example module (Integrated Modelling Platform) · North East flood case study · Draft for DARe to confirm",
-    autoTour: true,
     status: "Built from DARe's North East flood case study (Ford & Schooling, LCRIG Innovation and Learning Festival, June 2026). The step order follows that presentation and is awaiting DARe's confirmation.",
     legend: [
       ["climate", "Hazard model (flood simulation)"],

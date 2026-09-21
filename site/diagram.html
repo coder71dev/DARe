@@ -14,10 +14,11 @@
   <!-- LAYOUT:HEADER — identical on every page; becomes the header block
        inside resources/views/layouts/app.blade.php when this moves to Laravel -->
   <header class="site-header">
-    <div class="brand">
+    <!-- The logo is a link home, the same place the "Home" nav item goes. -->
+    <a class="brand" href="index.html" aria-label="DARe TPRAF — home">
       <img class="logo" src="assets/icons/logo.svg" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />
       <span class="brand-subtitle">TPRAF</span>
-    </div>
+    </a>
     <nav>
       <a href="index.html">Home</a>
     </nav>
@@ -186,7 +187,9 @@
   <footer class="site-footer">
     <div class="container">
       <p class="footer-label">Funded by &middot; Led by</p>
-      <img class="footer-lockup" src="assets/img/funders-partners.png" alt="Funders and partners of the DARe Hub" width="2160" height="103" loading="lazy" />
+      <a class="footer-lockup-link" href="https://dare.ac.uk" aria-label="DARe Hub website (dare.ac.uk)">
+        <img class="footer-lockup" src="assets/img/funders-partners.png" alt="Funders and partners of the DARe Hub" width="2160" height="103" loading="lazy" />
+      </a>
       <p class="footer-line">DARe &middot; Decarbonised, Adaptable, Resilient Transport Infrastructures Hub &middot; <a href="https://dare.ac.uk">dare.ac.uk</a></p>
     </div>
   </footer>
