@@ -398,15 +398,26 @@
   }
 
   // Decorative light-blue cluster background — sits behind the boxes/arrows
-  // it groups, purely visual (no click target, no text). A "dashed" style
-  // container (no fill, dashed outline) reproduces the source diagrams'
-  // sub-groupings within a cluster (e.g. DSP's Risk Assessment/Asset
-  // Performance/Resilience Assessment trio) and the outer boundary around
-  // Detailed Option Assessment + Portfolio Optimisation together.
-  function makeContainerEl(container) {
+  // it groups, purely visual by default (no click target, no text). A
+  // "dashed" style container (no fill, dashed outline) reproduces the source
+  // diagrams' sub-groupings within a cluster (e.g. DSP's Risk Assessment/
+  // Asset Performance/Resilience Assessment trio) and the outer boundary
+  // around Detailed Option Assessment + Portfolio Optimisation together.
+  //
+  // A plain "-bg" cluster background becomes clickable when its matching
+  // heading (same id with "-heading" instead of "-bg") carries a `text` —
+  // client feedback 23 Sept asked for the whole cluster, not just its title
+  // bar, to open the column-level summary. Boxes sit visually on top of the
+  // background, so this never steals a click from an individual box; it only
+  // catches clicks that land on empty cluster space.
+  function makeContainerEl(container, data) {
     const el = document.createElement("div");
     const variantClass = container.variant ? ` variant-${container.variant}` : "";
-    el.className = "diagram-cluster-bg" + variantClass + (container.style === "dashed" ? " style-dashed" : "");
+    const heading = container.id && container.id.endsWith("-bg")
+      ? (data.headings || []).find((h) => h.id === container.id.replace(/-bg$/, "-heading"))
+      : null;
+    const clickable = !!(heading && heading.text);
+    el.className = "diagram-cluster-bg" + variantClass + (container.style === "dashed" ? " style-dashed" : "") + (clickable ? " is-clickable" : "");
     el.style.left = pctX(container.pos.left);
     el.style.top = pct(container.pos.top);
     el.style.width = pctX(container.pos.width);
@@ -416,22 +427,41 @@
     // own radius rather than needing a class per combination.
     if (container.radius) el.style.borderRadius = container.radius;
     if (container.group) el.dataset.group = container.group;
+    if (clickable) {
+      el.setAttribute("role", "button");
+      el.setAttribute("tabindex", "0");
+      el.addEventListener("click", () => openModal(heading));
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(heading); }
+      });
+    }
     return el;
   }
 
-  // Section titles (e.g. "Transport Scenarios") — plain text, not a
-  // popup-opening control, so a div rather than a button. An optional
+  // Section titles (e.g. "Transport Scenarios") — plain text by default, not
+  // a popup-opening control, so a div rather than a button. An optional
   // colour variant renders it as a solid bar (matching the source Level 2
   // diagrams, where each process stage has its own coloured title bar)
   // instead of plain text.
+  //
+  // DSP's six cluster title bars are the exception: five of them carry the
+  // client's column-level process summary (client feedback 23 Sept), so
+  // those become a real clickable control — same popup a box opens — while
+  // any heading with no `text` (e.g. DSP's own "Detailed Option Assessment",
+  // whose summary lives on its vertical box instead per the client's own
+  // "[vertical box]" note, plus every heading on other views) stays a plain,
+  // non-interactive label exactly as before.
   function makeHeadingEl(heading) {
-    const el = document.createElement("div");
-    el.className = "diagram-heading" + (heading.variant ? ` variant-${heading.variant}` : "");
+    const clickable = !!heading.text;
+    const el = document.createElement(clickable ? "button" : "div");
+    if (clickable) el.type = "button";
+    el.className = "diagram-heading" + (heading.variant ? ` variant-${heading.variant}` : "") + (clickable ? " is-clickable" : "");
     el.style.left = pctX(heading.pos.left);
     el.style.top = pct(heading.pos.top);
     el.style.width = pctX(heading.pos.width);
     el.style.height = pct(heading.pos.height);
     el.textContent = heading.label;
+    if (clickable) el.addEventListener("click", () => openModal(heading));
     return el;
   }
 
@@ -675,7 +705,7 @@
     tourPulse = null;
     stage.querySelectorAll(".diagram-box, .diagram-label, .diagram-heading, .diagram-box-halo, .diagram-cluster-bg, .tour-pulse").forEach((n) => n.remove());
 
-    (data.containers || []).forEach((container) => stage.appendChild(makeContainerEl(container)));
+    (data.containers || []).forEach((container) => stage.appendChild(makeContainerEl(container, data)));
 
     setupViewBox();
     svgLayer.appendChild(makeArrowMarker());

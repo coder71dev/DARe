@@ -1175,6 +1175,22 @@ a { color: var(--color-sky); }
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
+/* DSP's clickable clusters (client feedback 23 Sept) — re-enable pointer
+   events just for these (boxes sit above the background as separate
+   elements, so this only ever catches a click on otherwise-empty cluster
+   space) and add a hover/focus cue so it reads as a control. */
+.diagram-cluster-bg.is-clickable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.diagram-cluster-bg.is-clickable:hover,
+.diagram-cluster-bg.is-clickable:focus-visible {
+  filter: brightness(0.97);
+  outline: 2px solid var(--color-water-faint);
+  outline-offset: -2px;
+}
+
 /* Cluster isn't part of the selected DSP/IMP process — loses its fill
    (matching the source PPTX's own DSP-only/IMP-only slides) rather than
    fading like a box, since it's just a grouping outline, not content. */
@@ -1451,6 +1467,23 @@ a { color: var(--color-sky); }
   font-size: clamp(0.6rem, 0.9vw, 0.85rem);
   z-index: 2;
   pointer-events: none;
+}
+
+/* DSP's clickable cluster titles (client feedback 23 Sept) — a real button,
+   so it needs the click re-enabled and its own hover/focus cue, unlike the
+   plain non-interactive headings on every other view. */
+.diagram-heading.is-clickable {
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.diagram-heading.is-clickable:hover,
+.diagram-heading.is-clickable:focus-visible {
+  filter: brightness(1.08);
+  outline: 2px solid var(--color-white);
+  outline-offset: -3px;
 }
 
 /* Level 2's process-stage headings render as a solid colour bar (matching
