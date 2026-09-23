@@ -1715,6 +1715,19 @@ a { color: var(--color-sky); }
 }
 
 @media (max-width: 760px) {
+  /* Full-width, one above the other, on every phone — deliberately, not as
+     a side-effect of running out of room. The two buttons' natural widths
+     (~164px + ~147px + gap) happen to just fit in a 375px-wide standalone
+     diagram page, but not once the same bar sits inside the home page's
+     narrower, padded column — so without this rule the exact same strip
+     read as a tidy row on one page and an accidental, uneven wrap on the
+     other. Stacking full-width on both removes that inconsistency and
+     gives each button a bigger, centred tap target besides. */
+  .tour-play {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
   /* Its own line on a phone — a step name squeezed into a narrow column next
      to the buttons is worse than a second row. Two lines are always reserved
      so a longer step name can't change the strip's height mid-walkthrough and
