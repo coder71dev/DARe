@@ -42,7 +42,7 @@
         <div class="hero-copy">
           <p class="eyebrow">DARe &middot; Interactive Resource</p>
           <h1 id="hero-title"><span class="hero-owner">DARe&rsquo;s</span> Transport Performance &amp; Risk Analysis Framework</h1>
-          <p class="tagline">For people, for place, for a more sustainable future</p>
+          <p class="tagline">Supporting the transition to a decarbonised transport system that is resilient and adaptive to a changing climate</p>
           <div class="hero-actions">
             <a class="cta-button" href="diagram.html#extended">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
             <a class="ghost-link" href="#what-is-tpraf">What is TPRAF?</a>
@@ -52,6 +52,12 @@
           <img src="assets/icons/framework.svg" alt="" width="1482" height="1482" />
         </div>
       </div>
+      <!-- A quiet nudge to keep scrolling, since the page has a lot below
+           the fold. Links to the same "What is TPRAF?" anchor as the ghost
+           link above, so it's a second way to reach it, not new content. -->
+      <a class="scroll-cue" href="#what-is-tpraf" aria-label="Scroll to learn more">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v13M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
     </section>
 
     <!-- The guide's palette page shows the four brand colours as four equal
@@ -63,64 +69,71 @@
 
     <section class="section" id="what-is-tpraf" aria-labelledby="what-title">
       <div class="container">
-        <header class="section-head">
+        <header class="section-head reveal">
           <h2 id="what-title">What is TPRAF?</h2>
           <p class="section-index">01 &middot; Overview</p>
         </header>
 
-        <div class="prose">
-          <p class="definition">
-            <strong>DARe&rsquo;s Transport Performance &amp; Risk Analysis Framework (TPRAF):</strong>
-            a validated, usable framework to help decision-makers — at local, regional, and national
-            levels — assess and balance the demands associated with climate resilience, adaptation,
-            and decarbonisation when addressing risks to transport infrastructure performance and
-            operations.
-          </p>
+        <!-- Two columns on wide screens: the prose reads at a normal line
+             length (a full-width paragraph on a 1180px container is too wide
+             to read comfortably) and the audience list — already real page
+             content, not new copy — fills the space beside it as a sidebar
+             card, instead of the page just leaving that space blank. -->
+        <div class="overview-grid">
+          <div class="overview-main">
+            <div class="prose">
+              <p class="definition">
+                <strong>DARe&rsquo;s Transport Performance &amp; Risk Analysis Framework (TPRAF):</strong>
+                a validated, usable framework to help decision-makers — at local, regional, and national
+                levels — assess and balance the demands associated with climate resilience, adaptation,
+                and decarbonisation when addressing risks to transport infrastructure performance and
+                operations.
+              </p>
 
-          <p>
-            The TPRAF responds to growing challenges across the UK transport sector, including
-            increasing climate risks, ageing assets, evolving travel demand, and constrained
-            investment, while promoting decisions that consider system-wide performance rather
-            than isolated assets.
-          </p>
-        </div>
+              <p>
+                The TPRAF responds to growing challenges across the UK transport sector, including
+                increasing climate risks, ageing assets, evolving travel demand, and constrained
+                investment, while promoting decisions that consider system-wide performance rather
+                than isolated assets.
+              </p>
 
-        <div class="audience">
-          <p class="audience-lead">
-            The TPRAF is designed as a <strong>flexible, modular framework</strong> that can be
-            applied by a wide range of transport decision-makers, including:
-          </p>
-          <ul class="audience-list">
-            <li>National infrastructure owners</li>
-            <li>Local and combined authorities</li>
-            <li>Transport operators</li>
-            <li>Freight companies</li>
-            <li>Consultancies</li>
-            <li>Researchers</li>
-          </ul>
-        </div>
+              <p>
+                Rather than replacing existing organisational processes, it is intended to
+                <strong>complement and strengthen current practices</strong>, providing a unifying
+                framework that helps integrate assessments and decision-making processes, enabling
+                smoother data exchange and reducing fragmentation. This consistency supports more
+                joined-up planning, improved information sharing, and better alignment between
+                strategic, operational, and investment decisions.
+              </p>
+            </div>
+          </div>
 
-        <div class="prose">
-          <p>
-            Rather than replacing existing organisational processes, it is intended to
-            <strong>complement and strengthen current practices</strong>, providing a unifying
-            framework that helps integrate assessments and decision-making processes, enabling
-            smoother data exchange and reducing fragmentation. This consistency supports more
-            joined-up planning, improved information sharing, and better alignment between
-            strategic, operational, and investment decisions.
-          </p>
+          <aside class="overview-aside">
+            <p class="audience-lead">
+              The TPRAF is designed as a <strong>flexible, modular framework</strong> that can be
+              applied by a wide range of transport decision-makers, including:
+            </p>
+            <ul class="audience-list">
+              <li>National infrastructure owners</li>
+              <li>Local and combined authorities</li>
+              <li>Transport operators</li>
+              <li>Freight companies</li>
+              <li>Consultancies</li>
+              <li>Researchers</li>
+            </ul>
+          </aside>
         </div>
       </div>
     </section>
 
     <section class="section band-stone" aria-labelledby="about-title">
       <div class="container">
-        <header class="section-head">
+        <header class="section-head reveal">
           <h2 id="about-title">About the TPRAF Diagram</h2>
           <p class="section-index">02 &middot; The resource</p>
         </header>
 
-        <div class="prose">
+        <div class="prose prose-wide">
           <p>
             This interactive version of the DARe Transport Performance &amp; Risk Analysis Framework
             (TPRAF) is one of several resources developed by the DARe Hub. Alongside the full TPRAF
@@ -131,25 +144,29 @@
           </p>
         </div>
 
-        <ul class="resource-cards">
-          <li class="resource-card">
+        <ul class="resource-cards reveal-group">
+          <li class="resource-card reveal">
+            <!-- The full report isn't public yet, so this points at DARe's news
+                 article about TPRAF instead — swap the href once the report itself
+                 is published. -->
+            <a class="resource-card-link" href="https://dare.ac.uk/news/dare-unveils-first-version-of-innovative-framework-tpraf/" target="_blank" rel="noopener" aria-label="Full TPRAF report — read the DARe news article"></a>
             <img class="resource-icon" src="assets/icons/icon-publications.png" alt="" width="256" height="256" />
             <h3>Full TPRAF report</h3>
             <p>The purpose, structure, and development of the framework.</p>
           </li>
-          <li class="resource-card">
+          <li class="resource-card reveal">
             <img class="resource-icon resource-icon-tall" src="assets/icons/handbook.svg" alt="" width="1399" height="2024" />
             <h3>DARe Handbook</h3>
             <p>Guidance on operationalising the framework&rsquo;s components in practice.</p>
           </li>
-          <li class="resource-card">
+          <li class="resource-card reveal">
             <img class="resource-icon" src="assets/icons/icon-search.png" alt="" width="256" height="256" />
             <h3>This interactive diagram</h3>
             <p>Explore the framework at your own pace.</p>
           </li>
         </ul>
 
-        <div class="prose">
+        <div class="prose prose-wide">
           <p>
             This interactive resource offers an accessible introduction to the framework, enabling
             users to explore its structure, components, and relationships at their own pace. Whether
@@ -175,7 +192,7 @@
          embed. The wrapper is a boundary and a hook, nothing more. -->
     <section class="section" aria-labelledby="simple-title">
       <div class="container">
-        <header class="section-head">
+        <header class="section-head reveal">
           <h2 id="simple-title">The simple form</h2>
           <p class="section-index">03 &middot; Level 1</p>
         </header>
@@ -212,7 +229,7 @@
               <span class="tour-play-icon" aria-hidden="true"></span>
               <span id="tour-play-label">Play walkthrough</span>
             </button>
-            <p class="tour-caption" id="tour-caption" aria-live="polite">Watch the steps play in order.</p>
+            <p class="tour-caption" id="tour-caption" aria-live="polite">Watch the steps play.</p>
             <div class="tour-actions">
               <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
               <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
@@ -255,14 +272,64 @@
 
     <section class="section band-stone" aria-labelledby="further-title">
       <div class="container">
-        <header class="section-head">
+        <header class="section-head reveal">
           <h2 id="further-title">Further Information</h2>
           <p class="section-index">04 &middot; More detail</p>
         </header>
-        <div class="prose">
-          <p>Further information and supporting downloads will be added here.</p>
-        </div>
-        <p class="pending-note">Awaiting final content from DARe</p>
+
+        <ul class="resource-cards reveal-group">
+          <li class="resource-card reveal">
+            <a class="resource-card-link" href="https://dare.ac.uk" target="_blank" rel="noopener" aria-label="DARe website (dare.ac.uk)"></a>
+            <img class="resource-icon" src="assets/icons/icon-website.png" alt="" width="256" height="256" />
+            <h3>DARe website</h3>
+            <p>The DARe Hub's main site, at dare.ac.uk.</p>
+          </li>
+          <li class="resource-card reveal">
+            <a class="resource-card-link" href="https://repository.dare.ac.uk/" target="_blank" rel="noopener" aria-label="DARe Repository"></a>
+            <img class="resource-icon" src="assets/icons/icon-repository.png" alt="" width="256" height="256" />
+            <h3>DARe Repository</h3>
+            <p>Datasets, models, and outputs from across the DARe Hub.</p>
+          </li>
+          <li class="resource-card reveal">
+            <a class="resource-card-link" href="mailto:darehub@newcastle.ac.uk" aria-label="Email the DARe Hub"></a>
+            <img class="resource-icon" src="assets/icons/icon-email.png" alt="" width="256" height="256" />
+            <h3>Email us</h3>
+            <p>Questions about TPRAF or the DARe Hub's work.</p>
+          </li>
+        </ul>
+
+        <!-- The full text is one long paragraph, which visitors tend to skip.
+             A <details> card keeps it collapsed to a one-line teaser (the
+             paragraph's own opening words, clamped by CSS, not a rewritten
+             summary) behind a clearly-clickable "Acknowledgements" row, using
+             the brand's own Quote Mark icon so it reads as a credit/thank-you
+             rather than another block of body copy. -->
+        <details class="ack-card reveal" open>
+          <summary class="ack-summary">
+            <img class="ack-icon" src="assets/icons/icon-quote.png" alt="" width="256" height="256" />
+            <span class="ack-summary-copy">
+              <span class="ack-summary-label">Acknowledgements</span>
+              <span class="ack-summary-preview" aria-hidden="true">The development of the DARe Transport Performance &amp; Risk Analysis Framework (TPRAF) has been a collaborative effort involving colleagues from across the DARe Hub, particularly those contributing to Work Packages 2 and 3.</span>
+            </span>
+            <svg class="ack-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="ack-body">
+            <p>
+              The development of the DARe Transport Performance &amp; Risk Analysis Framework (TPRAF)
+              has been a collaborative effort involving colleagues from across the DARe Hub,
+              particularly those contributing to Work Packages 2 and 3. The authors gratefully
+              acknowledge the wider DARe team for their expertise, insights, and contributions to
+              the framework&rsquo;s development and refinement. We also thank DARe&rsquo;s project
+              partners and stakeholders, whose engagement, challenge, and practical experience have
+              helped ensure that the TPRAF is grounded in real-world transport infrastructure
+              decision-making and reflects the needs of its intended users. This work was funded by
+              UK Research and Innovation (UKRI) through the Engineering and Physical Sciences
+              Research Council (EPSRC), and by the Department for Transport, under EPSRC Grant
+              EP/Y024257/1, <em>Research Hub for Decarbonised Adaptable and Resilient Transport
+              Infrastructures (DARe)</em>.
+            </p>
+          </div>
+        </details>
       </div>
     </section>
 

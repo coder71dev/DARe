@@ -220,6 +220,12 @@ a { color: var(--color-sky); }
 
 @media (min-width: 820px) {
   .hero-grid { grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr); }
+  /* Only capped once the hero graphic sits beside the copy (this
+     breakpoint) — below it, the graphic stacks below the copy instead, so
+     there's nothing to its right and the tagline can use the full width
+     instead of stopping at a comfortable reading measure with empty space
+     beside it (mobile report, 23 Sept). */
+  .hero .tagline { max-width: 30ch; }
 }
 
 .eyebrow {
@@ -242,7 +248,6 @@ a { color: var(--color-sky); }
 .hero-owner { color: var(--color-leaf); }
 
 .hero .tagline {
-  max-width: 30ch;
   margin: 1.25rem 0 0;
   color: var(--color-stone);
   font-size: clamp(1rem, 1.7vw, 1.25rem);
@@ -255,6 +260,41 @@ a { color: var(--color-sky); }
   align-items: center;
   gap: 0.85rem 1.75rem;
   margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  z-index: 1;
+  display: inline-flex;
+  padding: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  transform: translateX(-50%);
+  animation: scroll-cue-bounce 1.8s ease-in-out infinite;
+}
+
+.scroll-cue:hover,
+.scroll-cue:focus-visible {
+  color: var(--color-white);
+}
+
+.scroll-cue svg {
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes scroll-cue-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue { animation: none; }
+}
+
+@media (max-height: 600px) {
+  .scroll-cue { display: none; }
 }
 
 .hero-graphic img {
@@ -290,6 +330,32 @@ a { color: var(--color-sky); }
 
 /* ---------- Sections ---------- */
 .section { padding: clamp(2.5rem, 6vw, 4.75rem) 0; }
+
+/* Scroll-reveal: a plain fade/rise-in for section heads and cards as they
+   enter view, applied by app.js via IntersectionObserver. Elements start
+   revealed (no JS/no support = just show everything, see app.js) so this
+   only ever adds polish, never hides content. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-group > .reveal:nth-child(2) { transition-delay: 0.08s; }
+.reveal-group > .reveal:nth-child(3) { transition-delay: 0.16s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 
 .band-stone { background: var(--color-stone); }
 
@@ -327,16 +393,120 @@ a { color: var(--color-sky); }
   white-space: nowrap;
 }
 
-.prose { max-width: 62ch; }
+.prose { max-width: 68ch; }
 
 .prose p { margin: 0 0 1.15rem; line-height: 1.62; }
 .prose p:last-child { margin-bottom: 0; }
 
+/* Used where a paragraph is the only thing in its row (no sidebar to share
+   the space with, e.g. "About the TPRAF Diagram"), so it isn't left looking
+   like a narrow column with dead space beside it — runs the full container
+   width rather than stopping at a "readable" line length. */
+.prose-wide { max-width: none; }
+
 .definition { font-size: 1.06rem; }
 
-/* ---------- Who it's for ---------- */
-.audience { margin: clamp(1.75rem, 3vw, 2.5rem) 0; }
+/* ---------- Overview two-column layout (What is TPRAF?) ---------- */
+.overview-grid {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 2.5rem);
+  align-items: start;
+}
 
+@media (min-width: 860px) {
+  .overview-grid { grid-template-columns: minmax(0, 1fr) minmax(240px, 320px); }
+}
+
+.overview-aside {
+  margin: 0;
+  padding: 1.5rem 1.5rem 1.75rem;
+  background: var(--color-stone);
+  border-radius: 12px;
+}
+
+.overview-aside .audience-lead { max-width: none; }
+.overview-aside .audience-list { grid-template-columns: 1fr; }
+
+/* ---------- Acknowledgements card (collapsible, native <details>) ---------- */
+.ack-card {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  background: var(--color-white);
+  border: 1px solid rgba(0, 41, 94, 0.12);
+  border-left: 4px solid var(--color-leaf);
+  border-radius: 10px;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.ack-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.ack-summary::-webkit-details-marker { display: none; }
+
+.ack-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  opacity: 0.85;
+}
+
+.ack-summary-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ack-summary-label {
+  font-weight: 700;
+  color: var(--color-water);
+  font-size: 0.98rem;
+}
+
+.ack-summary-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--color-water-muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.ack-chevron {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--color-water-muted);
+  transition: transform 0.15s ease;
+}
+
+.ack-card[open] .ack-chevron { transform: rotate(180deg); }
+.ack-card[open] .ack-summary-preview { display: none; }
+
+.ack-body {
+  padding: 0 1.25rem 1.25rem calc(1.25rem + 34px + 0.9rem);
+}
+
+.ack-body p {
+  margin: 0;
+  color: var(--color-water-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 560px) {
+  .ack-body { padding-left: 1.25rem; }
+}
+
+/* ---------- Who it's for ---------- */
 .audience-lead {
   max-width: 62ch;
   margin: 0 0 1.1rem;
@@ -375,16 +545,40 @@ a { color: var(--color-sky); }
 /* Bold use of the palette, as the guide asks for on its materials — the
    three cards take three of the four colours in guide order. */
 .resource-card {
+  position: relative;
   padding: 1.25rem 1.25rem 1.4rem;
   background: var(--color-white);
   border: 1px solid rgba(0, 41, 94, 0.12);
   border-top: 4px solid var(--color-water);
   border-radius: 10px;
   box-shadow: var(--shadow-soft);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .resource-card:nth-child(2) { border-top-color: var(--color-leaf); }
 .resource-card:nth-child(3) { border-top-color: var(--color-sky); }
+
+/* Lift the whole card on hover/focus of its link, so a card with a
+   full-cover link (see .resource-card-link below) reads as clickable. */
+.resource-card:has(.resource-card-link:hover),
+.resource-card:has(.resource-card-link:focus-visible) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 41, 94, 0.14);
+}
+
+/* A card can carry one full-cover link (the "Full TPRAF report" card, and
+   the new Further Information cards) without disturbing its visible content
+   — the link sits invisible over the whole card rather than wrapping it. */
+.resource-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.resource-card-link:hover ~ h3 {
+  text-decoration: underline;
+}
 
 /* Constrained by height rather than width: the set mixes square badges with
    a tall book shape, and equal heights is what makes them read as one set. */
@@ -408,17 +602,6 @@ a { color: var(--color-sky); }
   color: var(--color-water-muted);
   font-size: 0.9rem;
   line-height: 1.45;
-}
-
-.pending-note {
-  display: inline-block;
-  margin: 0.9rem 0 0;
-  padding: 0.35rem 0.7rem;
-  background: var(--color-stone);
-  border-radius: 6px;
-  color: var(--color-water-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
 }
 
 /* ---------- The simple form on the landing page ---------- */
@@ -700,11 +883,26 @@ a { color: var(--color-sky); }
 .diagram-guide-swatch.swatch-leaf { background: var(--color-leaf); }
 .diagram-guide-swatch.swatch-io { background: var(--color-white); border: 2px solid var(--color-water); }
 
+/* DSP's six process-stage title-bar colours (client feedback, 23 Sept: the
+   guide only explained the navy/white box roles, never what the six stage
+   colours meant) — same hexes as .diagram-heading.variant-c1..c6. */
+.diagram-guide-swatch.swatch-c1 { background: #60c8f0; }
+.diagram-guide-swatch.swatch-c2 { background: #f0a860; }
+.diagram-guide-swatch.swatch-c3 { background: #f08878; }
+.diagram-guide-swatch.swatch-c4 { background: #b0e0a0; }
+.diagram-guide-swatch.swatch-c5 { background: #f8e0b0; }
+.diagram-guide-swatch.swatch-c6 { background: #88b0c0; }
+
 /* IMP's key is the source slide's own nine-entry key (domain, not process),
    so the legend reproduces those swatch colours rather than the brand four.
    The pale ones carry a hairline outline purely so they stay visible against
-   the white guide card — the source's own key swatches do the same. */
-.diagram-guide-swatch.swatch-tool { background: #000000; }
+   the white guide card — the source's own key swatches do the same.
+   Exception: "Tool" is #156082 here, not the source's black — the source's
+   own key swatch is black but every actual Tool box (NTEM, Building
+   Development Model, etc.), in both the source slide and our build, is this
+   navy-teal. Matching our own boxes reads better than reproducing a swatch
+   colour nothing on the diagram actually uses (23 Sept, on review). */
+.diagram-guide-swatch.swatch-tool { background: #156082; }
 .diagram-guide-swatch.swatch-social { background: #f2f2f2; border: 1px solid #c9c9c9; }
 .diagram-guide-swatch.swatch-threshold { background: #f2cfee; border: 1px solid #d9a8d4; }
 .diagram-guide-swatch.swatch-climate { background: #d9f2d0; border: 1px solid #a8d9a0; }
@@ -712,6 +910,9 @@ a { color: var(--color-sky); }
 .diagram-guide-swatch.swatch-supply { background: #fbe3d6; border: 1px solid #e0b8a0; }
 .diagram-guide-swatch.swatch-freight { background: #fef3e2; border: 1px solid #e0cfa8; }
 .diagram-guide-swatch.swatch-adapt { background: #f0ffff; border: 1px solid #a8dcdc; }
+/* Added 23 Sept: the source's key never documented this box at all, even
+   though it's the most visually prominent one on the diagram. */
+.diagram-guide-swatch.swatch-passenger { background: #c00000; }
 
 .diagram-guide-swatch.swatch-dot {
   width: 9px;
@@ -1085,28 +1286,13 @@ a { color: var(--color-sky); }
   transform: rotate(var(--box-rotate, 0deg)) translateY(-2px);
 }
 
-/* "Start here" cue — a corner ribbon + glow pulse on the flow's natural
-   entry box, contained entirely within the box's own footprint so it can't
-   collide with neighbouring boxes/headings even in Extended's tight layout. */
-.diagram-box.is-start {
+/* "Just clicked" cue — a glow pulse on whichever box a visitor clicks, so the
+   diagram shows where they are without suggesting any one box is the fixed
+   starting point (client feedback, 22 Sept: the framework should read as
+   start-anywhere, not a fixed sequence — this replaces the old single
+   pre-marked "Start" ribbon box). */
+.diagram-box.is-clicked {
   animation: start-box-glow 1.6s ease-in-out 3;
-}
-
-.diagram-box.is-start::before {
-  content: "Start";
-  position: absolute;
-  top: -9px;
-  left: -6px;
-  padding: 0.1rem 0.5rem;
-  background: var(--color-leaf);
-  color: var(--color-water);
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-radius: 999px;
-  box-shadow: 0 2px 6px rgba(0, 41, 94, 0.25);
-  z-index: 4;
 }
 
 @keyframes start-box-glow {
@@ -1115,7 +1301,7 @@ a { color: var(--color-sky); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .diagram-box.is-start { animation: none; }
+  .diagram-box.is-clicked { animation: none; }
 }
 
 /* Box color groups — matches the source PPTX: navy for the
@@ -1314,14 +1500,17 @@ a { color: var(--color-sky); }
 .diagram-heading.variant-key-demand,
 .diagram-heading.variant-key-supply,
 .diagram-heading.variant-key-freight,
-.diagram-heading.variant-key-adapt {
+.diagram-heading.variant-key-adapt,
+.diagram-heading.variant-key-passenger {
   border-radius: 6px;
   padding: 0.15rem 0.3rem;
   font-size: clamp(0.6rem, 0.9vw, 0.94rem);
   line-height: 1.12;
 }
 
-.diagram-heading.variant-key-tool { background: #000000; color: var(--color-white); }
+/* "Tool" is #156082 here, not the source's black — see the matching note by
+   .diagram-guide-swatch.swatch-tool in the legend rules above. */
+.diagram-heading.variant-key-tool { background: #156082; color: var(--color-white); }
 .diagram-heading.variant-key-io { background: var(--color-white); color: #333333; border: 1px solid #156082; }
 .diagram-heading.variant-key-social { background: #f2f2f2; }
 .diagram-heading.variant-key-threshold { background: #f2cfee; }
@@ -1330,6 +1519,9 @@ a { color: var(--color-sky); }
 .diagram-heading.variant-key-supply { background: #fbe3d6; }
 .diagram-heading.variant-key-freight { background: #fef3e2; }
 .diagram-heading.variant-key-adapt { background: #f0ffff; }
+/* Added 23 Sept: undocumented in the source's own key, despite being the
+   most visually prominent box on the diagram. */
+.diagram-heading.variant-key-passenger { background: #c00000; color: var(--color-white); }
 
 /* Plain text labels (Risk Mitigation / Feedback loop) — no pill/background,
    matching the source PPTX's plain bold caption style. */

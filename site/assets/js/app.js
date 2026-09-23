@@ -353,9 +353,22 @@
     el.dataset.boxId = box.id; // how the walkthrough finds a step's box again
     if (box.group) el.dataset.group = box.group;
     if (box.rotate) el.style.setProperty("--box-rotate", box.rotate + "deg");
-    if (box.startHere) el.classList.add("is-start");
     el.addEventListener("click", () => onBoxClick(box));
     return el;
+  }
+
+  // The glow pulse used to sit permanently on one pre-chosen "Start" box.
+  // Client feedback (22 Sept) wants the framework to read as start-anywhere,
+  // so instead the same pulse now plays on whichever box a visitor actually
+  // clicks — a "you are here" cue, not a fixed entry point. Re-triggerable:
+  // removing then re-adding the class restarts a CSS animation that's
+  // already running (a repeat click on the same box pulses again).
+  function pulseBox(id) {
+    const el = tourBoxEl(id);
+    if (!el) return;
+    el.classList.remove("is-clicked");
+    void el.offsetWidth; // force reflow so the animation restarts
+    el.classList.add("is-clicked");
   }
 
   // While a tour runs, a box moves it to that box's step. Otherwise a box opens
@@ -365,7 +378,10 @@
     const index = lessonStepIndexOfBox(box.id);
     if (index >= 0 && lessonState.running) lessonGoTo(index, index === lessonState.index + 1);
     else if (index >= 0 && currentLesson().clickStartsTour) startLesson(index);
-    else openModal(box);
+    else {
+      pulseBox(box.id);
+      openModal(box);
+    }
   }
 
   function makeLabelEl(label) {
@@ -423,38 +439,22 @@
      since the colour legend's meaning shifts slightly between Simple (no
      DSP/IMP split) and Extended (colours = process).
 
-     Collapsed by default: the guide is a reference to open when you want it,
-     not something that stands between the title and the diagram on every
-     visit. Only a real open/close is remembered, so the default still applies
-     to anyone who has never touched it. The key is renamed from
-     "tpraf-guide-collapsed", which the old expanded-by-default start-up wrote
-     for every visitor — they'd otherwise keep getting the old behaviour. */
-  const GUIDE_STORAGE_KEY = "tpraf-guide-open";
-
-  function getGuideCollapsed() {
-    try {
-      return localStorage.getItem(GUIDE_STORAGE_KEY) !== "1";
-    } catch (e) {
-      return true; // no storage available: fall back to the default, not to a preference
-    }
-  }
-
-  function setGuideCollapsed(collapsed, persist) {
+     Always closed on load, everywhere (home page and every diagram tab) —
+     the guide is a reference to open when you want it, not something that
+     stands between the title and the diagram on every visit. This used to
+     remember a visitor's last open/close choice via localStorage, but that
+     meant it could default to open for a returning visitor; it no longer
+     persists, so every fresh load starts collapsed regardless of history. */
+  function setGuideCollapsed(collapsed) {
     guideEl.dataset.collapsed = collapsed ? "true" : "false";
     guideToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
-    if (!persist) return;
-    try {
-      localStorage.setItem(GUIDE_STORAGE_KEY, collapsed ? "0" : "1");
-    } catch (e) {
-      /* per-viewer convenience only — fine if it can't persist */
-    }
   }
 
   if (guideToggle) {
     guideToggle.addEventListener("click", () => {
-      setGuideCollapsed(guideEl.dataset.collapsed !== "true", true);
+      setGuideCollapsed(guideEl.dataset.collapsed !== "true");
     });
-    setGuideCollapsed(getGuideCollapsed(), false);
+    setGuideCollapsed(true);
   }
 
   function escapeHtml(str) {
@@ -466,14 +466,17 @@
     // Level 2 views set their own data.legend (different meaning: box type,
     // not DSP/IMP process) instead of the Level 1 navy/sky/leaf default.
     const legend = data.legend || [
-      ["navy", hasProcessGroups ? "Impact Modelling (IMP) steps" : "Hazard & scenario steps"],
-      ["sky", hasProcessGroups ? "Decision Support (DSP) steps" : "Evaluation & risk steps"],
-      ["leaf", "Key decision point"]
+      ["navy", hasProcessGroups ? "Integrated Modelling (IMP)" : "Hazard & scenario steps"],
+      ["sky", hasProcessGroups ? "Decision Support (DSP)" : "Evaluation & risk steps"]
     ];
     const legendHtml = legend
       .map(([swatch, label]) => `<li><span class="diagram-guide-swatch swatch-${swatch}"></span>${escapeHtml(label)}</li>`)
       .join("");
-    const hasPlaceholders = data.boxes.some((b) => b.isPlaceholder) || (data.labels || []).some((l) => l.isPlaceholder);
+    // Only boxes ever actually show the little "still coming" dot on the
+    // diagram (see .missing-content in style.css — labels never get it), so
+    // a label-only placeholder (e.g. an unconfirmed feedback-loop caption)
+    // shouldn't keep this legend line alive once every box is done.
+    const hasPlaceholders = data.boxes.some((b) => b.isPlaceholder);
     const hasFeedback = (data.feedbackPaths || []).length > 0;
     const dotHtml = hasPlaceholders ? `<li><span class="diagram-guide-swatch swatch-dot"></span>Wording still coming from DARe</li>` : "";
     const lineHtml = hasFeedback ? `<li><span class="diagram-guide-swatch swatch-line"></span>Feedback loop</li>` : "";
@@ -482,10 +485,13 @@
       ? " Use the <strong>DSP only</strong> / <strong>IMP only</strong> buttons above the diagram to follow just one process at a time."
       : "";
 
-    const status = data.status || "Working draft, ready for review — Level 1 is complete below; Level 2 component diagrams are next.";
+    // Only shown when a view sets its own data.status (DSP/IMP/Level 3, where
+    // it's still accurate) — Simple and Extended used to fall back to a
+    // generic "Level 2 is next" line that's stale now Level 2 exists.
+    const statusHtml = data.status ? `<p class="diagram-guide-status">${escapeHtml(data.status)}</p>` : "";
 
     const tourHint = (data.tour || []).length
-      ? " Or press <strong>Play walkthrough</strong> to watch the steps light up in order, and see how the diagram loops back on itself."
+      ? " Or press <strong>Play walkthrough</strong> to watch the steps light up."
       : "";
 
     // A lesson view is read with the step card, not by opening popups.
@@ -497,7 +503,7 @@
     return `
       <p class="diagram-guide-hint">${hint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
       <ul class="diagram-guide-legend">${legendHtml}${dotHtml}${lineHtml}</ul>
-      <p class="diagram-guide-status">${escapeHtml(status)}</p>
+      ${statusHtml}
     `;
   }
 
@@ -1183,10 +1189,12 @@
   // What the strip reads before (and after) a run. The count comes from the
   // view on screen, so it always describes the walkthrough that's on offer
   // rather than a generic label — 8 steps on the simple form, 35 on DSP.
+  // No "in order" framing (client feedback, 22 Sept): visitors shouldn't be
+  // led to think the steps must be followed in a fixed sequence.
   function tourIdleCaption() {
     const data = TPRAF_CONTENT[currentViewKey];
     const count = ((data && data.tour) || []).length;
-    return count ? "Watch all " + count + " steps in order." : "";
+    return count ? "Watch all " + count + " steps." : "";
   }
 
   function setTourControls(state) {
@@ -1342,7 +1350,12 @@
   const phoneQuery = window.matchMedia("(max-width: 760px)");
 
   const LESSON_SEEN_KEY = "tpraf-tour-seen"; // set once a visitor finishes or skips any tour
-  const AUTO_START_TOUR = true;   // open the tour on its own each time a diagram is shown (not on the home page)
+  // The tour used to open on its own on every view change. Client feedback,
+  // 22 Sept, asked for that to stop on Extended and Level 3 specifically;
+  // on reflection the same "let people choose when to take it" logic applies
+  // everywhere, so it no longer auto-opens on any view. "?tour=1" still
+  // forces it open (a demo link, or previewing it quickly).
+  const AUTO_START_TOUR = false;
   const CONTINUOUS_PROGRESS_ABOVE = 14; // a longer tour gets one smooth progress bar, not a segment per step
   const PROCESS_LABELS = { dsp: "Decision support (DSP)", imp: "Impact modelling (IMP)", both: "DSP and IMP" };
   // The home page embeds the simple form and has no level tabs; it never opens a tour by itself.
@@ -1485,11 +1498,13 @@
     else window.location.href = "diagram.html#" + view;
   }
 
-  // Every diagram has a tour, and it opens on its own every time a diagram is
-  // shown: on each page load and each time a level tab is picked. Only the home
-  // page is left alone (its diagram sits far down the page, and scrolling a
-  // visitor past the hero on arrival would be jarring). "?tour=0" turns it off.
+  // Every diagram has a tour, but (per client feedback, 22 Sept) it no longer
+  // opens on its own anywhere — a visitor always chooses it via "Take the
+  // guided tour". "?tour=1" still force-offers it (a demo link, or previewing
+  // it quickly); "?tour=0" is now redundant with AUTO_START_TOUR off, but
+  // left working in case auto-start is ever turned back on for some views.
   function shouldOfferTour() {
+    if (tourUrlOverride() === "1") return true;
     if (tourUrlOverride() === "0") return false;
     return AUTO_START_TOUR && !isLandingPage;
   }
@@ -2094,4 +2109,36 @@
   setupDragToScroll(document.getElementById("diagram-stage-wrap"));
   setupDragToScroll(document.getElementById("diagram-toolbar"));
   setupZoomControls();
+
+  // Scroll-reveal: fades in ".reveal" elements (the home page's section
+  // heads and resource cards) as they enter view. No-op on diagram.html,
+  // which has none. Elements are visible by default (see .reveal in
+  // style.css), so a browser without IntersectionObserver just shows
+  // everything immediately rather than hiding content.
+  const revealEls = document.querySelectorAll(".reveal");
+  if (revealEls.length) {
+    if ("IntersectionObserver" in window) {
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      );
+      revealEls.forEach((el) => revealObserver.observe(el));
+    } else {
+      revealEls.forEach((el) => el.classList.add("is-visible"));
+    }
+  }
+
+  // It should start open by default (the "open" attribute in index.html
+  // handles a fresh load) — but some browsers restore a <details> element's
+  // open/closed state on a plain reload the same way they restore scroll
+  // position, so a visitor who closed it could have it come back closed on
+  // their next reload. Force it open on every load so the default is
+  // consistent regardless of that.
+  document.querySelectorAll(".ack-card").forEach((el) => { el.open = true; });
 })();

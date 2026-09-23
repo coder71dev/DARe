@@ -45,7 +45,6 @@ const TPRAF_CONTENT = {
       {
         id: "transport-scenarios",
         label: "Transport Scenarios",
-        startHere: true,
         pos: { left: 4.42, top: 29.65, width: 15.79, height: 8.77 },
         text: "The transport system being tested: the combination of transport demand (the people and goods that need to travel) and transport supply (the roads, railways, cycleways and footways they travel on). For future scenarios, this is the transport system envisaged under a set of decarbonisation policies, which may include modal shift, technological change, or demand change.",
         isPlaceholder: false,
@@ -83,8 +82,8 @@ const TPRAF_CONTENT = {
         id: "bau",
         label: "Business as usual/Do nothing evaluation",
         pos: { left: 23.80, top: 44.76, width: 14.24, height: 10.67 },
-        text: "Content coming soon — awaiting text from DARe.",
-        isPlaceholder: true,
+        text: "Evaluating current assets and/or networks, and understanding the problems and challenges present.",
+        isPlaceholder: false,
         handbookUrl: "#",
         variant: "sky"
       },
@@ -101,8 +100,8 @@ const TPRAF_CONTENT = {
         id: "adaptation-interventions",
         label: "Adaptation/\nInterventions",
         pos: { left: 60.71, top: 45.62, width: 14.24, height: 8.77 },
-        text: "Content coming soon — awaiting text from DARe.",
-        isPlaceholder: true,
+        text: "Options and pathways to improve resilience, adaptation, sustainability, and transport performance.",
+        isPlaceholder: false,
         handbookUrl: "#",
         variant: "leaf",
         highlight: true
@@ -207,7 +206,6 @@ const TPRAF_CONTENT = {
       {
         id: "transport-demand",
         label: "Transport Demand",
-        startHere: true,
         pos: { left: 5.92, top: 25.48, width: 9.16, height: 6.88 },
         text: "Models used to build a statistically representative population of the study area, with a variety of socio-demographic attributes (e.g., age, sex, income) and activity plans (e.g., trip purpose, starting time, main transport mode, origin-destination), such as NTEM, LUISA, UDM, SILO, and MITO, to represent the demand on the transport system. For freight, this is vehicle schedules and delivery plans.",
         isPlaceholder: false,
@@ -334,8 +332,8 @@ const TPRAF_CONTENT = {
         id: "adaptation-interventions",
         label: "Adaptation/\nInterventions",
         pos: { left: 54.76, top: 51.9, width: 9.16, height: 6.93 },
-        text: "Content coming soon — awaiting text from DARe.",
-        isPlaceholder: true,
+        text: "Options and pathways to improve resilience, adaptation, sustainability, and transport performance.",
+        isPlaceholder: false,
         handbookUrl: "#",
         variant: "leaf",
         group: "both"
@@ -546,10 +544,15 @@ const TPRAF_CONTENT = {
   dsp: {
     title: "Overview of DSP Components",
     subtitle: "Level 2 — Decision Support Process",
-    status: "Redesigned from the source component map in brand colors — each process stage keeps its own colour identity (title bar, body tint, and the standalone inputs that feed it), matching the source. Wording for most steps is still coming from DARe.",
     legend: [
       ["navy", "Tool or model step"],
-      ["io", "Input or output artefact"]
+      ["io", "Input or output artefact"],
+      ["c1", "Asset/Network Evaluation"],
+      ["c2", "Problem Framing and Scope"],
+      ["c3", "Risk Reduction Analysis"],
+      ["c4", "Detailed Option Assessment"],
+      ["c5", "Portfolio Optimisation"],
+      ["c6", "Outcome Assessment"]
     ],
     /* Layout note: every position below comes from a small script that
        computes cluster widths, per-column box stacking (with a deliberate
@@ -562,7 +565,7 @@ const TPRAF_CONTENT = {
       // generic "input" colour (Transport/Climate Scenarios match Asset/
       // Network Evaluation's blue; Requirements/Context/Constraints match
       // Problem Framing's grey).
-      { id: "dsp-transport-scenarios", label: "Transport Scenarios", startHere: true, pos: { left: 2.7, top: 12, width: 14, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky-pale" },
+      { id: "dsp-transport-scenarios", label: "Transport Scenarios", pos: { left: 2.7, top: 12, width: 14, height: 6 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "sky-pale" },
       { id: "dsp-climate-scenarios", label: "Climate Scenarios", pos: { left: 2.7, top: 21, width: 14, height: 6 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "sky-pale" },
       { id: "dsp-requirements", label: "Requirements", pos: { left: 25.7, top: 7, width: 14, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "c2-input" },
       { id: "dsp-context", label: "Context", pos: { left: 25.7, top: 14.5, width: 14, height: 5 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "c2-input" },
@@ -780,7 +783,6 @@ const TPRAF_CONTENT = {
     subtitle: "Level 2 — Integrated Modelling Platform",
     // Leads on to the Level 3 example module (see the `level3` view below).
     next: { key: "level3", label: "See the Level 3 example: from rainfall to transport disruption" },
-    status: "Redrawn to match the source component map (level_2_slide_12.png) — the slide's own colours, groupings, blocks and connector routing, including its KEY panel. Wording for most steps is still coming from DARe.",
     legend: [
       ["tool", "Tool"],
       ["io", "Input / Output"],
@@ -790,12 +792,13 @@ const TPRAF_CONTENT = {
       ["supply", "Transport Supply"],
       ["climate", "Climate Scenario, Weather Variables & Hazard Models"],
       ["freight", "Freight"],
-      ["adapt", "Adaptation Measures"]
+      ["adapt", "Adaptation Measures"],
+      ["passenger", "Passenger Transport Model"]
     ],
 
     boxes: [
       // Climate Scenario, Weather Variables & Hazard Models (bottom left).
-      { id: "imp-atmospheric-fields", label: "Atmospheric fields, soil fields, sea surface temperature etc.", startHere: true, compact: true, pos: { left: 3.04, top: 49.16, width: 13.22, height: 9.52 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "imp-atmospheric-fields", label: "Atmospheric fields, soil fields, sea surface temperature etc.", compact: true, pos: { left: 3.04, top: 49.16, width: 13.22, height: 9.52 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
       { id: "imp-ukcp18-modelling", label: "UKCP18-Local Modelling of the atmosphere", pos: { left: 3.27, top: 65.27, width: 12.99, height: 7.42 }, text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).", isPlaceholder: false, handbookUrl: "#", variant: "model-green" },
       { id: "imp-weather-event", label: "Weather Event", pos: { left: 3.19, top: 78.43, width: 13.07, height: 5.04 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
       { id: "imp-heat-model", label: "Heat Model", pos: { left: 21.25, top: 74.23, width: 8.4, height: 4.62 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "model-green" },
@@ -863,6 +866,11 @@ const TPRAF_CONTENT = {
       { id: "imp-key-title", label: "KEY", variant: "key-title", pos: { left: 20.0, top: 3.0, width: 8.0, height: 4.6 } },
       { id: "imp-key-tool", label: "Tool", variant: "key-tool", pos: { left: 3.19, top: 9.66, width: 13.07, height: 5.19 } },
       { id: "imp-key-io", label: "Input / Output", variant: "key-io", pos: { left: 3.19, top: 15.55, width: 13.07, height: 4.9 } },
+      // Added 23 Sept: the source slide's own KEY never documented this
+      // colour, even though the Passenger Transport Model box is the most
+      // visually prominent one on the diagram. Column 1 has empty room
+      // below "Input / Output", so it fits without resizing the panel.
+      { id: "imp-key-passenger", label: "Passenger Transport Model", variant: "key-passenger", pos: { left: 3.19, top: 21.99, width: 13.07, height: 5.19 } },
       { id: "imp-key-social", label: "Social Behavioural Impacts", variant: "key-social", pos: { left: 17.67, top: 9.52, width: 13.46, height: 5.19 } },
       { id: "imp-key-threshold", label: "Transport-specific Threshold", variant: "key-threshold", pos: { left: 17.67, top: 15.83, width: 13.38, height: 5.04 } },
       { id: "imp-key-climate", label: "Climate Scenario, Weather Variables & Hazard Models", variant: "key-climate", pos: { left: 17.67, top: 21.99, width: 13.38, height: 8.54 } },
@@ -999,7 +1007,7 @@ const TPRAF_CONTENT = {
       ["io", "Input or output"]
     ],
     boxes: [
-      { id: "l3-rainfall", label: "Rainfall events", startHere: true, pos: { left: 4, top: 45, width: 15, height: 8 }, text: "Rainfall events generated from UKCP18-Local (UK Climate Projections), used to drive the flood simulation. Two rainfall cases were tested: Case 1 has a broader spatial extent, and Case 2 a more spatially concentrated rainfall structure. Each case was run for a current and a future scenario.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "l3-rainfall", label: "Rainfall events", pos: { left: 4, top: 45, width: 15, height: 8 }, text: "Rainfall events generated from UKCP18-Local (UK Climate Projections), used to drive the flood simulation. Two rainfall cases were tested: Case 1 has a broader spatial extent, and Case 2 a more spatially concentrated rainfall structure. Each case was run for a current and a future scenario.", isPlaceholder: false, handbookUrl: "#" },
       { id: "l3-dtm", label: "DTM", pos: { left: 4, top: 15, width: 15, height: 8 }, text: "Digital terrain model (DTM): terrain data used as an input to the CityCAT flood simulation.", isPlaceholder: false, handbookUrl: "#" },
       { id: "l3-green-spaces", label: "Green Spaces", pos: { left: 4, top: 25, width: 15, height: 8 }, text: "Green space data used as an input to the CityCAT flood simulation.", isPlaceholder: false, handbookUrl: "#" },
       { id: "l3-buildings", label: "Buildings", pos: { left: 4, top: 35, width: 15, height: 8 }, text: "Building data used as an input to the CityCAT flood simulation.", isPlaceholder: false, handbookUrl: "#" },
