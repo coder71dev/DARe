@@ -4252,3 +4252,198 @@ html.menu-open { overflow: hidden; }
   .home .footer-funders { height: 86px; }
   .home .footer-signoff .container { max-width: 1920px; padding-left: 117px; }
 }
+
+/* ==========================================================================
+   Diagram page on a desktop, from the 24 Sept Figma export (1920px frame): a
+   centred title band, coloured level tabs, the "How to explore" bar that opens
+   on demand, and the diagram in the same white card as the homepage. Phones
+   and small tablets (900px and under) keep their own layouts, above.
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* The design has no phone layout: the guide stays open there, as before. */
+  .diagram-page .diagram-guide[data-collapsed="true"] .diagram-guide-body { display: grid; }
+  .diagram-page .diagram-guide-chevron { display: none; }
+  .diagram-page .diagram-guide-toggle { pointer-events: none; cursor: default; }
+}
+
+@media (min-width: 901px) {
+  /* Title band */
+  .diagram-page .diagram-hero .breadcrumb { display: none; }
+  .diagram-page .diagram-hero-inner {
+    display: block;
+    padding-top: clamp(2rem, 6.67vw, 128px);
+    padding-bottom: clamp(2rem, 6.8vw, 130px);
+    text-align: center;
+  }
+  .diagram-page .diagram-hero .hero-label {
+    min-width: clamp(6rem, 7.08vw, 136px);
+    margin: 0 0 clamp(1rem, 1.6vw, 31px);
+    padding: clamp(0.5rem, 0.83vw, 16px) clamp(0.9rem, 1.45vw, 28px);
+    border: 0;
+    border-radius: clamp(8px, 0.63vw, 12px);
+    background: var(--color-water);
+    color: var(--color-white);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    font-weight: 400;
+    line-height: 1.1197;
+    text-align: center;
+  }
+  .diagram-page .diagram-hero h1 {
+    max-width: 44.8vw;
+    margin: 0 auto;
+    font-size: clamp(2rem, 3.96vw, 76px);
+    font-weight: 400;
+    line-height: 1.1197;
+    color: var(--color-water);
+  }
+
+  /* Grey page, the card on the design's 138px margins */
+  .diagram-page .diagram-band {
+    background: #e9e9e9;
+    padding-top: clamp(1.5rem, 5.05vw, 97px);
+    padding-bottom: clamp(2rem, 5.26vw, 101px);
+  }
+  .diagram-page .diagram-band .container {
+    padding-left: clamp(1.25rem, 7.19vw, 138px);
+    padding-right: clamp(1.25rem, 6.3vw, 121px);
+  }
+  .diagram-page .landing-diagram {
+    --card-pad: clamp(0.75rem, 5.2vw, 100px);
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    align-items: start;
+  }
+  /* Views other than the simple form keep their tighter card until they have a design. */
+  .diagram-page .landing-diagram:has(.diagram-viewport:not([data-view="simple"])) { --card-pad: clamp(0.75rem, 1.5vw, 28px); }
+
+  /* Level tabs: green when current, white otherwise */
+  .diagram-page .landing-diagram .diagram-toolbar { grid-column: 1; grid-row: 1; padding: 4px; margin: -4px; gap: clamp(0.75rem, 2.24vw, 43px); }
+  .diagram-page .level-tab {
+    height: clamp(2.75rem, 3.13vw, 60px);
+    padding: 0 clamp(1rem, 1.4vw, 27px);
+    border-radius: clamp(8px, 0.52vw, 10px);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    font-weight: 400;
+  }
+  .diagram-page .level-tab[aria-selected="true"] { background: var(--color-leaf); color: var(--color-water); }
+
+  /* How to explore: a white bar that opens on demand */
+  .diagram-page .landing-diagram .diagram-guide {
+    grid-row: 2;
+    max-width: none;
+    margin: clamp(1rem, 3.28vw, 63px) 0 0;
+    border: 0;
+    border-radius: clamp(6px, 0.52vw, 10px);
+    background: var(--color-white);
+  }
+  .diagram-page .diagram-guide-toggle {
+    min-height: clamp(3rem, 3.96vw, 76px);
+    padding: 0 clamp(1rem, 2.4vw, 46px) 0 clamp(1rem, 1.04vw, 20px);
+    background: var(--color-white);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  .diagram-page .diagram-guide-icon { display: none; }
+  .diagram-page .diagram-guide-chevron { width: clamp(14px, 1.25vw, 24px); height: clamp(14px, 1.25vw, 24px); }
+  .diagram-page .diagram-guide-toggle[aria-expanded="false"] .diagram-guide-chevron { transform: none; }
+  .diagram-page .diagram-guide-toggle[aria-expanded="true"] .diagram-guide-chevron { transform: rotate(180deg); }
+
+  .diagram-page .landing-diagram .process-toggle { grid-row: 3; }
+  .diagram-page .landing-diagram .view-next { display: none; }
+
+  /* The card: the tour buttons and a hairline at the top, the zoom bar at the foot */
+  .diagram-page .landing-diagram .diagram-viewport {
+    position: relative;
+    grid-row: 4;
+    margin-top: clamp(1rem, 4.17vw, 80px);
+    padding: clamp(5.5rem, 9.9vw, 190px) var(--card-pad) clamp(0.75rem, 4.98vw, 96px);
+    border-radius: clamp(16px, 1.3vw, 25px);
+  }
+  .diagram-page .landing-diagram .diagram-viewport::before,
+  .diagram-page .landing-diagram .diagram-viewport::after {
+    content: "";
+    position: absolute;
+    left: var(--card-pad);
+    right: var(--card-pad);
+    height: 1px;
+    background: #ececec;
+    pointer-events: none;
+  }
+  .diagram-page .landing-diagram .diagram-viewport::before { top: clamp(4rem, 8.7vw, 167px); }
+  .diagram-page .landing-diagram .diagram-viewport::after { bottom: clamp(0.75rem, 3.5vw, 67px); }
+
+  .diagram-page .landing-diagram > .diagram-tour {
+    grid-row: 4;
+    grid-column: 1;
+    justify-self: start;
+    align-self: start;
+    z-index: 12;
+    flex-wrap: nowrap;
+    width: auto;
+    max-width: none;
+    margin: calc(clamp(1rem, 4.17vw, 80px) + clamp(0.75rem, 3.1vw, 60px)) 0 0 var(--card-pad);
+    padding: 0;
+    gap: 0.6rem clamp(0.75rem, 1.25vw, 24px);
+    background: none;
+  }
+  .diagram-page .landing-diagram > .diagram-tour[hidden] { display: none; }
+  .diagram-page .landing-diagram .tour-caption,
+  .diagram-page .landing-diagram .tour-btn { color: var(--color-water); }
+
+  .diagram-page .landing-diagram .tour-play {
+    flex-direction: row-reverse;
+    height: clamp(2.75rem, 3.02vw, 58px);
+    padding: 0 clamp(0.9rem, 1.2vw, 23px);
+    gap: 0.6em;
+    border-radius: clamp(8px, 0.52vw, 10px);
+    background: var(--color-water);
+    color: var(--color-white);
+    font-size: clamp(1rem, 1.25vw, 24px);
+  }
+  .diagram-page .landing-diagram .tour-play:not(.tour-guide):not(#lesson-start) {
+    padding-left: clamp(1rem, 1.6vw, 31px);
+    padding-right: clamp(0.9rem, 1.25vw, 24px);
+    gap: clamp(0.6rem, 0.85vw, 16px);
+  }
+  .diagram-page .landing-diagram .tour-play:not(.tour-guide):not(#lesson-start) .tour-play-icon {
+    border-left-width: 12px;
+    border-top-width: 8px;
+    border-bottom-width: 8px;
+  }
+  .diagram-page .landing-diagram .tour-play.tour-guide,
+  .diagram-page .landing-diagram .lesson-launch .tour-play { background: var(--color-leaf); color: var(--color-water); }
+  .diagram-page .landing-diagram .tour-guide .tour-play-icon,
+  .diagram-page .landing-diagram .lesson-launch .tour-play-icon {
+    width: 1em;
+    height: 1em;
+    border: 0;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath transform='translate%286.04 6.04%29 scale%28.72%29' d='M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath transform='translate%286.04 6.04%29 scale%28.72%29' d='M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  .diagram-page .landing-diagram .zoom-toggle { display: none; }
+  .diagram-page .landing-diagram .zoom-controls {
+    display: flex;
+    right: var(--card-pad);
+    bottom: clamp(0.75rem, 6.25vw, 120px);
+    align-items: center;
+    min-height: clamp(2.5rem, 3.1vw, 60px);
+    padding: 0 clamp(0.75rem, 1.1vw, 21px);
+    border: 0;
+    border-radius: clamp(8px, 0.6vw, 12px);
+    background: var(--color-mist);
+    box-shadow: none;
+    font-size: clamp(0.8rem, 0.9vw, 17px);
+  }
+}
+
+/* The simple form fills the card's whole inner width: the frame is stretched past
+   the card's padding by the 4% of empty stage it leaves each side. */
+@media (min-width: 1100px) {
+  .diagram-page .diagram-viewport[data-view="simple"] .diagram-stage-wrap {
+    width: 108.8%;
+    margin-left: -4.4%;
+  }
+}
