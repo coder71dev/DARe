@@ -3666,3 +3666,10 @@ html.menu-open { overflow: hidden; }
   padding: 0 clamp(0.9rem, 1vw, 19px);
   font-size: clamp(0.9rem, 1vw, 19px);
 }
+
+/* Phone: give the swipe hint room under the filter, and keep the filter off the
+   tour buttons above it. */
+@media (max-width: 760px) {
+  .diagram-page .landing-diagram .scroll-hint { margin: 0.75rem 0 0.6rem; }
+  .diagram-page .landing-diagram .process-toggle { margin-top: 0.75rem; }
+}
