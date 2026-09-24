@@ -217,15 +217,14 @@
           <h3 class="diagram-title" id="diagram-title"></h3>
           <p class="diagram-subtitle" id="diagram-subtitle"></p>
 
-          <!-- Starts collapsed — same as diagram.html's copy (see there) -->
-          <div class="diagram-guide" id="diagram-guide" data-collapsed="true">
-            <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="false" aria-controls="diagram-guide-body">
+          <!-- Always open — same as diagram.html's copy (see there) -->
+          <div class="diagram-guide" id="diagram-guide">
+            <div class="diagram-guide-toggle" id="diagram-guide-toggle">
               <span class="diagram-guide-toggle-label">
                 <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
                 How to explore this diagram
               </span>
-              <svg class="diagram-guide-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
+            </div>
             <div class="diagram-guide-body" id="diagram-guide-body"></div>
           </div>
 

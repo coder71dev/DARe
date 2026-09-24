@@ -850,8 +850,7 @@ a { color: var(--color-sky); }
   font-weight: 700;
   font-size: 0.92rem;
   padding: 0.7rem 1.1rem;
-  cursor: pointer;
-  text-align: left;
+  text-align: left; /* a plain heading now: the guide is always open */
 }
 
 .diagram-guide-toggle-label {
@@ -3512,23 +3511,69 @@ html.menu-open { overflow: hidden; }
    above.
    ========================================================================== */
 
-/* Shorter than the homepage hero, with a title that can be a whole sentence. */
-.diagram-page .diagram-hero .hero-grid {
-  padding-top: clamp(2rem, 4.4vw, 84px);
-  padding-bottom: clamp(2rem, 4.4vw, 84px);
+/* Slim title band, after dare.ac.uk's inner pages (e.g. /research/): Leaf, the
+   breadcrumb bottom-left, and the page label and title in the right-hand
+   column that the homepage hero also uses. Kept short so the diagram below
+   is on screen as the page opens. */
+.diagram-page .diagram-hero .container {
+  max-width: 1920px;
+  padding-left: clamp(1.25rem, 5.26vw, 101px);
+  padding-right: clamp(1.25rem, 5.26vw, 101px);
+}
+
+.diagram-hero-inner {
+  display: grid;
+  gap: 0.75rem clamp(2rem, 6vw, 116px);
+  align-items: end;
+  padding-top: clamp(0.9rem, 1.4vw, 26px);
+  padding-bottom: clamp(0.9rem, 1.4vw, 26px);
+}
+
+@media (min-width: 820px) {
+  .diagram-hero-inner { grid-template-columns: minmax(0, 1fr) clamp(280px, 23.85vw, 458px); }
+}
+
+.breadcrumb {
+  color: var(--color-water);
+  font-size: clamp(0.8rem, 0.83vw, 16px);
+  line-height: 1.3;
+}
+
+.breadcrumb a { color: inherit; text-decoration: underline; text-underline-offset: 0.15em; }
+.breadcrumb a:hover, .breadcrumb a:focus-visible { text-decoration-thickness: 2px; }
+.breadcrumb [aria-current="page"] { font-weight: 700; text-decoration: underline; text-underline-offset: 0.15em; }
+
+.diagram-hero-title { min-width: 0; }
+
+/* The small underlined page label above the title, as on dare.ac.uk. */
+.diagram-hero .hero-label {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden; /* one line: a long sub-title is cut short (its full text is the tooltip) */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  margin: 0 0 0.3rem;
+  padding-bottom: 0.1em;
+  border-bottom: 2px solid var(--color-water);
+  color: var(--color-water);
+  font-size: clamp(0.8rem, 0.83vw, 16px);
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .diagram-page .diagram-hero h1 {
   max-width: none;
-  font-size: clamp(1.75rem, 3vw, 58px);
+  margin: 0;
+  font-size: clamp(1.25rem, 1.75vw, 34px);
+  font-weight: 300;
+  line-height: 1.2;
 }
-
-.diagram-page .diagram-hero .tagline { margin: 0; }
 
 /* Fits the diagram card to the same edges as the homepage's simple-form card. */
 .diagram-page .diagram-band {
-  padding-top: clamp(2rem, 3.2vw, 62px);
-  padding-bottom: clamp(3rem, 6vw, 115px);
+  padding-top: clamp(1rem, 1.5vw, 28px);
+  padding-bottom: clamp(2rem, 4vw, 77px);
 }
 
 .diagram-page .diagram-band .container {
@@ -3537,19 +3582,38 @@ html.menu-open { overflow: hidden; }
   padding-right: clamp(1.25rem, 5.26vw, 101px);
 }
 
+/* Tabs on the left and the tour buttons on the right share the first row, and
+   everything else stacks full width beneath. A grid rather than the homepage's
+   column so the diagram card starts as high up the screen as it can. */
+.diagram-page .landing-diagram {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: clamp(1rem, 1.5vw, 28px);
+  align-items: center;
+}
+
+.diagram-page .landing-diagram > * { grid-column: 1 / -1; }
+.diagram-page .landing-diagram > .diagram-toolbar { grid-column: 1; grid-row: 1; order: 0; }
+.diagram-page .landing-diagram > .diagram-tour { grid-column: 2; grid-row: 1; margin: 0; justify-self: end; }
+
+@media (max-width: 900px) {
+  .diagram-page .landing-diagram > .diagram-toolbar { grid-column: 1 / -1; }
+  .diagram-page .landing-diagram > .diagram-tour { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; margin-top: 0.75rem; }
+}
+
 /* Level tabs as pills, like the homepage's "Overview" / "Level 1" labels: white
    with navy text, the current one navy. Still one swipeable row. */
 .diagram-page .diagram-toolbar {
   gap: clamp(0.5rem, 0.75vw, 14px);
-  margin-bottom: clamp(1.25rem, 2vw, 38px);
+  margin: 0;
   padding: 0;
   background: none;
 }
 
 .diagram-page .level-tab {
-  padding: clamp(0.5rem, 0.83vw, 16px) clamp(0.9rem, 1.1vw, 21px);
+  padding: clamp(0.45rem, 0.6vw, 12px) clamp(0.8rem, 0.9vw, 17px);
   border-radius: clamp(8px, 0.73vw, 14px);
-  font-size: clamp(0.95rem, 1.25vw, 24px);
+  font-size: clamp(0.9rem, 1vw, 19px);
   font-weight: 400;
   line-height: 1.1197;
   white-space: nowrap;
@@ -3560,8 +3624,8 @@ html.menu-open { overflow: hidden; }
 /* The card holds diagrams up to twice its width, so it is padded less than the
    homepage's. */
 .diagram-page .landing-diagram .diagram-viewport {
-  margin-top: clamp(1.25rem, 2vw, 38px);
-  padding: clamp(0.75rem, 2vw, 38px);
+  margin-top: clamp(0.75rem, 1.2vw, 22px);
+  padding: clamp(0.75rem, 1.5vw, 28px);
 }
 
 .diagram-page .landing-diagram .view-next { order: 7; margin: clamp(1rem, 1.6vw, 30px) 0 0; }
@@ -3576,4 +3640,11 @@ html.menu-open { overflow: hidden; }
   justify-content: flex-start;
   flex-wrap: wrap;
   margin: 0 0 clamp(0.75rem, 1.2vw, 24px);
+}
+
+/* Tour buttons on the tabs' row are a touch smaller than on the homepage. */
+.diagram-page .landing-diagram .tour-play {
+  height: clamp(2.4rem, 2.4vw, 46px);
+  padding: 0 clamp(0.9rem, 1vw, 19px);
+  font-size: clamp(0.9rem, 1vw, 19px);
 }

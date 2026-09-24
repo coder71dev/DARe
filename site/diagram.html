@@ -72,13 +72,17 @@
   <!-- PAGE:CONTENT — becomes @section('content') in resources/views/diagram.blade.php -->
   <main>
 
-    <!-- Title band, in the homepage's Leaf hero style but shorter. The title and
-         the line under it are filled in per view by app.js (content.js). -->
+    <!-- Slim title band in the style of dare.ac.uk's inner pages: breadcrumb on
+         the left, page label and title on the right. The label and title are
+         filled in per view by app.js (content.js). -->
     <section class="hero diagram-hero" aria-labelledby="diagram-title">
-      <div class="container hero-grid">
-        <h1 id="diagram-title"></h1>
-        <div class="hero-side">
-          <p class="tagline" id="diagram-subtitle"></p>
+      <div class="container diagram-hero-inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a> <span aria-hidden="true">&gt;</span> <span aria-current="page">Explore TPRAF</span>
+        </nav>
+        <div class="diagram-hero-title">
+          <p class="hero-label" id="diagram-subtitle"></p>
+          <h1 id="diagram-title"></h1>
         </div>
       </div>
     </section>
@@ -86,29 +90,27 @@
     <section class="section band-mist diagram-band" aria-label="TPRAF diagrams">
       <div class="container">
 
-        <!-- Level tabs: a row of pills, swiped or dragged when it overflows. -->
-        <div class="diagram-toolbar" id="diagram-toolbar" role="tablist" aria-label="Diagram level">
-          <button class="level-tab" data-view="simple" aria-selected="true">Level 1 &middot; Simple</button>
-          <button class="level-tab" data-view="extended">Level 1 &middot; Extended</button>
-          <button class="level-tab" data-view="dsp">Level 2 &middot; DSP</button>
-          <button class="level-tab" data-view="imp">Level 2 &middot; IMP</button>
-          <button class="level-tab" data-view="level3">Level 3 &middot; Example</button>
-        </div>
-
         <!-- Same block as the homepage's simple form: the diagram sits in a white
              card, with the tour buttons above it and the guide below. -->
         <div class="landing-diagram">
-      <!-- Starts collapsed (data-collapsed) so it's shut from first paint rather
-           than flashing open before the script runs. A visitor who opens it gets
-           that remembered; see app.js. -->
-      <div class="diagram-guide" id="diagram-guide" data-collapsed="true">
-        <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="false" aria-controls="diagram-guide-body">
+          <!-- Level tabs: a row of pills, swiped or dragged when it overflows. -->
+          <div class="diagram-toolbar" id="diagram-toolbar" role="tablist" aria-label="Diagram level">
+            <button class="level-tab" data-view="simple" aria-selected="true">Level 1 &middot; Simple</button>
+            <button class="level-tab" data-view="extended">Level 1 &middot; Extended</button>
+            <button class="level-tab" data-view="dsp">Level 2 &middot; DSP</button>
+            <button class="level-tab" data-view="imp">Level 2 &middot; IMP</button>
+            <button class="level-tab" data-view="level3">Level 3 &middot; Example</button>
+          </div>
+
+      <!-- How to explore: always open. It sits below the diagram, so it never
+           stands between the visitor and the diagram. -->
+      <div class="diagram-guide" id="diagram-guide">
+        <div class="diagram-guide-toggle" id="diagram-guide-toggle">
           <span class="diagram-guide-toggle-label">
             <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
             How to explore this diagram
           </span>
-          <svg class="diagram-guide-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        </div>
         <div class="diagram-guide-body" id="diagram-guide-body"></div>
       </div>
 

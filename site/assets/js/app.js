@@ -37,7 +37,6 @@
   const processBtnImp = document.getElementById("process-btn-imp");
   const processBtnAll = document.getElementById("process-btn-all");
   const guideEl = document.getElementById("diagram-guide");
-  const guideToggle = document.getElementById("diagram-guide-toggle");
   const guideBody = document.getElementById("diagram-guide-body");
   const stageWrap = document.getElementById("diagram-stage-wrap");
   const cropEl = document.getElementById("diagram-crop");
@@ -100,6 +99,7 @@
   let currentScale = 1; // per-view canvas size multiplier (data.scale) — see the note in content.js
   let currentCropRatio = 1; // fraction of the full 0-100 stage height that's actually visible
   let refreshZoom = function () {}; // replaced with the real thing once setupZoomControls runs
+  let fitOnLoad = function () {}; // sizes a view to the screen when it is first shown (diagram page)
   let setZoomLevel = function () {}; // likewise: sets an exact zoom (the guided tour uses it on phones)
 
   // The source PPTX's box/label positions are percentages of the *full
@@ -510,27 +510,11 @@
     return el;
   }
 
-  /* Guide panel: collapsible legend + interaction hints, rebuilt per view
-     since the colour legend's meaning shifts slightly between Simple (no
-     DSP/IMP split) and Extended (colours = process).
-
-     Always closed on load, everywhere (home page and every diagram tab) —
-     the guide is a reference to open when you want it, not something that
-     stands between the title and the diagram on every visit. This used to
-     remember a visitor's last open/close choice via localStorage, but that
-     meant it could default to open for a returning visitor; it no longer
-     persists, so every fresh load starts collapsed regardless of history. */
-  function setGuideCollapsed(collapsed) {
-    guideEl.dataset.collapsed = collapsed ? "true" : "false";
-    guideToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
-  }
-
-  if (guideToggle) {
-    guideToggle.addEventListener("click", () => {
-      setGuideCollapsed(guideEl.dataset.collapsed !== "true");
-    });
-    setGuideCollapsed(true);
-  }
+  /* Guide panel: legend + interaction hints, rebuilt per view since the colour
+     legend's meaning shifts slightly between Simple (no DSP/IMP split) and
+     Extended (colours = process). It is always open, on the home page and on
+     every diagram tab: it sits below the diagram, so it never stands between
+     the visitor and the diagram. */
 
   function escapeHtml(str) {
     return str.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -735,6 +719,7 @@
 
     titleEl.textContent = data.title;
     subtitleEl.textContent = data.subtitle;
+    subtitleEl.title = data.subtitle;
     // Lets CSS adapt page furniture to a specific view's geometry — the zoom
     // widget docks bottom-left on IMP, whose bottom-right corner is occupied
     // by a box from the source slide (see style.css).
@@ -797,6 +782,10 @@
           ' <span aria-hidden="true">&rarr;</span>';
       }
     }
+
+    // Last, once everything above the diagram (process filter, tour buttons)
+    // has settled, so the fit is measured against the real position.
+    fitOnLoad();
   }
 
   // Click-and-drag horizontal scroll for mouse users, used by both the level
@@ -951,6 +940,23 @@
     });
     window.addEventListener("resize", applyZoom);
 
+    // On the diagram page a desktop visitor should see the whole diagram
+    // without scrolling, so each view opens zoomed to fit the space below the
+    // page's own title area (never bigger than 100%, never below the floor
+    // where its text stops being readable). Phones keep 100% and swipe.
+    const FIT_ON_LOAD_MIN_ZOOM = 0.5;
+    const FIT_BOTTOM_GAP = 40; // the card's bottom padding and a little air
+    fitOnLoad = function () {
+      if (!document.body.classList.contains("diagram-page") || window.innerWidth <= 760) return;
+      const natW = naturalWidth();
+      const cropH = ((natW * 6858 * currentScale) / 12192) * currentCropRatio;
+      const top = wrap.getBoundingClientRect().top + window.scrollY;
+      const availH = window.innerHeight - top - FIT_BOTTOM_GAP;
+      zoom = Math.max(FIT_ON_LOAD_MIN_ZOOM, Math.min(1, availableWidth() / fullWidth(), availH / cropH));
+      wrap.scrollLeft = 0;
+      applyZoom();
+    };
+
     refreshZoom = applyZoom;
     setZoomLevel = function (level) {
       zoom = level;
@@ -958,6 +964,9 @@
       applyZoom();
     };
     applyZoom();
+    // The first view was drawn before these controls existed, so size it now.
+    fitOnLoad();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitOnLoad);
   }
 
   /* ==========================================================================
