@@ -4091,3 +4091,164 @@ html.menu-open { overflow: hidden; }
   font-size: calc(var(--fs, 12px) * 0.8);
   white-space: nowrap;
 }
+
+/* ==========================================================================
+   Homepage refresh, from the 24 Sept Figma export (1920px frame). Sizes are the
+   Figma px divided by 19.2 (vw) and capped at the Figma px, so they are exact at
+   1920 and shrink with the screen. Wide screens only where the layout changes.
+   ========================================================================== */
+
+/* ---- Header: a touch shorter, bigger Home / Explore TPRAF ---- */
+@media (min-width: 900px) {
+  .home .site-header { --header-pad: clamp(1rem, 2.14vw, 41px); }
+  .home .site-header .header-tools { margin-right: clamp(2rem, 12.7vw, 244px); }
+  .home .site-header { padding-right: clamp(1.25rem, 5.94vw, 114px); }
+  .home .site-header .header-nav { gap: clamp(1rem, 1.82vw, 35px); }
+  .home .site-header .header-nav a { font-size: clamp(0.95rem, 1.354vw, 26px); }
+  .home .site-header .header-nav .header-cta {
+    height: clamp(36px, 2.66vw, 51px);
+    padding: 0 0.7em 0 0.9em;
+    gap: 0.45em;
+    border-radius: clamp(6px, 0.42vw, 8px);
+  }
+  .home .site-header .header-nav .btn-sm-icon { width: 0.95em; height: 0.95em; }
+}
+
+/* ---- Hero: 590px tall, tagline and link a little lower ---- */
+@media (min-width: 820px) {
+  .home .hero-grid { padding-top: clamp(3rem, 8.72vw, 167px); padding-bottom: clamp(3rem, 8.72vw, 167px); }
+  .home .hero-side { align-self: start; margin-top: clamp(0px, 3.7vw, 71px); }
+  .home .hero .tagline { margin-bottom: clamp(1.25rem, 2.86vw, 55px); }
+}
+
+/* ---- What is TPRAF?: the picture sits straight on the page, no white card ---- */
+.home .what-figure { background: none; }
+.home .what-copy .what-lead { max-width: none; }
+.audience-tile { gap: 0; }
+
+/* Outlined labels ("Overview", "The resource") are as big as the Level 1 label. */
+.home .pill:not(.pill-navy) {
+  padding: clamp(0.5rem, 0.83vw, 16px) clamp(0.9rem, 1.3vw, 25px);
+  border-radius: clamp(8px, 0.63vw, 12px);
+  font-size: clamp(1rem, 1.25vw, 24px);
+}
+
+.home .band-navy .pill:not(.pill-navy) { border-color: var(--color-leaf); }
+
+/* "About the TPRAF Diagram" is one line. */
+@media (min-width: 820px) {
+  .home .band-navy .section-head h2 { max-width: none; }
+}
+
+/* ---- The simple form ---- */
+@media (min-width: 900px) {
+  .home .band-leaf .container { padding-left: clamp(1.25rem, 7.19vw, 138px); }
+  .home .band-leaf .section-head h2,
+  .home .landing-diagram .diagram-title { margin-left: 0; }
+  .home .landing-diagram { margin-right: clamp(0px, 0.42vw, 8px); }
+  .home .band-leaf { padding-bottom: clamp(3rem, 8.4vw, 161px); }
+
+  .home:not(.diagram-page) .landing-diagram .landing-extend {
+    margin-top: clamp(0.9rem, 2.08vw, 40px);
+    height: clamp(2.75rem, 3.02vw, 58px);
+    min-width: 0;
+    padding: 0 clamp(0.8rem, 1vw, 19px) 0 clamp(0.9rem, 1.2vw, 23px);
+    gap: clamp(0.5rem, 0.7vw, 13px);
+    border-radius: clamp(8px, 0.52vw, 10px);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    font-weight: 400;
+  }
+  .home:not(.diagram-page) .landing-diagram .btn-sm-icon,
+  .home:not(.diagram-page) .landing-diagram .tour-guide .tour-play-icon { width: 1em; height: 1em; }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-guide { margin-top: clamp(1rem, 2.34vw, 45px); }
+  .home:not(.diagram-page) .landing-diagram .diagram-guide-toggle {
+    font-size: clamp(1rem, 1.25vw, 24px);
+    min-height: clamp(3rem, 3.96vw, 76px);
+    padding: 0 clamp(1rem, 2.4vw, 46px) 0 clamp(1rem, 1.04vw, 20px);
+    line-height: 1.2;
+  }
+  .home:not(.diagram-page) .landing-diagram .diagram-guide-chevron { width: clamp(20px, 2.1vw, 40px); height: clamp(20px, 2.1vw, 40px); margin: -0.5vw; }
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport { margin-top: clamp(1rem, 3.5vw, 67px); }
+}
+
+/* The card: 100px inside on every side, a hairline above and below the diagram. */
+@media (min-width: 1100px) {
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport {
+    position: relative;
+    padding: clamp(0.75rem, 3.1vw, 60px) clamp(0.75rem, 5.2vw, 100px) clamp(0.75rem, 4.98vw, 96px);
+  }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport::after {
+    content: "";
+    position: absolute;
+    left: clamp(0.75rem, 5.2vw, 100px);
+    right: clamp(0.75rem, 5.2vw, 100px);
+    bottom: clamp(0.75rem, 3.5vw, 67px);
+    height: 1px;
+    background: #ececec;
+  }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport > .diagram-tour {
+    margin-bottom: clamp(0.5rem, 1.15vw, 22px);
+    padding-bottom: clamp(0.75rem, 2.55vw, 49px);
+    gap: clamp(0.75rem, 1.25vw, 24px);
+  }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play {
+    height: clamp(2.75rem, 3.02vw, 58px);
+    padding: 0 clamp(0.9rem, 1.2vw, 23px);
+    gap: 0.6em;
+    border-radius: clamp(8px, 0.52vw, 10px);
+    font-size: clamp(1rem, 1.25vw, 24px);
+  }
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play:not(.tour-guide) {
+    padding-left: clamp(1rem, 1.6vw, 31px);
+    padding-right: clamp(0.9rem, 1.25vw, 24px);
+    gap: clamp(0.6rem, 0.85vw, 16px);
+  }
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play:not(.tour-guide) .tour-play-icon {
+    border-left-width: 12px;
+    border-top-width: 8px;
+    border-bottom-width: 8px;
+  }
+
+  /* The diagram fills the card's whole inner width: the simple form leaves 4% of
+     empty stage each side, so the frame is stretched past the card's padding by
+     that much and the empty edges are clipped. */
+  .home:not(.diagram-page) .landing-diagram .diagram-stage-wrap {
+    width: 108.8%;
+    margin-left: -4.4%;
+  }
+
+  .home:not(.diagram-page) .landing-diagram .zoom-controls {
+    right: clamp(0.75rem, 5.2vw, 100px);
+    bottom: clamp(0.75rem, 6.25vw, 120px);
+    min-height: clamp(2.5rem, 3.1vw, 60px);
+    padding: 0 clamp(0.75rem, 1.1vw, 21px);
+    border-radius: clamp(8px, 0.6vw, 12px);
+    font-size: clamp(0.8rem, 0.9vw, 17px);
+    align-items: center;
+  }
+}
+
+/* ---- Further Information: no italics in the funding line, less air on top ---- */
+.home .ack strong em { font-style: normal; }
+@media (min-width: 820px) {
+  .home .section-further { padding-top: clamp(3rem, 4.8vw, 92px); }
+}
+
+/* ---- Footer: the 1920px design is set about 11% larger than dare.ac.uk's ---- */
+@media (min-width: 1701px) {
+  .home .footer-grid {
+    --fs-body1: 21px;
+    --fs-body2: 24.4px;
+    --logo-h: 80px;
+    grid-template-columns: 21.56vw minmax(0, 1fr);
+  }
+  .home .footer-grid { max-width: 1920px; padding-left: 117px; padding-right: 117px; }
+  .home .footer-logo { width: 361px; transform: translateX(-114px); }
+  .home .footer-contacts { padding-top: 78px; padding-left: 16px; }
+  .home .footer-funders { height: 86px; }
+  .home .footer-signoff .container { max-width: 1920px; padding-left: 117px; }
+}
