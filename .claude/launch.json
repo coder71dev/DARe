@@ -4,12 +4,8 @@
     {
       "name": "dare-site",
       "runtimeExecutable": "python",
-      "runtimeArgs": [
-        "-c",
-        "import os, functools, http.server as h; h.test(HandlerClass=functools.partial(h.SimpleHTTPRequestHandler, directory='site'), port=int(os.environ.get('PORT', '8743')))"
-      ],
-      "port": 8743,
-      "autoPort": true
+      "runtimeArgs": ["-m", "http.server", "8743", "--directory", "site"],
+      "port": 8743
     }
   ]
 }
