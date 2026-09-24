@@ -2536,8 +2536,7 @@ a { color: var(--color-sky); }
   display: flex;
   align-items: center;
   margin-left: auto;
-  /* Room for the absolutely-positioned Menu button (label + 62px bars). */
-  margin-right: calc(clamp(120px, 8.2vw, 157px) + clamp(2rem, 6vw, 116px));
+  margin-right: clamp(2rem, 6vw, 116px);
 }
 
 .header-search {
@@ -3905,3 +3904,162 @@ html.menu-open { overflow: hidden; }
 /* The diagram is sized to its own height, so the frame never needs a vertical
    scrollbar (only the sideways one, for a zoomed-in diagram). */
 .diagram-page .diagram-stage-wrap { overflow-y: hidden; }
+
+/* ==========================================================================
+   Header (both pages): Home and Explore TPRAF, as in the 26 Sept design.
+   ========================================================================== */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.2vw, 42px);
+}
+
+.site-header .header-nav a {
+  margin-left: 0; /* beats the older ".site-header nav a" spacing */
+  color: var(--color-white);
+  font-size: clamp(0.95rem, 1.04vw, 20px);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.site-header .header-nav .header-home { text-decoration: underline; text-underline-offset: 0.2em; }
+.site-header .header-nav .header-home:hover,
+.site-header .header-nav .header-home:focus-visible { text-decoration-thickness: 2px; }
+
+.site-header .header-nav .header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  height: clamp(36px, 2.3vw, 44px);
+  padding: 0 0.7em 0 0.9em;
+  border-radius: 7px;
+  background: var(--color-white);
+  color: var(--color-water);
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+.site-header .header-nav .header-cta:hover { transform: translateY(-2px); text-decoration: none; }
+.header-nav a:focus-visible { outline: 2px solid var(--color-leaf); outline-offset: 4px; }
+
+@media (max-width: 640px) {
+  /* The logo already goes home, so a phone keeps just the button beside it. */
+  .site-header .header-nav .header-home { display: none; }
+}
+
+/* ==========================================================================
+   Homepage simple form, as in the 26 Sept design: the "Explore the extended
+   form" button under the title, the guide as a white bar that opens on demand,
+   and the card holding the tour buttons at its top and the zoom bar at its
+   foot. Scoped away from the diagram page, which keeps its own arrangement.
+   ========================================================================== */
+.home:not(.diagram-page) .landing-diagram .landing-extend {
+  order: 0;
+  align-self: flex-start;
+  margin-top: clamp(0.9rem, 1.3vw, 25px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-guide {
+  order: 1;
+  margin-top: clamp(1rem, 1.6vw, 30px);
+  border: 0;
+  border-radius: clamp(6px, 0.5vw, 10px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-guide-toggle {
+  background: var(--color-white);
+  font-size: clamp(0.85rem, 0.95vw, 18px);
+  padding: clamp(0.7rem, 0.95vw, 18px) clamp(1rem, 1.3vw, 25px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-guide-icon { display: none; }
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport {
+  margin-top: clamp(1rem, 1.6vw, 30px);
+  padding-top: clamp(0.75rem, 2.4vw, 46px);
+}
+
+/* Tour buttons: "Take a tour" in Leaf, "Play walkthrough" in navy, on a line of
+   their own with a hairline under it. */
+.home:not(.diagram-page) .landing-diagram .diagram-viewport > .diagram-tour {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: auto;
+  max-width: none;
+  margin: 0 0 clamp(0.75rem, 1.5vw, 28px);
+  padding: 0 0 clamp(0.75rem, 1.5vw, 28px);
+  border-bottom: 1px solid #ececec;
+  border-radius: 0;
+  background: none;
+  gap: 0.6rem clamp(0.75rem, 1.1vw, 21px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play {
+  flex-direction: row-reverse;
+  height: clamp(2.1rem, 2.1vw, 40px);
+  padding: 0 clamp(0.8rem, 0.95vw, 18px);
+  border-radius: 7px;
+  background: var(--color-water);
+  color: var(--color-white);
+  font-size: clamp(0.85rem, 0.95vw, 18px);
+  font-weight: 400;
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play.tour-guide {
+  background: var(--color-leaf);
+  color: var(--color-water);
+}
+
+/* A circled arrow after "Take a tour", in place of the play triangle. */
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-guide .tour-play-icon {
+  width: 1.15em;
+  height: 1.15em;
+  border: 0;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 6.2 12 10l-4 3.8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 6.2 12 10l-4 3.8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-caption { color: var(--color-water); }
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-btn { color: var(--color-water); }
+
+/* The zoom bar is always showing at the card's bottom-right, quiet and plain
+   (the round zoom button is not in this design). */
+.home:not(.diagram-page) .landing-diagram .zoom-toggle { display: none; }
+
+.home:not(.diagram-page) .landing-diagram .zoom-controls {
+  display: flex;
+  right: clamp(1rem, 5.4vw, 103px);
+  bottom: clamp(0.75rem, 3.2vw, 60px);
+  border: 0;
+  background: var(--color-mist);
+  box-shadow: none;
+  font-size: clamp(0.75rem, 0.8vw, 15px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport.zoom-open .zoom-controls { display: flex; }
+
+/* The bar's chevron points down when closed and up when open, as in the design. */
+.home:not(.diagram-page) .landing-diagram .diagram-guide-toggle[aria-expanded="false"] .diagram-guide-chevron { transform: none; }
+.home:not(.diagram-page) .landing-diagram .diagram-guide-toggle[aria-expanded="true"] .diagram-guide-chevron { transform: rotate(180deg); }
+
+/* Section labels ("Overview", "The resource") are thin outlined pills in the
+   design; only the "Level 1" label is a solid navy one. */
+.home .pill:not(.pill-navy) {
+  padding: clamp(0.3rem, 0.42vw, 8px) clamp(0.7rem, 0.9vw, 17px);
+  border: 1px solid var(--color-water);
+  background: none;
+  color: var(--color-water);
+  font-size: clamp(0.8rem, 0.83vw, 16px);
+}
+
+.home .band-navy .pill:not(.pill-navy) { border-color: rgba(255, 255, 255, 0.45); color: var(--color-white); }
+
+/* "The resource" sits above the heading, at the left, as in the design. */
+.home .band-navy .section-head {
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: clamp(0.6rem, 1vw, 20px);
+}

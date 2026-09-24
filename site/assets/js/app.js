@@ -515,6 +515,17 @@
      Extended (colours = process). It is always open, on the home page and on
      every diagram tab: it sits below the diagram, so it never stands between
      the visitor and the diagram. */
+  const guideToggle = document.getElementById("diagram-guide-toggle");
+  // On the home page the guide is a bar above the card that opens on demand
+  // (the design's accordion). On the diagram page the toggle is a plain heading
+  // and the guide simply stays open. A fresh load always starts collapsed.
+  if (guideToggle && guideToggle.tagName === "BUTTON") {
+    guideToggle.addEventListener("click", () => {
+      const collapsed = guideEl.dataset.collapsed !== "true";
+      guideEl.dataset.collapsed = collapsed ? "true" : "false";
+      guideToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    });
+  }
 
   function escapeHtml(str) {
     return str.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -554,9 +565,9 @@
       : "";
 
     // A lesson view is read with the step card, not by opening popups.
-    const guidedHint = " Or press <strong>Take the guided tour</strong> for a step-by-step explanation.";
+    const guidedHint = " Or press <strong>Take a tour</strong> for a step-by-step explanation.";
     const hint = data.lesson && data.lesson.clickStartsTour
-      ? "Press <strong>Take the guided tour</strong> to have each step explained in turn, or click any box to have just that one explained."
+      ? "Press <strong>Take a tour</strong> to have each step explained in turn, or click any box to have just that one explained."
       : "Click any box or label to see its full detail." + toggleHint + tourHint + guidedHint;
 
     return `
@@ -1612,7 +1623,7 @@
     if (lessonLaunch) lessonLaunch.hidden = !(lesson && !barShown);
     if (!lesson || !lessonCard) return;
 
-    setStartLabels(tourSeen() ? "Take the tour again" : "Take the guided tour");
+    setStartLabels(tourSeen() ? "Take a tour again" : "Take a tour");
 
     // Progress: one clickable segment per step, or a single smooth bar on a long
     // tour (35 segments would be too small to see or press).
@@ -1727,7 +1738,7 @@
     stage.classList.remove("is-lesson");
     if (!(keepRoute && lessonState.index >= lessonState.total)) clearTourMarks();
     lessonState.index = -1;
-    setStartLabels("Take the tour again");
+    setStartLabels("Take a tour again");
     const fit = document.getElementById("zoom-fit");
     if (fit) fit.click();
   }
@@ -1854,7 +1865,7 @@
       const replay = document.createElement("button");
       replay.type = "button";
       replay.className = "lesson-link";
-      replay.textContent = "Take the tour again";
+      replay.textContent = "Take a tour again";
       replay.addEventListener("click", () => lessonGoTo(-1, false));
       lessonExtraEl.appendChild(replay);
       ((lesson.outro && lesson.outro.links) || []).forEach((link) => {
