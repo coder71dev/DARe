@@ -947,6 +947,7 @@
     const FIT_ON_LOAD_MIN_ZOOM = 0.5;
     const FIT_BOTTOM_GAP = 40; // the card's bottom padding and a little air
     fitOnLoad = function () {
+      wrap.scrollLeft = 0; // a newly shown view starts at its left edge, on every screen
       if (!document.body.classList.contains("diagram-page") || window.innerWidth <= 760) return;
       const natW = naturalWidth();
       const cropH = ((natW * 6858 * currentScale) / 12192) * currentCropRatio;

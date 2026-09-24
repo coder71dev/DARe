@@ -3793,3 +3793,104 @@ html.menu-open { overflow: hidden; }
   .diagram-page .landing-diagram .process-toggle { justify-self: stretch; width: 100%; margin-top: 0.5rem; }
   .diagram-page .landing-diagram .process-toggle button { flex: 1 1 0; text-align: center; padding-left: 0.4rem; padding-right: 0.4rem; }
 }
+
+/* Phone: the guided tour, the walkthrough and the zoom controls become three
+   round icon buttons in a slim strip along the top of the diagram card
+   (the swipe hint sits at the strip's left), instead of a block of buttons
+   above it. They are grid items in the same cell as the card, laid over the
+   space its extra top padding reserves, so they follow the card wherever the
+   controls above it wrap or disappear. */
+@media (max-width: 760px) {
+  .diagram-page .landing-diagram .level-select { grid-row: 1; }
+  .diagram-page .landing-diagram .process-toggle { grid-row: 2; }
+  .diagram-page .landing-diagram .diagram-viewport { grid-row: 3; margin-top: 0.6rem; padding-top: 3.4rem; }
+  .diagram-page .landing-diagram > .diagram-tour,
+  .diagram-page .landing-diagram .scroll-hint { grid-row: 3; z-index: 12; align-self: start; margin-top: 1.1rem; }
+  .diagram-page .landing-diagram .diagram-guide { grid-row: 4; }
+  .diagram-page .landing-diagram .view-next { grid-row: 5; }
+
+  .diagram-page .landing-diagram > .diagram-tour {
+    grid-column: 1 / -1;
+    justify-self: end;
+    width: auto;
+    margin: 1.1rem 3.5rem 0 0; /* clear of the zoom button at the strip's end */
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+  }
+
+  .diagram-page .landing-diagram .tour-play {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--color-mist);
+    color: var(--color-water);
+  }
+
+  .diagram-page .landing-diagram .tour-play.tour-guide,
+  .diagram-page .landing-diagram .lesson-launch .tour-play { background: var(--color-water); color: var(--color-white); }
+
+  /* The words stay for screen readers. */
+  .diagram-page .landing-diagram .tour-play > span:not(.tour-play-icon) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* A flag for "guided tour", so it reads differently from the play triangle. */
+  .diagram-page .landing-diagram .tour-guide .tour-play-icon,
+  .diagram-page .landing-diagram .lesson-launch .tour-play-icon {
+    width: 20px;
+    height: 20px;
+    border: 0;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 2.5v15M5.5 3.5h9.5l-2.6 3.6L15 10.7H5.5' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 2.5v15M5.5 3.5h9.5l-2.6 3.6L15 10.7H5.5' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  .diagram-page .landing-diagram .scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-self: start;
+    max-width: calc(100% - 11.5rem);
+    min-height: 44px;
+    margin: 1.1rem 0 0 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.25;
+  }
+
+  /* Zoom joins the strip at its right-hand end. */
+  .diagram-page .zoom-toggle { top: 0.5rem; right: 0.5rem; bottom: auto; }
+  .diagram-page .landing-diagram .zoom-controls { top: 3.6rem; right: 0.5rem; bottom: auto; }
+
+  /* While a walkthrough plays, its step name and Restart/Stop sit in a bar at
+     the foot of the screen, so the diagram keeps the whole card. */
+  .diagram-page .diagram-tour:has(.tour-caption.is-active) .tour-caption {
+    display: block;
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 60;
+    min-height: 0;
+    padding: 0.75rem 8.5rem 0.75rem 1rem;
+    border-radius: 12px;
+    background: var(--color-water);
+    color: var(--color-white);
+    box-shadow: 0 6px 20px rgba(0, 41, 94, 0.3);
+  }
+
+  .diagram-page .diagram-tour:has(.tour-caption.is-active) .tour-actions {
+    position: fixed;
+    right: 1.4rem;
+    bottom: 1.05rem;
+    z-index: 61;
+  }
+
+  .diagram-page .diagram-tour:has(.tour-caption.is-active) .tour-btn { color: var(--color-white); }
+}
