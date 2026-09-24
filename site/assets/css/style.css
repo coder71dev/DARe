@@ -4447,3 +4447,35 @@ html.menu-open { overflow: hidden; }
     margin-left: -4.4%;
   }
 }
+
+/* ==========================================================================
+   The zoom controls never sit on top of the diagram. On a desktop the bar has
+   its own band at the foot of the card, between the diagram and the hairline;
+   on a tablet the round button does; on a phone the bar, when opened, makes
+   room for itself under the strip of icon buttons.
+   ========================================================================== */
+@media (min-width: 901px) {
+  :is(.home:not(.diagram-page), .diagram-page) .landing-diagram .diagram-viewport {
+    padding-bottom: clamp(5.75rem, 8.7vw, 167px);
+  }
+  :is(.home:not(.diagram-page), .diagram-page) .landing-diagram .zoom-controls {
+    bottom: clamp(0.75rem, 4.6vw, 88px);
+  }
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  .home .landing-diagram .diagram-viewport { padding-bottom: 5rem; }
+  .home .landing-diagram .zoom-toggle { bottom: 0.75rem; }
+  .home .landing-diagram .zoom-controls { bottom: 0.75rem; }
+}
+
+@media (max-width: 760px) {
+  .diagram-page .landing-diagram .diagram-viewport.zoom-open { padding-top: 6.4rem; }
+  .diagram-page .landing-diagram .zoom-controls { top: 3.5rem; }
+}
+
+/* Home stays in the phone header on the diagram page (the logo already goes
+   home on the homepage itself, so it stays hidden there). */
+@media (max-width: 640px) {
+  .diagram-page .site-header .header-nav .header-home { display: inline; }
+}
