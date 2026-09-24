@@ -97,6 +97,7 @@
     return (n / currentMaxX) * 100 + "%";
   }
 
+  let currentScale = 1; // per-view canvas size multiplier (data.scale) — see the note in content.js
   let currentCropRatio = 1; // fraction of the full 0-100 stage height that's actually visible
   let refreshZoom = function () {}; // replaced with the real thing once setupZoomControls runs
   let setZoomLevel = function () {}; // likewise: sets an exact zoom (the guided tour uses it on phones)
@@ -174,28 +175,74 @@
      set from computeMaxX(). <polyline points> doesn't support "%" units,
      so a shared viewBox is the only way to keep everything consistent. */
   function setupViewBox() {
-    svgLayer.setAttribute("viewBox", "0 0 " + currentMaxX + " 100");
+    svgLayer.setAttribute("viewBox", "0 0 " + currentMaxX + " " + 100 * Y_SCALE);
     svgLayer.setAttribute("preserveAspectRatio", "none");
   }
 
   const COLOR_NAVY = "#00295e";
-  const COLOR_GREEN = "#3fae52";
+  const COLOR_GREEN = "#5ecf70"; // brand leaf green, as used in the Figma feedback loops
   const COLOR_GREY = "#a9b1ba"; // inactive-process colour for arrows/loops, matching the dimmed boxes they connect
 
-  function buildMarker(id, fill) {
+  /* The stage is a 16:9 slide, so one % of its height is 0.5625 of one % of
+     its width. The SVG viewBox is scaled by Y_SCALE to match, and every y
+     coordinate is passed through sy() on its way in, so a unit is the same
+     length in both directions: arrowheads keep their shape, corners stay
+     round, and vertical and horizontal lines are the same thickness. Content
+     data stays in plain slide percentages. */
+  const Y_SCALE = 6858 / 12192;
+  const sy = (y) => y * Y_SCALE;
+
+  // Connector thickness, marker size and bend radius are in stage units, so
+  // they are divided by the view's canvas scale to stay the same physical
+  // size (about 1.3px thick at 1200px wide) however big a view's canvas is.
+  const lineWidth = () => 0.11 / currentScale;
+  const cornerRadius = () => 2.1 / currentScale;
+
+  /* Open chevron head, as drawn in the Figma design: two thin arms at 45
+     degrees rather than a filled triangle. Sized in user units (1 marker unit
+     = 0.01 of the stage width) so it stays the same size whatever the line
+     width. refX pulls the mitred tip back onto the line's end point. */
+  function buildMarker(id, colour) {
     const marker = document.createElementNS(SVG_NS, "marker");
     marker.setAttribute("id", id);
-    marker.setAttribute("viewBox", "0 0 10 10");
-    marker.setAttribute("refX", "8");
-    marker.setAttribute("refY", "5");
-    marker.setAttribute("markerWidth", "6.5");
-    marker.setAttribute("markerHeight", "6.5");
+    marker.setAttribute("viewBox", "-70 -70 140 140");
+    marker.setAttribute("refX", "-7");
+    marker.setAttribute("refY", "0");
+    marker.setAttribute("markerUnits", "userSpaceOnUse");
+    marker.setAttribute("markerWidth", 1.4 / currentScale);
+    marker.setAttribute("markerHeight", 1.4 / currentScale);
     marker.setAttribute("orient", "auto-start-reverse");
     const path = document.createElementNS(SVG_NS, "path");
-    path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
-    path.setAttribute("fill", fill);
+    path.setAttribute("d", "M -48 -48 L 0 0 L -48 48");
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", colour);
+    // The head takes whatever colour its line currently has (the walkthrough
+    // and the process filter recolour lines). The attribute above is only the
+    // fallback for browsers without context-stroke.
+    path.style.stroke = "context-stroke";
+    path.setAttribute("stroke-width", "11");
     marker.appendChild(path);
     return marker;
+  }
+
+  /* A run of points as an SVG path with rounded bends, like the Figma
+     connectors. Each bend's radius is capped at half of the shorter leg
+     beside it, so tight elbows just get a smaller curve instead of kinking. */
+  function roundedPathD(points) {
+    const pts = points.map((p) => ({ x: p.x, y: sy(p.y) }));
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 1; i < pts.length - 1; i += 1) {
+      const prev = pts[i - 1], corner = pts[i], next = pts[i + 1];
+      const inLen = Math.hypot(corner.x - prev.x, corner.y - prev.y);
+      const outLen = Math.hypot(next.x - corner.x, next.y - corner.y);
+      const r = Math.min(cornerRadius(), inLen / 2, outLen / 2);
+      if (r <= 0) continue;
+      const a = { x: corner.x + ((prev.x - corner.x) / inLen) * r, y: corner.y + ((prev.y - corner.y) / inLen) * r };
+      const b = { x: corner.x + ((next.x - corner.x) / outLen) * r, y: corner.y + ((next.y - corner.y) / outLen) * r };
+      d += ` L ${a.x} ${a.y} Q ${corner.x} ${corner.y} ${b.x} ${b.y}`;
+    }
+    const last = pts[pts.length - 1];
+    return d + ` L ${last.x} ${last.y}`;
   }
 
   function makeArrowMarker() {
@@ -235,11 +282,11 @@
   function drawStraightArrow(arrow) {
     const line = document.createElementNS(SVG_NS, "line");
     line.setAttribute("x1", arrow.from.x);
-    line.setAttribute("y1", arrow.from.y);
+    line.setAttribute("y1", sy(arrow.from.y));
     line.setAttribute("x2", arrow.to.x);
-    line.setAttribute("y2", arrow.to.y);
+    line.setAttribute("y2", sy(arrow.to.y));
     line.setAttribute("stroke", COLOR_NAVY);
-    line.setAttribute("stroke-width", "0.18");
+    line.setAttribute("stroke-width", lineWidth());
     // A connector that is only a leg of a shared bus (see "head: false" in
     // content.js) draws no arrowhead of its own — the single head sits at the
     // far end of the run instead, so the branch reads as one arrival rather
@@ -253,30 +300,28 @@
   }
 
   function drawFeedbackPath(feedback) {
-    const polyline = document.createElementNS(SVG_NS, "polyline");
-    const pointsStr = feedback.points.map((p) => `${p.x},${p.y}`).join(" ");
-    polyline.setAttribute("points", pointsStr);
-    polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke", COLOR_GREEN);
-    polyline.setAttribute("stroke-width", "0.22");
-    polyline.setAttribute("marker-end", "url(#feedback-arrowhead)");
-    svgLayer.appendChild(taggedArrow(polyline, feedback.group, "feedback"));
-    recordConnector(polyline, "feedback", feedback.points);
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", roundedPathD(feedback.points));
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", COLOR_GREEN);
+    path.setAttribute("stroke-width", lineWidth());
+    path.setAttribute("marker-end", "url(#feedback-arrowhead)");
+    svgLayer.appendChild(taggedArrow(path, feedback.group, "feedback"));
+    recordConnector(path, "feedback", feedback.points);
   }
 
   // Same visual style as the straight main-flow arrows, just with bends —
   // for boxes that aren't directly aligned (e.g. Extended's side branches).
   function drawElbowPath(elbow) {
-    const polyline = document.createElementNS(SVG_NS, "polyline");
-    const pointsStr = elbow.points.map((p) => `${p.x},${p.y}`).join(" ");
-    polyline.setAttribute("points", pointsStr);
-    polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke", COLOR_NAVY);
-    polyline.setAttribute("stroke-width", "0.18");
-    if (elbow.head !== false) polyline.setAttribute("marker-end", "url(#arrowhead)");
-    if (elbow.bidirectional) polyline.setAttribute("marker-start", "url(#arrowhead)");
-    svgLayer.appendChild(taggedArrow(polyline, elbow.group, "main"));
-    recordConnector(polyline, "main", elbow.points);
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", roundedPathD(elbow.points));
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", COLOR_NAVY);
+    path.setAttribute("stroke-width", lineWidth());
+    if (elbow.head !== false) path.setAttribute("marker-end", "url(#arrowhead)");
+    if (elbow.bidirectional) path.setAttribute("marker-start", "url(#arrowhead)");
+    svgLayer.appendChild(taggedArrow(path, elbow.group, "main"));
+    recordConnector(path, "main", elbow.points);
   }
 
   // A smooth single-bulge curve (quadratic bezier) — for short loops within
@@ -284,11 +329,11 @@
   // where a straight elbow would look too mechanical.
   function drawCurvedPath(curve) {
     const path = document.createElementNS(SVG_NS, "path");
-    const d = `M ${curve.from.x},${curve.from.y} Q ${curve.control.x},${curve.control.y} ${curve.to.x},${curve.to.y}`;
+    const d = `M ${curve.from.x},${sy(curve.from.y)} Q ${curve.control.x},${sy(curve.control.y)} ${curve.to.x},${sy(curve.to.y)}`;
     path.setAttribute("d", d);
     path.setAttribute("fill", "none");
     path.setAttribute("stroke", COLOR_NAVY);
-    path.setAttribute("stroke-width", "0.18");
+    path.setAttribute("stroke-width", lineWidth());
     path.setAttribute("marker-end", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(path, curve.group, "main"));
     recordConnector(path, "main", sampleCurve(curve));
@@ -698,6 +743,7 @@
     guideBody.innerHTML = buildGuideBody(data);
 
     currentMaxX = computeMaxX(data);
+    currentScale = data.scale || 1;
 
     // Clear previous render
     svgLayer.innerHTML = "";
@@ -858,7 +904,7 @@
     // and the extra width just scrolls. At currentMaxX === 100 this is a
     // no-op (fullW === naturalWidth()).
     function fullWidth() {
-      return (naturalWidth() * currentMaxX) / 100;
+      return (naturalWidth() * currentMaxX * currentScale) / 100;
     }
 
     function fitZoom() {
@@ -872,9 +918,10 @@
       zoom = Math.max(ABSOLUTE_MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
       const natW = naturalWidth();
       const fullW = fullWidth();
-      const natH = (natW * 6858) / 12192;
+      const natH = (natW * 6858 * currentScale) / 12192;
       const natCropH = natH * currentCropRatio;
       crop.style.width = Math.round(fullW) + "px";
+      crop.style.setProperty("--fs", (natW * 0.0127).toFixed(2) + "px");
       crop.style.height = Math.round(natCropH) + "px";
       crop.style.transform = Math.abs(zoom - 1) < 0.005 ? "" : `scale(${zoom})`;
       sizer.style.width = Math.round(fullW * zoom) + "px";

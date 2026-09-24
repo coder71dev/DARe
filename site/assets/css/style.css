@@ -1306,19 +1306,21 @@ a { color: var(--color-sky); }
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--box-border-radius);
+  padding: 0.25em 0.6em;
+  border-radius: calc(var(--fs, 12px) * 0.8);
   border: 2px solid var(--color-water);
   background: var(--color-white);
   color: var(--color-water);
-  font-weight: 600;
-  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
-  line-height: 1.15;
+  font-weight: 400;
+  /* --fs is set by app.js on .diagram-crop: one shared text size for every
+     diagram (about 1.27% of the diagram's natural width, as in the Figma
+     design), so text and boxes grow and shrink together at any screen size. */
+  font-size: var(--fs, 0.8rem);
+  line-height: 1.3;
   white-space: pre-line; /* honours the \n we set for source-authored manual
                              line breaks (e.g. "Adaptation/\nInterventions"),
                              while still auto-wrapping normal long labels */
   cursor: pointer;
-  box-shadow: var(--shadow-soft);
   transform: rotate(var(--box-rotate, 0deg));
   transition: transform 0.12s ease, filter 0.12s ease;
   z-index: 2;
@@ -1332,9 +1334,9 @@ a { color: var(--color-sky); }
    they get a smaller font/padding budget. Applied by app.js to any box
    below a size threshold, not tied to a specific view. */
 .diagram-box.compact {
-  padding: 0.2rem 0.35rem;
-  font-size: clamp(0.55rem, 0.85vw, 0.72rem);
-  line-height: 1.1;
+  padding: 0.2em 0.4em;
+  font-size: calc(var(--fs, 0.8rem) * 0.88);
+  line-height: 1.2;
 }
 
 .diagram-box:hover,
@@ -1368,6 +1370,13 @@ a { color: var(--color-sky); }
   background: var(--color-water);
   border-color: var(--color-water);
   color: var(--color-white);
+}
+
+/* Figma look: the three brand-colour boxes are flat fills with no outline. */
+.diagram-box.variant-navy,
+.diagram-box.variant-sky,
+.diagram-box.variant-leaf {
+  border-width: 0;
 }
 
 .diagram-box.variant-sky {
@@ -1424,8 +1433,8 @@ a { color: var(--color-sky); }
    upright and readable inside the point. */
 .diagram-box.shape-diamond {
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  padding: 0.3rem 0.7rem;
-  font-size: clamp(0.45rem, 0.68vw, 0.58rem);
+  padding: 0.3em 0.7em;
+  font-size: calc(var(--fs, 0.8rem) * 0.75);
   line-height: 1.1;
 }
 
@@ -1505,7 +1514,7 @@ a { color: var(--color-sky); }
   text-align: center;
   color: var(--color-water);
   font-weight: 700;
-  font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+  font-size: calc(var(--fs, 0.8rem) * 0.95);
   z-index: 2;
   pointer-events: none;
 }
@@ -1541,7 +1550,12 @@ a { color: var(--color-sky); }
 .diagram-heading.variant-c5,
 .diagram-heading.variant-c6 {
   border-radius: 8px 8px 0 0;
-  padding: 0.2rem 0.4rem;
+  /* Title bars are one line tall, so the text must never wrap: em padding and
+     a slightly smaller size keep the longest titles ("Problem Framing and
+     Scope") inside the bar at every canvas size, phone included. */
+  padding: 0.2em 0.4em;
+  font-size: calc(var(--fs, 0.8rem) * 0.86);
+  white-space: nowrap;
   box-shadow: var(--shadow-soft);
 }
 
@@ -1561,7 +1575,7 @@ a { color: var(--color-sky); }
    non-clickable heading element the cluster titles use — the key is a
    reference, not a step, so it never opens a popup. */
 .diagram-heading.variant-key-title {
-  font-size: clamp(0.9rem, 1.6vw, 1.5rem);
+  font-size: calc(var(--fs, 0.8rem) * 1.6);
   line-height: 1.1;
   letter-spacing: 0.03em;
 }
@@ -1577,8 +1591,8 @@ a { color: var(--color-sky); }
 .diagram-heading.variant-key-adapt,
 .diagram-heading.variant-key-passenger {
   border-radius: 6px;
-  padding: 0.15rem 0.3rem;
-  font-size: clamp(0.6rem, 0.9vw, 0.94rem);
+  padding: 0.15em 0.3em;
+  font-size: calc(var(--fs, 0.8rem) * 0.95);
   line-height: 1.12;
 }
 
@@ -1609,7 +1623,7 @@ a { color: var(--color-sky); }
   border: none;
   color: var(--color-water);
   font-weight: 700;
-  font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+  font-size: calc(var(--fs, 0.8rem) * 0.95);
   cursor: pointer;
   z-index: 2;
 }
