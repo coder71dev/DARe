@@ -12,20 +12,61 @@
        {{ asset('assets/css/style.css') }} — same file, one-line swap. -->
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
-<body>
+<body class="home">
   <!-- LAYOUT:HEADER — identical on every page; becomes the header block
        inside resources/views/layouts/app.blade.php when this moves to Laravel -->
   <header class="site-header">
-    <!-- The logo is a link home, the same place the "Home" nav item goes. -->
     <a class="brand" href="index.html" aria-label="DARe TPRAF — home">
-      <img class="logo" src="assets/icons/logo.svg" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />
-      <span class="brand-subtitle">TPRAF</span>
+      <img class="logo" src="assets/icons/logo-header.svg" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />
     </a>
-    <nav>
-      <!-- .nav-cta: hidden below the guide's mobile threshold — see style.css.
-           Same destination as this page's "Explore TPRAF" buttons, since two
-           links with the same label must not go to different places. -->
-      <a class="nav-cta" href="diagram.html#extended">Explore TPRAF</a>
+    <div class="header-tools">
+      <!-- Same search as dare.ac.uk: WordPress's ?s= query on the main site. -->
+      <form class="header-search" id="header-search" role="search" action="https://dare.ac.uk/" method="get" target="_blank">
+        <label class="visually-hidden" for="header-search-input">Search</label>
+        <input id="header-search-input" type="text" name="s" placeholder="Search" autocomplete="off" />
+        <button type="submit" aria-label="Search"><svg class="search-icon" viewBox="0 0 28.425 45.048" aria-hidden="true"><path class="si-t" transform="translate(-117.565 -0.001)" d="M128.571,17.563a22.105,22.105,0,0,1,2.243.624,21.828,21.828,0,0,1,2.194.87.488.488,0,0,0,.588-.118L144.087,6.282a.489.489,0,0,0-.107-.73q-1.026-.648-2.1-1.234a.491.491,0,0,0-.606.113l-8.9,10.73a.488.488,0,0,1-.858-.313L131.617.9a.49.49,0,0,0-.39-.476q-1.2-.247-2.4-.415a.489.489,0,0,0-.553.49l-.075,16.6a.488.488,0,0,0,.374.469"/><path class="si-m" transform="translate(0 -24.998)" d="M27.584,34.746a.464.464,0,0,0-.792-.134l-2.04,2.461a.469.469,0,0,0-.1.393A10.382,10.382,0,1,1,8.217,31.243a.46.46,0,0,0,.184-.364l.014-3.154a.465.465,0,0,0-.693-.406A13.937,13.937,0,0,0,8.078,51.9l-.734,2.068-1.481-.562a1.628,1.628,0,0,0-2.1.935L.328,63.227a5.031,5.031,0,0,0,9.4,3.583l3.436-8.879a1.628,1.628,0,0,0-.94-2.11l-1.542-.586.749-2.11a13.946,13.946,0,0,0,16.152-18.38M8.905,59.046,6.4,65.533A1.46,1.46,0,0,1,3.663,64.5L6.179,58a.618.618,0,0,1,.8-.355l1.574.6a.618.618,0,0,1,.357.8"/></svg></button>
+      </form>
+    </div>
+    <button type="button" class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="site-menu">
+      <span class="label">Menu</span>
+      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+    <!-- Slide-in menu, styled like dare.ac.uk's: the TPRAF links first, then
+         the DARe hub's own menu. -->
+    <nav class="site-menu" id="site-menu" aria-label="Primary Menu">
+      <ul class="top-level">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="diagram.html#extended">Explore TPRAF</a></li>
+      <li class="has-sub">
+        <a href="https://dare.ac.uk/about-us/" target="_blank" rel="noopener" aria-expanded="false">About DARe <span class="sub-icon" aria-hidden="true"><svg viewBox="0 0 41 41"><circle cx="20.5" cy="20.5" r="19.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 12 9 8.5-9 8.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <div class="sub-menu-wrap">
+          <button type="button" class="sub-nav-back">Back</button>
+          <ul class="sub-menu">
+            <li><a href="https://dare.ac.uk/about-us/" target="_blank" rel="noopener">About DARe</a></li>
+            <li><a href="https://dare.ac.uk/about-us/our-team/" target="_blank" rel="noopener">Our team</a></li>
+            <li><a href="https://dare.ac.uk/about-us/our-partners/" target="_blank" rel="noopener">Our partners</a></li>
+            <li><a href="https://dare.ac.uk/about-us/our-funders/" target="_blank" rel="noopener">Our funders</a></li>
+          </ul>
+        </div>
+      </li>
+      <li><a href="https://dare.ac.uk/research/" target="_blank" rel="noopener">Our work</a></li>
+      <li class="has-sub">
+        <a href="https://dare.ac.uk/latest/" target="_blank" rel="noopener" aria-expanded="false">Latest <span class="sub-icon" aria-hidden="true"><svg viewBox="0 0 41 41"><circle cx="20.5" cy="20.5" r="19.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 12 9 8.5-9 8.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <div class="sub-menu-wrap">
+          <button type="button" class="sub-nav-back">Back</button>
+          <ul class="sub-menu">
+            <li><a href="https://dare.ac.uk/news/" target="_blank" rel="noopener">News</a></li>
+            <li><a href="https://dare.ac.uk/blog/" target="_blank" rel="noopener">Blog</a></li>
+            <li><a href="https://dare.ac.uk/events/" target="_blank" rel="noopener">Events</a></li>
+            <li><a href="https://dare.ac.uk/latest/" target="_blank" rel="noopener">View All</a></li>
+          </ul>
+        </div>
+      </li>
+      <li><a href="https://dare.ac.uk/publications/" target="_blank" rel="noopener">Publications</a></li>
+      <li><a href="https://dare.ac.uk/flexible-funding/" target="_blank" rel="noopener">Flexible Funding</a></li>
+      <li><a href="https://repository.dare.ac.uk/" target="_blank" rel="noopener">DARe Repository</a></li>
+      <li><a href="https://dare.ac.uk/contact-us/" target="_blank" rel="noopener">Contact us</a></li>
+      </ul>
     </nav>
   </header>
   <!-- /LAYOUT:HEADER -->
@@ -33,116 +74,96 @@
   <!-- PAGE:CONTENT — becomes @section('content') in resources/views/index.blade.php -->
   <main>
 
-    <!-- Hero. Full-bleed Water (the brand guide's primary colour, and the
-         colour its own digital palette page leads with), carrying the
-         DARe symbol-derived framework icon, the tagline from the social
-         skin sample, and the "explore TPRAF" button slide 2 asks for. -->
+    <!-- Hero: Leaf green with the title, the tagline and the two buttons,
+         then a full-width photograph. The photograph is
+         assets/img/hero-road.jpg; until that file is added the CSS falls back
+         to a plain green panel. -->
     <section class="hero" aria-labelledby="hero-title">
       <div class="container hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow">DARe &middot; Interactive Resource</p>
-          <h1 id="hero-title"><span class="hero-owner">DARe&rsquo;s</span> Transport Performance &amp; Risk Analysis Framework</h1>
-          <p class="tagline">Supporting the transition to a decarbonised transport system that is resilient and adaptive to a changing climate</p>
+        <h1 id="hero-title">DARe&rsquo;s Transport Performance &amp; Risk Analysis Framework</h1>
+        <div class="hero-side">
+          <p class="tagline">For people, for place, for a more sustainable future.</p>
           <div class="hero-actions">
-            <a class="cta-button" href="diagram.html#extended">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
-            <a class="ghost-link" href="#what-is-tpraf">What is TPRAF?</a>
+            <a class="btn-sm btn-sm-solid" href="diagram.html#extended">Explore TPRAF <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 6.2 12 10l-4 3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="btn-sm btn-sm-link" href="#what-is-tpraf">What is TPRAF? <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 6.2 12 10l-4 3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
           </div>
         </div>
-        <div class="hero-graphic">
-          <img src="assets/icons/framework.svg" alt="" width="1482" height="1482" />
-        </div>
       </div>
-      <!-- A quiet nudge to keep scrolling, since the page has a lot below
-           the fold. Links to the same "What is TPRAF?" anchor as the ghost
-           link above, so it's a second way to reach it, not new content. -->
-      <a class="scroll-cue" href="#what-is-tpraf" aria-label="Scroll to learn more">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v13M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
     </section>
+    <div class="hero-photo" role="img" aria-label="Aerial view of a motorway junction running through green countryside"></div>
 
-    <!-- The guide's palette page shows the four brand colours as four equal
-         panels side by side; this ribbon is that device, used as the page's
-         transition out of the hero. -->
-    <div class="brand-ribbon" aria-hidden="true">
-      <span class="ribbon-water"></span><span class="ribbon-leaf"></span><span class="ribbon-sky"></span><span class="ribbon-stone"></span>
-    </div>
-
-    <section class="section" id="what-is-tpraf" aria-labelledby="what-title">
+    <section class="section band-mist" id="what-is-tpraf" aria-labelledby="what-title">
       <div class="container">
-        <header class="section-head reveal">
-          <h2 id="what-title">What is TPRAF?</h2>
-          <p class="section-index">01 &middot; Overview</p>
-        </header>
-
-        <!-- Two columns on wide screens: the prose reads at a normal line
-             length (a full-width paragraph on a 1180px container is too wide
-             to read comfortably) and the audience list — already real page
-             content, not new copy — fills the space beside it as a sidebar
-             card, instead of the page just leaving that space blank. -->
-        <div class="overview-grid">
-          <div class="overview-main">
-            <div class="prose">
-              <p class="definition">
-                <strong>DARe&rsquo;s Transport Performance &amp; Risk Analysis Framework (TPRAF):</strong>
-                a validated, usable framework to help decision-makers — at local, regional, and national
-                levels — assess and balance the demands associated with climate resilience, adaptation,
-                and decarbonisation when addressing risks to transport infrastructure performance and
-                operations.
-              </p>
-
-              <p>
-                The TPRAF responds to growing challenges across the UK transport sector, including
-                increasing climate risks, ageing assets, evolving travel demand, and constrained
-                investment, while promoting decisions that consider system-wide performance rather
-                than isolated assets.
-              </p>
-
-              <p>
-                Rather than replacing existing organisational processes, it is intended to
-                <strong>complement and strengthen current practices</strong>, providing a unifying
-                framework that helps integrate assessments and decision-making processes, enabling
-                smoother data exchange and reducing fragmentation. This consistency supports more
-                joined-up planning, improved information sharing, and better alignment between
-                strategic, operational, and investment decisions.
-              </p>
-            </div>
+        <div class="what-intro">
+          <div class="what-figure reveal">
+            <img src="assets/icons/framework-navy.svg" alt="" width="1482" height="1482" />
           </div>
-
-          <aside class="overview-aside">
-            <p class="audience-lead">
-              The TPRAF is designed as a <strong>flexible, modular framework</strong> that can be
-              applied by a wide range of transport decision-makers, including:
+          <div class="what-copy reveal">
+            <span class="pill">Overview</span>
+            <h2 id="what-title">What is TPRAF?</h2>
+            <p>
+              DARe&rsquo;s Transport Performance &amp; Risk Analysis Framework (TPRAF) is a flexible,
+              validated framework that helps transport decision-makers assess climate risks,
+              resilience, adaptation, and decarbonisation while maintaining system-wide transport
+              performance.
             </p>
-            <ul class="audience-list">
-              <li>National infrastructure owners</li>
-              <li>Local and combined authorities</li>
-              <li>Transport operators</li>
-              <li>Freight companies</li>
-              <li>Consultancies</li>
-              <li>Researchers</li>
-            </ul>
-          </aside>
+            <p class="what-lead">It can be used by a wide range of transport decision-makers, including:</p>
+          </div>
         </div>
+
+        <ol class="audience-tiles reveal-group">
+          <li class="audience-tile reveal">
+            <span class="tile-num">01</span>
+            <img class="tile-icon" src="assets/icons/audience-1.svg" alt="" width="66" height="70" style="--w:66;--top:40;--right:38" />
+            <span class="tile-label">National infrastructure owners</span>
+          </li>
+          <li class="audience-tile reveal">
+            <span class="tile-num">02</span>
+            <img class="tile-icon" src="assets/icons/audience-2.svg" alt="" width="57" height="72" style="--w:57;--top:31;--right:43" />
+            <span class="tile-label">Local and combined authorities</span>
+          </li>
+          <li class="audience-tile reveal">
+            <span class="tile-num">03</span>
+            <img class="tile-icon" src="assets/icons/audience-3.svg" alt="" width="77" height="52" style="--w:77;--top:31;--right:52" />
+            <span class="tile-label">Transport operators</span>
+          </li>
+          <li class="audience-tile reveal">
+            <span class="tile-num">04</span>
+            <img class="tile-icon" src="assets/icons/audience-4.svg" alt="" width="60" height="57" style="--w:60;--top:24;--right:44" />
+            <span class="tile-label">Freight companies</span>
+          </li>
+          <li class="audience-tile reveal">
+            <span class="tile-num">05</span>
+            <img class="tile-icon" src="assets/icons/audience-5.svg" alt="" width="73" height="66" style="--w:73;--top:24;--right:44" />
+            <span class="tile-label">Consultancies</span>
+          </li>
+          <li class="audience-tile reveal">
+            <span class="tile-num">06</span>
+            <img class="tile-icon" src="assets/icons/audience-6.svg" alt="" width="68" height="66" style="--w:68;--top:24;--right:48" />
+            <span class="tile-label">Researchers</span>
+          </li>
+        </ol>
+
+        <p class="what-closing">
+          It complements existing processes by integrating assessments and decision-making,
+          improving data sharing, reducing fragmentation, and supporting better alignment across
+          strategic, operational, and investment decisions.
+        </p>
       </div>
     </section>
 
-    <section class="section band-stone" aria-labelledby="about-title">
+    <section class="section band-navy" aria-labelledby="about-title">
       <div class="container">
         <header class="section-head reveal">
           <h2 id="about-title">About the TPRAF Diagram</h2>
-          <p class="section-index">02 &middot; The resource</p>
+          <span class="pill">The resource</span>
         </header>
 
-        <div class="prose prose-wide">
-          <p>
-            This interactive version of the DARe Transport Performance &amp; Risk Analysis Framework
-            (TPRAF) is one of several resources developed by the DARe Hub. Alongside the full TPRAF
-            report and the DARe Handbook, it is designed to support the transport sector in
-            understanding and applying the framework. The full report explains the purpose,
-            structure, and development of TPRAF, while the DARe Handbook provides detailed guidance
-            on how to operationalise its components in practice.
-          </p>
-        </div>
+        <p class="section-text">
+          This interactive TPRAF is one of several DARe Hub resources, alongside the full TPRAF
+          report and DARe Handbook. Together, they explain the framework, its development, and
+          how to apply it in practice.
+        </p>
 
         <ul class="resource-cards reveal-group">
           <li class="resource-card reveal">
@@ -150,31 +171,27 @@
                  article about TPRAF instead — swap the href once the report itself
                  is published. -->
             <a class="resource-card-link" href="https://dare.ac.uk/news/dare-unveils-first-version-of-innovative-framework-tpraf/" target="_blank" rel="noopener" aria-label="Full TPRAF report — read the DARe news article"></a>
-            <img class="resource-icon" src="assets/icons/icon-publications.png" alt="" width="256" height="256" />
-            <h3>Full TPRAF report</h3>
+            <img class="card-icon" src="assets/icons/icon-publications.png" alt="" width="53" height="61" style="--w:53;--h:61;--top:36;--right:49" />
+            <h3>Full<br />TPRAF report</h3>
             <p>The purpose, structure, and development of the framework.</p>
           </li>
           <li class="resource-card reveal">
-            <img class="resource-icon resource-icon-tall" src="assets/icons/handbook.svg" alt="" width="1399" height="2024" />
-            <h3>DARe Handbook</h3>
-            <p>Guidance on operationalising the framework&rsquo;s components in practice.</p>
+            <img class="card-icon" src="assets/icons/handbook.svg" alt="" width="42" height="61" style="--w:42;--h:61;--top:35;--right:39" />
+            <h3>DARe<br />Handbook</h3>
+            <p>Guidance on operationalizing the framework&rsquo;s components in practice.</p>
           </li>
           <li class="resource-card reveal">
-            <img class="resource-icon" src="assets/icons/icon-search.png" alt="" width="256" height="256" />
-            <h3>This interactive diagram</h3>
+            <img class="card-icon" src="assets/icons/icon-search-card.svg" alt="" width="39" height="61" style="--w:39;--h:61;--top:28;--right:42" />
+            <h3>This interactive<br />diagram</h3>
             <p>Explore the framework at your own pace.</p>
           </li>
         </ul>
 
-        <div class="prose prose-wide">
-          <p>
-            This interactive resource offers an accessible introduction to the framework, enabling
-            users to explore its structure, components, and relationships at their own pace. Whether
-            you are encountering TPRAF for the first time or considering how it might support your
-            organisation, this resource is intended to help you navigate the framework before
-            engaging with the more detailed DARe guidance and tools.
-          </p>
-        </div>
+        <p class="section-text">
+          This interactive resource provides an accessible introduction to TPRAF, allowing users to
+          explore its structure, components, and relationships before moving on to the detailed DARe
+          guidance and tools.
+        </p>
       </div>
     </section>
 
@@ -187,29 +204,27 @@
          simple view). Per-page duplication of a shared block, exactly as the
          LAYOUT:HEADER / LAYOUT:FOOTER blocks above and below do.
 
-         Deliberately unframed (see .landing-diagram in style.css): no card,
-         border or shadow, so it reads as part of the page rather than an
-         embed. The wrapper is a boundary and a hook, nothing more. -->
-    <section class="section" aria-labelledby="simple-title">
+         The design sets the diagram itself in a white rounded card on the
+         Leaf band (see .home .diagram-viewport in style.css). -->
+    <section class="section band-leaf" aria-labelledby="simple-title">
       <div class="container">
         <header class="section-head reveal">
           <h2 id="simple-title">The simple form</h2>
-          <p class="section-index">03 &middot; Level 1</p>
+          <span class="pill pill-navy">Level 1</span>
         </header>
 
         <div class="landing-diagram">
           <h3 class="diagram-title" id="diagram-title"></h3>
           <p class="diagram-subtitle" id="diagram-subtitle"></p>
 
-          <!-- Starts collapsed — same as diagram.html's copy (see there) -->
-          <div class="diagram-guide" id="diagram-guide" data-collapsed="true">
-            <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="false" aria-controls="diagram-guide-body">
+          <!-- Always open — same as diagram.html's copy (see there) -->
+          <div class="diagram-guide" id="diagram-guide">
+            <div class="diagram-guide-toggle" id="diagram-guide-toggle">
               <span class="diagram-guide-toggle-label">
                 <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
                 How to explore this diagram
               </span>
-              <svg class="diagram-guide-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
+            </div>
             <div class="diagram-guide-body" id="diagram-guide-body"></div>
           </div>
 
@@ -238,7 +253,10 @@
 
           <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
           <div class="diagram-viewport">
-            <div class="zoom-controls" role="group" aria-label="Zoom diagram">
+            <button type="button" class="zoom-toggle" id="zoom-toggle" aria-expanded="false" aria-controls="zoom-controls" aria-label="Zoom controls">
+              <img src="assets/icons/zoom-plus.svg" alt="" width="45" height="45" />
+            </button>
+            <div class="zoom-controls" id="zoom-controls" role="group" aria-label="Zoom diagram">
               <button type="button" id="zoom-out" aria-label="Zoom out">&minus;</button>
               <span class="zoom-level" id="zoom-level">100%</span>
               <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
@@ -264,56 +282,58 @@
           </div>
         </div>
 
-        <p class="landing-diagram-cta">
-          <a class="inline-link" href="diagram.html#extended">Explore the extended form <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
-        </p>
       </div>
     </section>
 
-    <section class="section band-stone" aria-labelledby="further-title">
+    <section class="section section-further" aria-labelledby="further-title">
       <div class="container">
         <header class="section-head reveal">
           <h2 id="further-title">Further Information</h2>
-          <p class="section-index">04 &middot; More detail</p>
         </header>
 
-        <ul class="resource-cards reveal-group">
-          <li class="resource-card reveal">
-            <a class="resource-card-link" href="https://dare.ac.uk" target="_blank" rel="noopener" aria-label="DARe website (dare.ac.uk)"></a>
-            <img class="resource-icon" src="assets/icons/icon-website.png" alt="" width="256" height="256" />
-            <h3>DARe website</h3>
-            <p>The DARe Hub's main site, at dare.ac.uk.</p>
-          </li>
-          <li class="resource-card reveal">
-            <a class="resource-card-link" href="https://repository.dare.ac.uk/" target="_blank" rel="noopener" aria-label="DARe Repository"></a>
-            <img class="resource-icon" src="assets/icons/icon-repository.png" alt="" width="256" height="256" />
-            <h3>DARe Repository</h3>
-            <p>Datasets, models, and outputs from across the DARe Hub.</p>
-          </li>
-          <li class="resource-card reveal">
-            <a class="resource-card-link" href="mailto:darehub@newcastle.ac.uk" aria-label="Email the DARe Hub"></a>
-            <img class="resource-icon" src="assets/icons/icon-email.png" alt="" width="256" height="256" />
-            <h3>Email us</h3>
-            <p>Questions about TPRAF or the DARe Hub's work.</p>
-          </li>
-        </ul>
+        <!-- Three collapsible bars, as in the design; each opens to its
+             description and the link. -->
+        <div class="info-bars reveal-group">
+          <details class="info-bar reveal">
+            <summary>
+              <img class="info-bar-icon" src="assets/icons/bar-website.svg" alt="" width="36" height="59" style="--w:36;--h:59;--left:31" />
+              <span class="info-bar-label">DARe Website</span>
+              <svg class="bar-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6.5 10 13.5l6.5-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="info-bar-body">
+              <p>The DARe Hub&rsquo;s main site, at dare.ac.uk.</p>
+              <a class="inline-link" href="https://dare.ac.uk" target="_blank" rel="noopener">Visit dare.ac.uk <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+            </div>
+          </details>
+          <details class="info-bar reveal">
+            <summary>
+              <img class="info-bar-icon" src="assets/icons/bar-repository.svg" alt="" width="55" height="55" style="--w:55;--h:55;--left:31" />
+              <span class="info-bar-label">DARe Repository</span>
+              <svg class="bar-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6.5 10 13.5l6.5-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="info-bar-body">
+              <p>Datasets, models, and outputs from across the DARe Hub.</p>
+              <a class="inline-link" href="https://repository.dare.ac.uk/" target="_blank" rel="noopener">Visit the repository <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+            </div>
+          </details>
+          <details class="info-bar reveal">
+            <summary>
+              <img class="info-bar-icon" src="assets/icons/bar-email.svg" alt="" width="46" height="36" style="--w:46;--h:36;--left:35" />
+              <span class="info-bar-label">Email us</span>
+              <svg class="bar-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6.5 10 13.5l6.5-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="info-bar-body">
+              <p>Questions about TPRAF or the DARe Hub&rsquo;s work.</p>
+              <a class="inline-link" href="mailto:darehub@newcastle.ac.uk">darehub@newcastle.ac.uk <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+            </div>
+          </details>
+        </div>
 
-        <!-- The full text is one long paragraph, which visitors tend to skip.
-             A <details> card keeps it collapsed to a one-line teaser (the
-             paragraph's own opening words, clamped by CSS, not a rewritten
-             summary) behind a clearly-clickable "Acknowledgements" row, using
-             the brand's own Quote Mark icon so it reads as a credit/thank-you
-             rather than another block of body copy. -->
-        <details class="ack-card reveal" open>
-          <summary class="ack-summary">
-            <img class="ack-icon" src="assets/icons/icon-quote.png" alt="" width="256" height="256" />
-            <span class="ack-summary-copy">
-              <span class="ack-summary-label">Acknowledgements</span>
-              <span class="ack-summary-preview" aria-hidden="true">The development of the DARe Transport Performance &amp; Risk Analysis Framework (TPRAF) has been a collaborative effort involving colleagues from across the DARe Hub, particularly those contributing to Work Packages 2 and 3.</span>
-            </span>
-            <svg class="ack-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </summary>
-          <div class="ack-body">
+        <!-- Acknowledgements: always open in the design, so a plain block
+             rather than a collapsible card. -->
+        <div class="ack reveal">
+          <img class="ack-icon" src="assets/icons/ack-quote.svg" alt="" width="142" height="104" />
+          <div class="ack-text">
             <p>
               The development of the DARe Transport Performance &amp; Risk Analysis Framework (TPRAF)
               has been a collaborative effort involving colleagues from across the DARe Hub,
@@ -322,22 +342,23 @@
               the framework&rsquo;s development and refinement. We also thank DARe&rsquo;s project
               partners and stakeholders, whose engagement, challenge, and practical experience have
               helped ensure that the TPRAF is grounded in real-world transport infrastructure
-              decision-making and reflects the needs of its intended users. This work was funded by
-              UK Research and Innovation (UKRI) through the Engineering and Physical Sciences
-              Research Council (EPSRC), and by the Department for Transport, under EPSRC Grant
-              EP/Y024257/1, <em>Research Hub for Decarbonised Adaptable and Resilient Transport
-              Infrastructures (DARe)</em>.
+              decision-making and reflects the needs of its intended users.
+            </p>
+            <p>
+              <strong>This work was funded by UK Research and Innovation (UKRI) through the
+              Engineering and Physical Sciences Research Council (EPSRC), and by the Department for
+              Transport, under EPSRC Grant EP/Y024257/1, <em>Research Hub for Decarbonised Adaptable
+              and Resilient Transport Infrastructures (DARe)</em>.</strong>
             </p>
           </div>
-        </details>
+        </div>
       </div>
     </section>
 
-    <!-- Bold use of Leaf, the guide's other full-bleed banner colour. The
-         button carries slide 2's own "explore TPRAF" label and leads into the
-         extended form, which slide 2 calls the start of the interactive
+    <!-- The button carries slide 2's own "explore TPRAF" label and leads into
+         the extended form, which slide 2 calls the start of the interactive
          diagram. -->
-    <section class="cta-band" aria-labelledby="explore-title">
+    <section class="cta-band band-mist" aria-labelledby="explore-title">
       <div class="container cta-inner">
         <div>
           <h2 id="explore-title">Explore the framework</h2>
@@ -346,7 +367,7 @@
             through the extended diagram and the Level 2 component maps.
           </p>
         </div>
-        <a class="cta-button cta-button-inverse" href="diagram.html#extended">Explore TPRAF <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="cta-button" href="diagram.html#extended">Explore TPRAF <svg class="cta-circle" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 6.2 12 10l-4 3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
     </section>
 
@@ -393,14 +414,56 @@
     <img id="lesson-lightbox-img" alt="" />
   </div>
 
-  <!-- LAYOUT:FOOTER — identical on every page, same as the header above -->
+  <!-- LAYOUT:FOOTER — identical on every page, same as the header above.
+       Laid out and linked like the footer on dare.ac.uk. -->
   <footer class="site-footer">
-    <div class="container">
-      <p class="footer-label">Funded by &middot; Led by</p>
-      <a class="footer-lockup-link" href="https://dare.ac.uk" aria-label="DARe Hub website (dare.ac.uk)">
-        <img class="footer-lockup" src="assets/img/funders-partners.png" alt="Funders and partners of the DARe Hub" width="2160" height="103" loading="lazy" />
-      </a>
-      <p class="footer-line">DARe &middot; Decarbonised, Adaptable, Resilient Transport Infrastructures Hub &middot; <a href="https://dare.ac.uk">dare.ac.uk</a></p>
+    <div class="footer-main">
+      <div class="container footer-grid">
+        <a class="footer-logo-link" href="index.html" aria-label="DARe TPRAF — home"><img class="footer-logo" src="assets/icons/logo-footer.svg" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" /></a>
+
+        <div class="footer-contacts">
+          <div class="footer-col">
+            <h2 class="footer-heading">Keep in Touch</h2>
+            <p><a href="https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list" target="_blank" rel="noopener">Sign up to our mailing list</a></p>
+          </div>
+          <div class="footer-col">
+            <h2 class="footer-heading">Contact Us</h2>
+            <p><a href="mailto:darehub@newcastle.ac.uk">darehub@newcastle.ac.uk</a></p>
+          </div>
+          <div class="footer-col footer-social">
+            <h2 class="footer-heading">Follow Us</h2>
+            <ul>
+              <li><a href="https://www.linkedin.com/company/dare-hub/" target="_blank" rel="noopener">LinkedIn</a></li>
+              <li><a href="https://www.youtube.com/channel/UC3SeTcZlJQdFaYH5gdXmw1Q" target="_blank" rel="noopener">Youtube</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-address">
+          <p>DARe Hub<br />Stephenson Building<br />Newcastle University<br />NE1 7RU<br />United Kingdom</p>
+          <p>Find us on <a href="https://maps.app.goo.gl/P6UAs6S34K7V2CSP9" target="_blank" rel="noopener">Google</a></p>
+        </div>
+
+        <div class="footer-logos">
+          <h2 class="footer-heading">Funders</h2>
+          <a href="https://dare.ac.uk/about-us/our-funders/" target="_blank" rel="noopener" aria-label="DARe Hub funders">
+            <img class="footer-funders" src="assets/img/footer-funders.png" alt="Funders: Department for Transport, UK Research and Innovation, Engineering and Physical Sciences Research Council" width="1000" height="116" loading="lazy" />
+          </a>
+          <h2 class="footer-heading footer-heading-partners">Partners</h2>
+          <a href="https://dare.ac.uk/about-us/our-partners/" target="_blank" rel="noopener" aria-label="DARe Hub partners">
+            <img class="footer-partners" src="assets/img/footer-partners.png" alt="Partners: Newcastle University, University of Cambridge, University of Glasgow, Heriot-Watt University, Anglia Ruskin University" width="1400" height="104" loading="lazy" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-signoff">
+      <div class="container">
+        <ul>
+          <li><a href="https://dare.ac.uk/cookie-policy/" target="_blank" rel="noopener">Cookie Policy</a></li>
+          <li><a href="https://dare.ac.uk/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a></li>
+        </ul>
+      </div>
     </div>
   </footer>
   <!-- /LAYOUT:FOOTER -->

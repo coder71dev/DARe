@@ -16,6 +16,13 @@
    here — no functions, no DOM access — so that swap stays a 1-line change.
    See MIGRATION-NOTES.md for the full file-by-file map.
 
+   A view can set `scale` (default 1) to make its whole canvas that many times
+   larger than the page's natural diagram width. Positions and sizes stay in
+   the same percentages; text is one shared size for every diagram, so a
+   crowded view is given more canvas rather than smaller text. The canvas
+   grows and shrinks with the page, and scrolls sideways (or zooms) when it
+   is wider than the screen.
+
    Each view also carries a `tour`: the order its boxes are meant to be read
    in, for the walkthrough animation ("Play walkthrough" above the diagram).
    A step is just a box id. The arrow leading into a step is found from the
@@ -44,8 +51,8 @@ const TPRAF_CONTENT = {
     boxes: [
       {
         id: "transport-scenarios",
-        label: "Transport Scenarios",
-        pos: { left: 4.42, top: 29.65, width: 15.79, height: 8.77 },
+        label: "Transport\nScenarios",
+        pos: { left: 4.0, top: 12.6, width: 14.82, height: 12.2 },
         text: "The transport system being tested: the combination of transport demand (the people and goods that need to travel) and transport supply (the roads, railways, cycleways and footways they travel on). For future scenarios, this is the transport system envisaged under a set of decarbonisation policies, which may include modal shift, technological change, or demand change.",
         isPlaceholder: false,
         handbookUrl: "#",
@@ -53,8 +60,8 @@ const TPRAF_CONTENT = {
       },
       {
         id: "impact-assessment",
-        label: "Impact Assessment",
-        pos: { left: 4.42, top: 45.62, width: 15.79, height: 8.77 },
+        label: "Impact\nAssessment",
+        pos: { left: 4.0, top: 33.46, width: 14.82, height: 12.2 },
         text: "Analysis of the impact of the climate hazard (e.g. flooding, high temperatures) on the transport system. This is simulated by changing the supply (performance of transport links in the network) and observing the response of users. Performance metrics measure how well the system is able to continue operation and withstand the impacts, but also the cost of the disruption to the system and its users.",
         isPlaceholder: false,
         handbookUrl: "#",
@@ -62,8 +69,8 @@ const TPRAF_CONTENT = {
       },
       {
         id: "hazard-model",
-        label: "Hazard Model",
-        pos: { left: 4.42, top: 59.96, width: 15.79, height: 8.77 },
+        label: "Hazard\nModel",
+        pos: { left: 4.0, top: 54.31, width: 14.82, height: 12.2 },
         text: "Tools to estimate the impact of a climate-related phenomenon on the transport system, such as CADDIES, CityCAT, and VITO UrbClim + HiREx.",
         isPlaceholder: false,
         handbookUrl: "#",
@@ -71,8 +78,8 @@ const TPRAF_CONTENT = {
       },
       {
         id: "climate-scenarios",
-        label: "Climate Scenarios",
-        pos: { left: 4.42, top: 73.13, width: 15.79, height: 8.77 },
+        label: "Climate\nScenarios",
+        pos: { left: 4.0, top: 75.17, width: 14.82, height: 12.2 },
         text: "Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections).",
         isPlaceholder: false,
         handbookUrl: "#",
@@ -81,7 +88,7 @@ const TPRAF_CONTENT = {
       {
         id: "bau",
         label: "Business as usual/Do nothing evaluation",
-        pos: { left: 23.80, top: 44.76, width: 14.24, height: 10.67 },
+        pos: { left: 23.28, top: 33.46, width: 14.82, height: 12.2 },
         text: "Evaluating current assets and/or networks, and understanding the problems and challenges present.",
         isPlaceholder: false,
         handbookUrl: "#",
@@ -90,7 +97,7 @@ const TPRAF_CONTENT = {
       {
         id: "risk-reduction-needs",
         label: "Risk Reduction Needs",
-        pos: { left: 41.63, top: 45.62, width: 14.24, height: 8.77 },
+        pos: { left: 42.62, top: 33.46, width: 14.82, height: 12.2 },
         text: "This process applies a screening criteria to filter the long-list to a short-list of potential options for detailed pathway development informed by the risk and resilience assessment. As well as identifying / inputting thresholds / tipping points.",
         isPlaceholder: false,
         handbookUrl: "#",
@@ -99,17 +106,16 @@ const TPRAF_CONTENT = {
       {
         id: "adaptation-interventions",
         label: "Adaptation/\nInterventions",
-        pos: { left: 60.71, top: 45.62, width: 14.24, height: 8.77 },
+        pos: { left: 61.9, top: 33.46, width: 14.82, height: 12.2 },
         text: "Options and pathways to improve resilience, adaptation, sustainability, and transport performance.",
         isPlaceholder: false,
         handbookUrl: "#",
-        variant: "leaf",
-        highlight: true
+        variant: "leaf"
       },
       {
         id: "outcome-assessment",
-        label: "Outcome Assessment",
-        pos: { left: 79.78, top: 45.62, width: 14.24, height: 8.77 },
+        label: "Outcome\nAssessment",
+        pos: { left: 81.18, top: 33.46, width: 14.82, height: 12.2 },
         text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.",
         isPlaceholder: false,
         handbookUrl: "#",
@@ -117,60 +123,28 @@ const TPRAF_CONTENT = {
       }
     ],
 
-    labels: [
-      {
-        id: "risk-mitigation",
-        label: "Risk Mitigation",
-        pos: { left: 57.19, top: 39.47, width: 11.02, height: 4.49 },
-        text: "Content coming soon — awaiting text from DARe.",
-        isPlaceholder: true,
-        type: "tag"
-      },
-      {
-        id: "feedback-loop-top",
-        label: "Feedback loop",
-        pos: { left: 36.9, top: 21.5, width: 14.24, height: 4.49 },
-        text: "Adaptation/Interventions decisions loop back to reshape the transport scenarios considered.",
-        isPlaceholder: true,
-        type: "feedback"
-      },
-      {
-        id: "feedback-loop-bottom",
-        label: "Feedback loop",
-        pos: { left: 36.9, top: 55.5, width: 14.24, height: 4.49 },
-        text: "Adaptation/Interventions decisions loop back to refine the hazard model.",
-        isPlaceholder: true,
-        type: "feedback"
-      }
+    /* Geometry follows the Figma design (1452 x 664): the same eight boxes,
+       laid out on its grid and mapped into slide percentages. Its connectors
+       are drawn as they are there — thin navy lines with open chevron heads,
+       and the two green feedback loops leaving Adaptation/Interventions with
+       rounded corners. The design carries no "Feedback loop" or "Risk
+       Mitigation" captions, so neither is drawn. */
+    arrows: [
+      { from: { x: 11.89, y: 24.99 }, to: { x: 11.89, y: 32.88 } },   // Transport Scenarios -> Impact Assessment (down)
+      { from: { x: 11.89, y: 53.65 }, to: { x: 11.89, y: 45.77 } },   // Hazard Model -> Impact Assessment (up)
+      { from: { x: 11.89, y: 74.87 }, to: { x: 11.89, y: 66.99 } },   // Climate Scenarios -> Hazard Model (up)
+      { from: { x: 18.89, y: 39.5 }, to: { x: 23.28, y: 39.5 } },
+      { from: { x: 38.17, y: 39.5 }, to: { x: 42.6, y: 39.5 } },
+      { from: { x: 57.44, y: 39.5 }, to: { x: 61.88, y: 39.5 } },
+      { from: { x: 76.72, y: 39.5 }, to: { x: 81.16, y: 39.5 } }
     ],
 
-    /* Straight arrows: exact coordinates from the source slide's connectors.
-       Transport Scenarios feeds DOWN into Impact Assessment, while Hazard
-       Model and Climate Scenarios feed UP into it — both converge on
-       Impact Assessment (confirmed via the PPTX's shape-attachment data,
-       and matches the client's reference screenshot). */
-      arrows: [
-      { from: { x: 12.31, y: 30.46 }, to: { x: 12.31, y: 45.62 } },   // Transport Scenarios -> Impact Assessment (down)
-      { from: { x: 12.31, y: 59.96 }, to: { x: 12.31, y: 54.38 } },   // Hazard Model -> Impact Assessment (up)
-      { from: { x: 12.31, y: 73.13 }, to: { x: 12.31, y: 68.73 } },   // Climate Scenarios -> Hazard Model (up)
-      { from: { x: 20.21, y: 50.00 }, to: { x: 23.80, y: 50.00 } },
-      { from: { x: 38.04, y: 50.00 }, to: { x: 41.63, y: 50.00 } },
-      { from: { x: 55.87, y: 50.00 }, to: { x: 60.71, y: 50.00 } },
-      { from: { x: 74.95, y: 50.00 }, to: { x: 79.78, y: 50.00 } }
-    ],
-
-    /* Feedback loops — confirmed via the PPTX's own <a:stCxn>/<a:endCxn>
-       shape-attachment data (not a position guess): both loops attach to
-       Adaptation/Interventions. Exact bend points are a clean approximation
-       (PowerPoint's stored elbow bounding box wasn't reliable to reproduce
-       pixel-exactly), but which boxes connect is exact. */
+    /* Feedback loops: both leave Adaptation/Interventions (top and bottom
+       centre) and run back to the right-hand side of Transport Scenarios and
+       Hazard Model. The corners are rounded when drawn. */
     feedbackPaths: [
-      /* Adaptation/Interventions (top) -> Transport Scenarios (right side, vertical middle).
-         The last leg is horizontal (24 -> 20.21 at the box's own mid-height) so the arrow
-         approaches straight into the wall instead of dropping in from above. */
-      { points: [ { x: 67.83, y: 45.62 }, { x: 67.83, y: 27 }, { x: 24, y: 27 }, { x: 24, y: 34.04 }, { x: 20.21, y: 34.04 } ] },
-      /* Adaptation/Interventions (bottom) -> Hazard Model (right side, vertical middle) */
-      { points: [ { x: 67.83, y: 54.39 }, { x: 67.83, y: 61 }, { x: 24, y: 61 }, { x: 24, y: 64.35 }, { x: 20.21, y: 64.35 } ] }
+      { points: [ { x: 69.31, y: 33.46 }, { x: 69.31, y: 18.7 }, { x: 18.84, y: 18.7 } ] },
+      { points: [ { x: 69.31, y: 45.65 }, { x: 69.31, y: 60.96 }, { x: 18.84, y: 60.96 } ] }
     ],
 
     /* Up the climate chain, then left-to-right along the decision chain, then
@@ -202,6 +176,7 @@ const TPRAF_CONTENT = {
   extended: {
     title: "Overview of TPRAF: Extended Form",
     subtitle: "Level 1 — Extended",
+    scale: 1.35,
     boxes: [
       {
         id: "transport-demand",
@@ -407,7 +382,7 @@ const TPRAF_CONTENT = {
       {
         id: "risk-mitigation-heading",
         label: "Risk Mitigation",
-        pos: { left: 50.96, top: 46.43, width: 11.02, height: 3.81 }
+        pos: { left: 64.85, top: 46.43, width: 11.02, height: 3.81 }
       }
     ],
 
@@ -415,7 +390,7 @@ const TPRAF_CONTENT = {
       {
         id: "feedback-loop-top",
         label: "Feedback loop",
-        pos: { left: 36.67, top: 25.0, width: 14.24, height: 3.81 },
+        pos: { left: 36.67, top: 24.6, width: 14.24, height: 3.81 },
         text: "Adaptation/Interventions decisions loop back to reshape the transport scenarios considered.",
         isPlaceholder: true,
         type: "feedback"
@@ -423,7 +398,7 @@ const TPRAF_CONTENT = {
       {
         id: "feedback-loop-bottom",
         label: "Feedback loop",
-        pos: { left: 36.67, top: 75.88, width: 14.24, height: 3.81 },
+        pos: { left: 36.67, top: 76.4, width: 14.24, height: 3.81 },
         text: "Adaptation/Interventions decisions loop back to refine the hazard model.",
         isPlaceholder: true,
         type: "feedback"
@@ -438,7 +413,12 @@ const TPRAF_CONTENT = {
        since it's not fully "inside" either process. Drives the DSP/IMP
        toggle's arrow colouring in app.js, same idea as box.group. */
     arrows: [
-      { from: { x: 15.27, y: 44.42 }, to: { x: 14.95, y: 51.06 }, group: "imp" },   // Transport System -> Impact Assessment
+      // Transport Demand / Supply -> Transport System and Weather Variables ->
+      // Hazard Model: straight lines. Each x sits inside both boxes' widths.
+      { from: { x: 12, y: 32.36 }, to: { x: 12, y: 37.61 }, group: "imp" },       // Transport Demand -> Transport System
+      { from: { x: 18.5, y: 32.36 }, to: { x: 18.5, y: 37.61 }, group: "imp" },   // Transport Supply -> Transport System
+      { from: { x: 12.4, y: 83.84 }, to: { x: 12.4, y: 78.92 }, group: "imp" },   // Weather Variables -> Hazard Model (straight up)
+      { from: { x: 14.95, y: 44.42 }, to: { x: 14.95, y: 51.06 }, group: "imp" },   // Transport System -> Impact Assessment
       { from: { x: 16.52, y: 87.25 }, to: { x: 14.98, y: 87.25 }, group: "imp" },   // Climate Scenario -> Weather Variables
       { from: { x: 14.96, y: 72.1 }, to: { x: 14.96, y: 69.11 }, group: "imp" },    // Hazard Model -> Transport Specific Threshold (up)
       { from: { x: 14.95, y: 62.29 }, to: { x: 14.95, y: 59.66 }, group: "imp" },   // Transport Specific Threshold -> Impact Assessment (up)
@@ -460,21 +440,10 @@ const TPRAF_CONTENT = {
          (centre (4.76, 57.31), 6.82 wide x 9.16 tall) rather than the
          unrotated pos above — same rotation, applied around the same centre. */
       { points: [ { x: 5.82, y: 87.25 }, { x: 4.76, y: 87.25 }, { x: 4.76, y: 61.89 } ], group: "imp" },           // Weather Variables -> Social Behaviour Impacts (visual bottom)
-      // Final leg is vertical (approaching from below) to enter Hazard Model's
-      // bottom edge cleanly — a horizontal final leg into a horizontal wall
-      // was why this arrowhead looked misaligned.
-      { points: [ { x: 10.4, y: 83.84 }, { x: 10.4, y: 80 }, { x: 14.96, y: 80 }, { x: 14.96, y: 78.92 } ], group: "imp" },  // Weather Variables -> Hazard Model
       // Enters Transport Demand's left wall at vertical mid-height, not its
       // bottom — final leg is horizontal so the arrowhead points right, into
       // the wall, instead of up into the underside of the box.
-      { points: [ { x: 4.76, y: 52.73 }, { x: 4.76, y: 28.92 }, { x: 5.92, y: 28.92 } ], group: "imp" },           // Social Behaviour Impacts (visual top) -> Transport Demand (left wall)
-      // Both converge toward Transport System's narrower top edge (it's not
-      // as wide as Transport Demand + Transport Supply together), matching
-      // the source PPTX rather than two parallel straight lines — the old
-      // straight-line version put Transport Supply's arrow just outside
-      // Transport System's right edge, missing the box.
-      { points: [ { x: 10.5, y: 32.36 }, { x: 10.5, y: 35 }, { x: 12, y: 35 }, { x: 12, y: 37.61 } ], group: "imp" },   // Transport Demand -> Transport System
-      { points: [ { x: 20.32, y: 32.36 }, { x: 20.32, y: 35 }, { x: 18.5, y: 35 }, { x: 18.5, y: 37.61 } ], group: "imp" }  // Transport Supply -> Transport System
+      { points: [ { x: 4.76, y: 52.73 }, { x: 4.76, y: 28.92 }, { x: 5.92, y: 28.92 } ], group: "imp" }            // Social Behaviour Impacts (visual top) -> Transport Demand (left wall)
     ],
 
     /* Feedback loops (green) — same pattern as Simple: Adaptation/Interventions
@@ -489,8 +458,8 @@ const TPRAF_CONTENT = {
          and points straight into the target's vertical wall — a vertical
          final leg (as this had before) makes the marker point down/up
          instead of into the box, which read as "not clearly visible". */
-      { points: [ { x: 59.34, y: 51.9 }, { x: 59.34, y: 25 }, { x: 28, y: 25 }, { x: 28, y: 28.92 }, { x: 24.9, y: 28.92 } ], group: "imp" },  // -> Transport Supply (right wall)
-      { points: [ { x: 59.34, y: 58.83 }, { x: 59.34, y: 76 }, { x: 22, y: 76 }, { x: 22, y: 75.51 }, { x: 20.14, y: 75.51 } ], group: "imp" }  // -> Hazard Model (right wall)
+      { points: [ { x: 59.34, y: 51.9 }, { x: 59.34, y: 28.92 }, { x: 24.9, y: 28.92 } ], group: "imp" },  // -> Transport Supply (right wall)
+      { points: [ { x: 59.34, y: 58.83 }, { x: 59.34, y: 75.51 }, { x: 20.14, y: 75.51 } ], group: "imp" }  // -> Hazard Model (right wall)
     ],
 
     /* Portfolio Optimisation -> Adaptation/Interventions (cost-benefit
@@ -636,7 +605,7 @@ const TPRAF_CONTENT = {
       { id: "dsp-risk-assessment-cross", label: "Risk Assessment", pos: { left: 86.6, top: 83, width: 14, height: 5 }, text: "Quantifies risks of failure and disruption, evaluates risks of inaction measures at asset, system, and network levels, including risks from decarbonisation strategies, extreme weather, climate change, and other shocks. Engaging with different organisations to understand their risk tolerance and, based on this, identify and/or prioritise their risk reduction needs.", isPlaceholder: false, handbookUrl: "#" },
       { id: "dsp-funding-budgets", label: "Funding / Budgets (Financial Case)", pos: { left: 70.1, top: 93, width: 13, height: 6 }, text: "Funding and budgeting processes, to test affordability and establish the financial case.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
       { id: "dsp-procurement", label: "Procurement (Commercial Case)", pos: { left: 87.1, top: 93, width: 13, height: 6 }, text: "Procurement and commercial processes, to determine the delivery and contracting approach.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-pm-governance", label: "PM, Governance, Reporting (Management Case)", pos: { left: 104.1, top: 93, width: 13, height: 6 }, text: "Implementation and monitoring, to deliver the selected intervention and generate updated condition, cost and performance evidence for future risk and mitigation assessments.", isPlaceholder: false, handbookUrl: "#", variant: "navy" }
+      { id: "dsp-pm-governance", label: "PM, Governance, Reporting (Management Case)", pos: { left: 104.1, top: 93, width: 18, height: 6.5 }, text: "Implementation and monitoring, to deliver the selected intervention and generate updated condition, cost and performance evidence for future risk and mitigation assessments.", isPlaceholder: false, handbookUrl: "#", variant: "navy" }
     ],
 
     containers: [
@@ -789,6 +758,7 @@ const TPRAF_CONTENT = {
   imp: {
     title: "Overview of IMP Components",
     subtitle: "Level 2 — Integrated Modelling Platform",
+    scale: 1.5,
     // Leads on to the Level 3 example module (see the `level3` view below).
     next: { key: "level3", label: "See the Level 3 example: from rainfall to transport disruption" },
     legend: [

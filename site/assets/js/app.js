@@ -37,7 +37,6 @@
   const processBtnImp = document.getElementById("process-btn-imp");
   const processBtnAll = document.getElementById("process-btn-all");
   const guideEl = document.getElementById("diagram-guide");
-  const guideToggle = document.getElementById("diagram-guide-toggle");
   const guideBody = document.getElementById("diagram-guide-body");
   const stageWrap = document.getElementById("diagram-stage-wrap");
   const cropEl = document.getElementById("diagram-crop");
@@ -97,8 +96,10 @@
     return (n / currentMaxX) * 100 + "%";
   }
 
+  let currentScale = 1; // per-view canvas size multiplier (data.scale) — see the note in content.js
   let currentCropRatio = 1; // fraction of the full 0-100 stage height that's actually visible
   let refreshZoom = function () {}; // replaced with the real thing once setupZoomControls runs
+  let fitOnLoad = function () {}; // sizes a view to the screen when it is first shown (diagram page)
   let setZoomLevel = function () {}; // likewise: sets an exact zoom (the guided tour uses it on phones)
 
   // The source PPTX's box/label positions are percentages of the *full
@@ -174,28 +175,74 @@
      set from computeMaxX(). <polyline points> doesn't support "%" units,
      so a shared viewBox is the only way to keep everything consistent. */
   function setupViewBox() {
-    svgLayer.setAttribute("viewBox", "0 0 " + currentMaxX + " 100");
+    svgLayer.setAttribute("viewBox", "0 0 " + currentMaxX + " " + 100 * Y_SCALE);
     svgLayer.setAttribute("preserveAspectRatio", "none");
   }
 
   const COLOR_NAVY = "#00295e";
-  const COLOR_GREEN = "#3fae52";
+  const COLOR_GREEN = "#5ecf70"; // brand leaf green, as used in the Figma feedback loops
   const COLOR_GREY = "#a9b1ba"; // inactive-process colour for arrows/loops, matching the dimmed boxes they connect
 
-  function buildMarker(id, fill) {
+  /* The stage is a 16:9 slide, so one % of its height is 0.5625 of one % of
+     its width. The SVG viewBox is scaled by Y_SCALE to match, and every y
+     coordinate is passed through sy() on its way in, so a unit is the same
+     length in both directions: arrowheads keep their shape, corners stay
+     round, and vertical and horizontal lines are the same thickness. Content
+     data stays in plain slide percentages. */
+  const Y_SCALE = 6858 / 12192;
+  const sy = (y) => y * Y_SCALE;
+
+  // Connector thickness, marker size and bend radius are in stage units, so
+  // they are divided by the view's canvas scale to stay the same physical
+  // size (about 1.3px thick at 1200px wide) however big a view's canvas is.
+  const lineWidth = () => 0.11 / currentScale;
+  const cornerRadius = () => 2.1 / currentScale;
+
+  /* Open chevron head, as drawn in the Figma design: two thin arms at 45
+     degrees rather than a filled triangle. Sized in user units (1 marker unit
+     = 0.01 of the stage width) so it stays the same size whatever the line
+     width. refX pulls the mitred tip back onto the line's end point. */
+  function buildMarker(id, colour) {
     const marker = document.createElementNS(SVG_NS, "marker");
     marker.setAttribute("id", id);
-    marker.setAttribute("viewBox", "0 0 10 10");
-    marker.setAttribute("refX", "8");
-    marker.setAttribute("refY", "5");
-    marker.setAttribute("markerWidth", "6.5");
-    marker.setAttribute("markerHeight", "6.5");
+    marker.setAttribute("viewBox", "-70 -70 140 140");
+    marker.setAttribute("refX", "-7");
+    marker.setAttribute("refY", "0");
+    marker.setAttribute("markerUnits", "userSpaceOnUse");
+    marker.setAttribute("markerWidth", 1.4 / currentScale);
+    marker.setAttribute("markerHeight", 1.4 / currentScale);
     marker.setAttribute("orient", "auto-start-reverse");
     const path = document.createElementNS(SVG_NS, "path");
-    path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
-    path.setAttribute("fill", fill);
+    path.setAttribute("d", "M -48 -48 L 0 0 L -48 48");
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", colour);
+    // The head takes whatever colour its line currently has (the walkthrough
+    // and the process filter recolour lines). The attribute above is only the
+    // fallback for browsers without context-stroke.
+    path.style.stroke = "context-stroke";
+    path.setAttribute("stroke-width", "11");
     marker.appendChild(path);
     return marker;
+  }
+
+  /* A run of points as an SVG path with rounded bends, like the Figma
+     connectors. Each bend's radius is capped at half of the shorter leg
+     beside it, so tight elbows just get a smaller curve instead of kinking. */
+  function roundedPathD(points) {
+    const pts = points.map((p) => ({ x: p.x, y: sy(p.y) }));
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 1; i < pts.length - 1; i += 1) {
+      const prev = pts[i - 1], corner = pts[i], next = pts[i + 1];
+      const inLen = Math.hypot(corner.x - prev.x, corner.y - prev.y);
+      const outLen = Math.hypot(next.x - corner.x, next.y - corner.y);
+      const r = Math.min(cornerRadius(), inLen / 2, outLen / 2);
+      if (r <= 0) continue;
+      const a = { x: corner.x + ((prev.x - corner.x) / inLen) * r, y: corner.y + ((prev.y - corner.y) / inLen) * r };
+      const b = { x: corner.x + ((next.x - corner.x) / outLen) * r, y: corner.y + ((next.y - corner.y) / outLen) * r };
+      d += ` L ${a.x} ${a.y} Q ${corner.x} ${corner.y} ${b.x} ${b.y}`;
+    }
+    const last = pts[pts.length - 1];
+    return d + ` L ${last.x} ${last.y}`;
   }
 
   function makeArrowMarker() {
@@ -235,11 +282,11 @@
   function drawStraightArrow(arrow) {
     const line = document.createElementNS(SVG_NS, "line");
     line.setAttribute("x1", arrow.from.x);
-    line.setAttribute("y1", arrow.from.y);
+    line.setAttribute("y1", sy(arrow.from.y));
     line.setAttribute("x2", arrow.to.x);
-    line.setAttribute("y2", arrow.to.y);
+    line.setAttribute("y2", sy(arrow.to.y));
     line.setAttribute("stroke", COLOR_NAVY);
-    line.setAttribute("stroke-width", "0.18");
+    line.setAttribute("stroke-width", lineWidth());
     // A connector that is only a leg of a shared bus (see "head: false" in
     // content.js) draws no arrowhead of its own — the single head sits at the
     // far end of the run instead, so the branch reads as one arrival rather
@@ -253,30 +300,28 @@
   }
 
   function drawFeedbackPath(feedback) {
-    const polyline = document.createElementNS(SVG_NS, "polyline");
-    const pointsStr = feedback.points.map((p) => `${p.x},${p.y}`).join(" ");
-    polyline.setAttribute("points", pointsStr);
-    polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke", COLOR_GREEN);
-    polyline.setAttribute("stroke-width", "0.22");
-    polyline.setAttribute("marker-end", "url(#feedback-arrowhead)");
-    svgLayer.appendChild(taggedArrow(polyline, feedback.group, "feedback"));
-    recordConnector(polyline, "feedback", feedback.points);
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", roundedPathD(feedback.points));
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", COLOR_GREEN);
+    path.setAttribute("stroke-width", lineWidth());
+    path.setAttribute("marker-end", "url(#feedback-arrowhead)");
+    svgLayer.appendChild(taggedArrow(path, feedback.group, "feedback"));
+    recordConnector(path, "feedback", feedback.points);
   }
 
   // Same visual style as the straight main-flow arrows, just with bends —
   // for boxes that aren't directly aligned (e.g. Extended's side branches).
   function drawElbowPath(elbow) {
-    const polyline = document.createElementNS(SVG_NS, "polyline");
-    const pointsStr = elbow.points.map((p) => `${p.x},${p.y}`).join(" ");
-    polyline.setAttribute("points", pointsStr);
-    polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke", COLOR_NAVY);
-    polyline.setAttribute("stroke-width", "0.18");
-    if (elbow.head !== false) polyline.setAttribute("marker-end", "url(#arrowhead)");
-    if (elbow.bidirectional) polyline.setAttribute("marker-start", "url(#arrowhead)");
-    svgLayer.appendChild(taggedArrow(polyline, elbow.group, "main"));
-    recordConnector(polyline, "main", elbow.points);
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", roundedPathD(elbow.points));
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", COLOR_NAVY);
+    path.setAttribute("stroke-width", lineWidth());
+    if (elbow.head !== false) path.setAttribute("marker-end", "url(#arrowhead)");
+    if (elbow.bidirectional) path.setAttribute("marker-start", "url(#arrowhead)");
+    svgLayer.appendChild(taggedArrow(path, elbow.group, "main"));
+    recordConnector(path, "main", elbow.points);
   }
 
   // A smooth single-bulge curve (quadratic bezier) — for short loops within
@@ -284,11 +329,11 @@
   // where a straight elbow would look too mechanical.
   function drawCurvedPath(curve) {
     const path = document.createElementNS(SVG_NS, "path");
-    const d = `M ${curve.from.x},${curve.from.y} Q ${curve.control.x},${curve.control.y} ${curve.to.x},${curve.to.y}`;
+    const d = `M ${curve.from.x},${sy(curve.from.y)} Q ${curve.control.x},${sy(curve.control.y)} ${curve.to.x},${sy(curve.to.y)}`;
     path.setAttribute("d", d);
     path.setAttribute("fill", "none");
     path.setAttribute("stroke", COLOR_NAVY);
-    path.setAttribute("stroke-width", "0.18");
+    path.setAttribute("stroke-width", lineWidth());
     path.setAttribute("marker-end", "url(#arrowhead)");
     svgLayer.appendChild(taggedArrow(path, curve.group, "main"));
     recordConnector(path, "main", sampleCurve(curve));
@@ -465,27 +510,11 @@
     return el;
   }
 
-  /* Guide panel: collapsible legend + interaction hints, rebuilt per view
-     since the colour legend's meaning shifts slightly between Simple (no
-     DSP/IMP split) and Extended (colours = process).
-
-     Always closed on load, everywhere (home page and every diagram tab) —
-     the guide is a reference to open when you want it, not something that
-     stands between the title and the diagram on every visit. This used to
-     remember a visitor's last open/close choice via localStorage, but that
-     meant it could default to open for a returning visitor; it no longer
-     persists, so every fresh load starts collapsed regardless of history. */
-  function setGuideCollapsed(collapsed) {
-    guideEl.dataset.collapsed = collapsed ? "true" : "false";
-    guideToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
-  }
-
-  if (guideToggle) {
-    guideToggle.addEventListener("click", () => {
-      setGuideCollapsed(guideEl.dataset.collapsed !== "true");
-    });
-    setGuideCollapsed(true);
-  }
+  /* Guide panel: legend + interaction hints, rebuilt per view since the colour
+     legend's meaning shifts slightly between Simple (no DSP/IMP split) and
+     Extended (colours = process). It is always open, on the home page and on
+     every diagram tab: it sits below the diagram, so it never stands between
+     the visitor and the diagram. */
 
   function escapeHtml(str) {
     return str.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -690,6 +719,7 @@
 
     titleEl.textContent = data.title;
     subtitleEl.textContent = data.subtitle;
+    subtitleEl.title = data.subtitle;
     // Lets CSS adapt page furniture to a specific view's geometry — the zoom
     // widget docks bottom-left on IMP, whose bottom-right corner is occupied
     // by a box from the source slide (see style.css).
@@ -698,6 +728,7 @@
     guideBody.innerHTML = buildGuideBody(data);
 
     currentMaxX = computeMaxX(data);
+    currentScale = data.scale || 1;
 
     // Clear previous render
     svgLayer.innerHTML = "";
@@ -751,6 +782,10 @@
           ' <span aria-hidden="true">&rarr;</span>';
       }
     }
+
+    // Last, once everything above the diagram (process filter, tour buttons)
+    // has settled, so the fit is measured against the real position.
+    fitOnLoad();
   }
 
   // Click-and-drag horizontal scroll for mouse users, used by both the level
@@ -832,7 +867,9 @@
     if (!crop || !sizer || !wrap || !zoomInBtn || !zoomOutBtn || !zoomFitBtn || !zoomResetBtn || !zoomLevelEl) return;
 
     const MIN_NATURAL_WIDTH = 900; // same floor the original static CSS used
-    const MAX_NATURAL_WIDTH = 1200; // same ceiling the original static CSS used
+    // Same ceiling the original static CSS used — except on the landing page,
+    // where the design gives the diagram the card's full width (about 1450px).
+    const MAX_NATURAL_WIDTH = document.querySelector(".landing-diagram") ? 1600 : 1200;
     const ABSOLUTE_MIN_ZOOM = 0.25; // safety floor so it can never become unusably tiny
     const MAX_ZOOM = 2;
     const STEP = 0.15;
@@ -856,7 +893,7 @@
     // and the extra width just scrolls. At currentMaxX === 100 this is a
     // no-op (fullW === naturalWidth()).
     function fullWidth() {
-      return (naturalWidth() * currentMaxX) / 100;
+      return (naturalWidth() * currentMaxX * currentScale) / 100;
     }
 
     function fitZoom() {
@@ -870,9 +907,10 @@
       zoom = Math.max(ABSOLUTE_MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
       const natW = naturalWidth();
       const fullW = fullWidth();
-      const natH = (natW * 6858) / 12192;
+      const natH = (natW * 6858 * currentScale) / 12192;
       const natCropH = natH * currentCropRatio;
       crop.style.width = Math.round(fullW) + "px";
+      crop.style.setProperty("--fs", (natW * 0.0127).toFixed(2) + "px");
       crop.style.height = Math.round(natCropH) + "px";
       crop.style.transform = Math.abs(zoom - 1) < 0.005 ? "" : `scale(${zoom})`;
       sizer.style.width = Math.round(fullW * zoom) + "px";
@@ -902,6 +940,24 @@
     });
     window.addEventListener("resize", applyZoom);
 
+    // On the diagram page a desktop visitor should see the whole diagram
+    // without scrolling, so each view opens zoomed to fit the space below the
+    // page's own title area (never bigger than 100%, never below the floor
+    // where its text stops being readable). Phones keep 100% and swipe.
+    const FIT_ON_LOAD_MIN_ZOOM = 0.5;
+    const FIT_BOTTOM_GAP = 40; // the card's bottom padding and a little air
+    fitOnLoad = function () {
+      wrap.scrollLeft = 0; // a newly shown view starts at its left edge, on every screen
+      if (!document.body.classList.contains("diagram-page") || window.innerWidth <= 760) return;
+      const natW = naturalWidth();
+      const cropH = ((natW * 6858 * currentScale) / 12192) * currentCropRatio;
+      const top = wrap.getBoundingClientRect().top + window.scrollY;
+      const availH = window.innerHeight - top - FIT_BOTTOM_GAP;
+      zoom = Math.max(FIT_ON_LOAD_MIN_ZOOM, Math.min(1, availableWidth() / fullWidth(), availH / cropH));
+      wrap.scrollLeft = 0;
+      applyZoom();
+    };
+
     refreshZoom = applyZoom;
     setZoomLevel = function (level) {
       zoom = level;
@@ -909,6 +965,9 @@
       applyZoom();
     };
     applyZoom();
+    // The first view was drawn before these controls existed, so size it now.
+    fitOnLoad();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitOnLoad);
   }
 
   /* ==========================================================================
@@ -2114,7 +2173,33 @@
     document.querySelectorAll(".level-tab").forEach((t) => {
       t.setAttribute("aria-selected", String(t.dataset.view === viewKey));
     });
+    syncLevelPicker();
     renderDiagram(viewKey);
+  }
+
+  // Phone level picker: the tabs fold into a dropdown whose button names the
+  // current level. Choosing a level closes it; so does tapping elsewhere or Escape.
+  const levelSelect = document.getElementById("level-select");
+  const levelCurrent = document.getElementById("level-current");
+  const levelCurrentLabel = document.getElementById("level-current-label");
+
+  function setLevelPickerOpen(open) {
+    if (!levelSelect) return;
+    levelSelect.classList.toggle("is-open", open);
+    levelCurrent.setAttribute("aria-expanded", String(open));
+  }
+
+  function syncLevelPicker() {
+    if (!levelSelect) return;
+    const active = document.querySelector('.level-tab[aria-selected="true"]');
+    if (active) levelCurrentLabel.textContent = active.textContent.trim();
+    setLevelPickerOpen(false);
+  }
+
+  if (levelSelect) {
+    levelCurrent.addEventListener("click", () => setLevelPickerOpen(!levelSelect.classList.contains("is-open")));
+    document.addEventListener("click", (e) => { if (!levelSelect.contains(e.target)) setLevelPickerOpen(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setLevelPickerOpen(false); });
   }
 
   document.querySelectorAll(".level-tab").forEach((tab) => {
@@ -2164,11 +2249,58 @@
     }
   }
 
-  // It should start open by default (the "open" attribute in index.html
-  // handles a fresh load) — but some browsers restore a <details> element's
-  // open/closed state on a plain reload the same way they restore scroll
-  // position, so a visitor who closed it could have it come back closed on
-  // their next reload. Force it open on every load so the default is
-  // consistent regardless of that.
-  document.querySelectorAll(".ack-card").forEach((el) => { el.open = true; });
+  // Round zoom button on the home page's diagram card: shows/hides the zoom controls.
+  const zoomToggle = document.getElementById("zoom-toggle");
+  if (zoomToggle) {
+    const viewport = zoomToggle.closest(".diagram-viewport");
+    zoomToggle.addEventListener("click", () => {
+      const open = viewport.classList.toggle("zoom-open");
+      zoomToggle.setAttribute("aria-expanded", String(open));
+    });
+  }
+
+  // Header "Menu" button on the home page: slides the menu panel in from the
+  // right, like dare.ac.uk's. Items with a circle arrow open a second panel;
+  // Escape closes it, then the menu.
+  const menuToggle = document.getElementById("menu-toggle");
+  const siteMenu = document.getElementById("site-menu");
+  if (menuToggle && siteMenu) {
+    const root = document.documentElement;
+    const subItems = siteMenu.querySelectorAll(".has-sub");
+    const closeSubs = () => {
+      subItems.forEach((li) => {
+        li.classList.remove("is-open");
+        li.querySelector(":scope > a").setAttribute("aria-expanded", "false");
+      });
+      root.classList.remove("menu-sub-open");
+    };
+    const setMenu = (open) => {
+      siteMenu.classList.toggle("is-open", open);
+      siteMenu.inert = !open;
+      menuToggle.setAttribute("aria-expanded", String(open));
+      root.classList.toggle("menu-open", open);
+      if (!open) closeSubs();
+    };
+    setMenu(false);
+    menuToggle.addEventListener("click", () => setMenu(!siteMenu.classList.contains("is-open")));
+    subItems.forEach((li) => {
+      const link = li.querySelector(":scope > a");
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        li.classList.add("is-open");
+        link.setAttribute("aria-expanded", "true");
+        root.classList.add("menu-sub-open");
+        li.querySelector(".sub-menu a").focus({ preventScroll: true });
+      });
+      li.querySelector(".sub-nav-back").addEventListener("click", () => { closeSubs(); link.focus(); });
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || !siteMenu.classList.contains("is-open")) return;
+      if (root.classList.contains("menu-sub-open")) closeSubs();
+      else { setMenu(false); menuToggle.focus(); }
+    });
+    document.addEventListener("click", (e) => {
+      if (siteMenu.classList.contains("is-open") && !siteMenu.contains(e.target) && !menuToggle.contains(e.target)) setMenu(false);
+    });
+  }
 })();
