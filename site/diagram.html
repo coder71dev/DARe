@@ -10,106 +10,177 @@
   <link rel="apple-touch-icon" href="assets/icons/favicon-192.png" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
-<body>
+<body class="home diagram-page">
   <!-- LAYOUT:HEADER — identical on every page; becomes the header block
        inside resources/views/layouts/app.blade.php when this moves to Laravel -->
   <header class="site-header">
-    <!-- The logo is a link home, the same place the "Home" nav item goes. -->
     <a class="brand" href="index.html" aria-label="DARe TPRAF — home">
-      <img class="logo" src="assets/icons/logo.svg" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />
-      <span class="brand-subtitle">TPRAF</span>
+      <img class="logo" src="assets/icons/logo-header.svg" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />
     </a>
-    <nav>
-      <a href="index.html">Home</a>
+    <div class="header-tools">
+      <!-- Same search as dare.ac.uk: WordPress's ?s= query on the main site. -->
+      <form class="header-search" id="header-search" role="search" action="https://dare.ac.uk/" method="get" target="_blank">
+        <label class="visually-hidden" for="header-search-input">Search</label>
+        <input id="header-search-input" type="text" name="s" placeholder="Search" autocomplete="off" />
+        <button type="submit" aria-label="Search"><svg class="search-icon" viewBox="0 0 28.425 45.048" aria-hidden="true"><path class="si-t" transform="translate(-117.565 -0.001)" d="M128.571,17.563a22.105,22.105,0,0,1,2.243.624,21.828,21.828,0,0,1,2.194.87.488.488,0,0,0,.588-.118L144.087,6.282a.489.489,0,0,0-.107-.73q-1.026-.648-2.1-1.234a.491.491,0,0,0-.606.113l-8.9,10.73a.488.488,0,0,1-.858-.313L131.617.9a.49.49,0,0,0-.39-.476q-1.2-.247-2.4-.415a.489.489,0,0,0-.553.49l-.075,16.6a.488.488,0,0,0,.374.469"/><path class="si-m" transform="translate(0 -24.998)" d="M27.584,34.746a.464.464,0,0,0-.792-.134l-2.04,2.461a.469.469,0,0,0-.1.393A10.382,10.382,0,1,1,8.217,31.243a.46.46,0,0,0,.184-.364l.014-3.154a.465.465,0,0,0-.693-.406A13.937,13.937,0,0,0,8.078,51.9l-.734,2.068-1.481-.562a1.628,1.628,0,0,0-2.1.935L.328,63.227a5.031,5.031,0,0,0,9.4,3.583l3.436-8.879a1.628,1.628,0,0,0-.94-2.11l-1.542-.586.749-2.11a13.946,13.946,0,0,0,16.152-18.38M8.905,59.046,6.4,65.533A1.46,1.46,0,0,1,3.663,64.5L6.179,58a.618.618,0,0,1,.8-.355l1.574.6a.618.618,0,0,1,.357.8"/></svg></button>
+      </form>
+    </div>
+    <button type="button" class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="site-menu">
+      <span class="label">Menu</span>
+      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+    <!-- Slide-in menu, styled like dare.ac.uk's: the TPRAF links first, then
+         the DARe hub's own menu. -->
+    <nav class="site-menu" id="site-menu" aria-label="Primary Menu">
+      <ul class="top-level">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="diagram.html#extended">Explore TPRAF</a></li>
+      <li class="has-sub">
+        <a href="https://dare.ac.uk/about-us/" target="_blank" rel="noopener" aria-expanded="false">About DARe <span class="sub-icon" aria-hidden="true"><svg viewBox="0 0 41 41"><circle cx="20.5" cy="20.5" r="19.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 12 9 8.5-9 8.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <div class="sub-menu-wrap">
+          <button type="button" class="sub-nav-back">Back</button>
+          <ul class="sub-menu">
+            <li><a href="https://dare.ac.uk/about-us/" target="_blank" rel="noopener">About DARe</a></li>
+            <li><a href="https://dare.ac.uk/about-us/our-team/" target="_blank" rel="noopener">Our team</a></li>
+            <li><a href="https://dare.ac.uk/about-us/our-partners/" target="_blank" rel="noopener">Our partners</a></li>
+            <li><a href="https://dare.ac.uk/about-us/our-funders/" target="_blank" rel="noopener">Our funders</a></li>
+          </ul>
+        </div>
+      </li>
+      <li><a href="https://dare.ac.uk/research/" target="_blank" rel="noopener">Our work</a></li>
+      <li class="has-sub">
+        <a href="https://dare.ac.uk/latest/" target="_blank" rel="noopener" aria-expanded="false">Latest <span class="sub-icon" aria-hidden="true"><svg viewBox="0 0 41 41"><circle cx="20.5" cy="20.5" r="19.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 12 9 8.5-9 8.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <div class="sub-menu-wrap">
+          <button type="button" class="sub-nav-back">Back</button>
+          <ul class="sub-menu">
+            <li><a href="https://dare.ac.uk/news/" target="_blank" rel="noopener">News</a></li>
+            <li><a href="https://dare.ac.uk/blog/" target="_blank" rel="noopener">Blog</a></li>
+            <li><a href="https://dare.ac.uk/events/" target="_blank" rel="noopener">Events</a></li>
+            <li><a href="https://dare.ac.uk/latest/" target="_blank" rel="noopener">View All</a></li>
+          </ul>
+        </div>
+      </li>
+      <li><a href="https://dare.ac.uk/publications/" target="_blank" rel="noopener">Publications</a></li>
+      <li><a href="https://dare.ac.uk/flexible-funding/" target="_blank" rel="noopener">Flexible Funding</a></li>
+      <li><a href="https://repository.dare.ac.uk/" target="_blank" rel="noopener">DARe Repository</a></li>
+      <li><a href="https://dare.ac.uk/contact-us/" target="_blank" rel="noopener">Contact us</a></li>
+      </ul>
     </nav>
   </header>
   <!-- /LAYOUT:HEADER -->
 
   <!-- PAGE:CONTENT — becomes @section('content') in resources/views/diagram.blade.php -->
-  <div class="diagram-toolbar" id="diagram-toolbar">
-    <button class="level-tab" data-view="simple" aria-selected="true">Level 1 &middot; Simple</button>
-    <button class="level-tab" data-view="extended">Level 1 &middot; Extended</button>
-    <button class="level-tab" data-view="dsp">Level 2 &middot; DSP</button>
-    <button class="level-tab" data-view="imp">Level 2 &middot; IMP</button>
-    <button class="level-tab" data-view="level3">Level 3 &middot; Example</button>
-  </div>
+  <main>
 
-  <h1 class="diagram-title" id="diagram-title"></h1>
-  <p class="diagram-subtitle" id="diagram-subtitle"></p>
-
-  <!-- Starts collapsed (data-collapsed) so it's shut from first paint rather
-       than flashing open before the script runs. A visitor who opens it gets
-       that remembered; see app.js. -->
-  <div class="diagram-guide" id="diagram-guide" data-collapsed="true">
-    <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="false" aria-controls="diagram-guide-body">
-      <span class="diagram-guide-toggle-label">
-        <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
-        How to explore this diagram
-      </span>
-      <svg class="diagram-guide-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="diagram-guide-body" id="diagram-guide-body"></div>
-  </div>
-
-  <div class="process-toggle" id="process-toggle" role="group" aria-label="Filter by process" hidden>
-    <button type="button" id="process-btn-all" aria-pressed="true">Show all</button>
-    <button type="button" id="process-btn-dsp" aria-pressed="false">DSP only</button>
-    <button type="button" id="process-btn-imp" aria-pressed="false">IMP only</button>
-  </div>
-
-  <!-- Walkthrough. Plays this view's own reading order (content.js `tour`) as
-       an animated pass through the diagram: each step lights up, then a glow
-       travels along the arrow into the next one. Sits in flow above the
-       diagram so starting/stopping it can never move the diagram itself.
-       Restart/Stop sit in their own right-hand group: the caption's length
-       changes with every step, and they must not shuffle sideways with it. -->
-  <div class="diagram-tour" id="diagram-tour">
-    <!-- The interactive guided tour (spotlight + explanation card), offered on
-         every diagram beside the hands-off walkthrough below. -->
-    <button type="button" class="tour-play tour-guide" id="lesson-start-inline" hidden>
-      <span class="tour-play-icon" aria-hidden="true"></span>
-      <span id="lesson-start-inline-label">Take the guided tour</span>
-    </button>
-    <button type="button" class="tour-play" id="tour-play">
-      <span class="tour-play-icon" aria-hidden="true"></span>
-      <span id="tour-play-label">Play walkthrough</span>
-    </button>
-    <p class="tour-caption" id="tour-caption" aria-live="polite">Watch the steps play.</p>
-    <div class="tour-actions">
-      <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
-      <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
-    </div>
-  </div>
-
-  <!-- Guided tour launcher. Shown only on a view that has a tour (Level 3). -->
-  <div class="diagram-tour lesson-launch" id="lesson-launch" hidden>
-    <button type="button" class="tour-play" id="lesson-start">
-      <span class="tour-play-icon" aria-hidden="true"></span>
-      <span id="lesson-start-label">Take the guided tour</span>
-    </button>
-    <p class="tour-caption" id="lesson-launch-caption">Or click any box to have it explained.</p>
-  </div>
-
-  <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
-  <div class="diagram-viewport">
-    <div class="zoom-controls" role="group" aria-label="Zoom diagram">
-      <button type="button" id="zoom-out" aria-label="Zoom out">&minus;</button>
-      <span class="zoom-level" id="zoom-level">100%</span>
-      <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
-      <div class="zoom-divider"></div>
-      <button type="button" id="zoom-fit" aria-label="Fit diagram to screen">Fit</button>
-      <button type="button" id="zoom-reset" aria-label="Reset zoom">Reset</button>
-    </div>
-    <div class="diagram-stage-wrap" id="diagram-stage-wrap">
-      <div class="zoom-sizer" id="zoom-sizer">
-        <div class="diagram-crop" id="diagram-crop">
-          <div class="diagram-stage" id="diagram-stage">
-            <svg class="arrows-layer" id="arrows-layer"></svg>
-          </div>
+    <!-- Title band, in the homepage's Leaf hero style but shorter. The title and
+         the line under it are filled in per view by app.js (content.js). -->
+    <section class="hero diagram-hero" aria-labelledby="diagram-title">
+      <div class="container hero-grid">
+        <h1 id="diagram-title"></h1>
+        <div class="hero-side">
+          <p class="tagline" id="diagram-subtitle"></p>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <section class="section band-mist diagram-band" aria-label="TPRAF diagrams">
+      <div class="container">
+
+        <!-- Level tabs: a row of pills, swiped or dragged when it overflows. -->
+        <div class="diagram-toolbar" id="diagram-toolbar" role="tablist" aria-label="Diagram level">
+          <button class="level-tab" data-view="simple" aria-selected="true">Level 1 &middot; Simple</button>
+          <button class="level-tab" data-view="extended">Level 1 &middot; Extended</button>
+          <button class="level-tab" data-view="dsp">Level 2 &middot; DSP</button>
+          <button class="level-tab" data-view="imp">Level 2 &middot; IMP</button>
+          <button class="level-tab" data-view="level3">Level 3 &middot; Example</button>
+        </div>
+
+        <!-- Same block as the homepage's simple form: the diagram sits in a white
+             card, with the tour buttons above it and the guide below. -->
+        <div class="landing-diagram">
+      <!-- Starts collapsed (data-collapsed) so it's shut from first paint rather
+           than flashing open before the script runs. A visitor who opens it gets
+           that remembered; see app.js. -->
+      <div class="diagram-guide" id="diagram-guide" data-collapsed="true">
+        <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="false" aria-controls="diagram-guide-body">
+          <span class="diagram-guide-toggle-label">
+            <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
+            How to explore this diagram
+          </span>
+          <svg class="diagram-guide-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="diagram-guide-body" id="diagram-guide-body"></div>
+      </div>
+
+          <div class="process-toggle" id="process-toggle" role="group" aria-label="Filter by process" hidden>
+            <button type="button" id="process-btn-all" aria-pressed="true">Show all</button>
+            <button type="button" id="process-btn-dsp" aria-pressed="false">DSP only</button>
+            <button type="button" id="process-btn-imp" aria-pressed="false">IMP only</button>
+          </div>
+
+          <!-- Walkthrough. Plays this view's own reading order (content.js `tour`):
+               each step lights up, then a glow travels along the arrow into the
+               next one. Sits in flow above the diagram so starting/stopping it
+               can never move the diagram itself. -->
+          <div class="diagram-tour" id="diagram-tour">
+            <button type="button" class="tour-play tour-guide" id="lesson-start-inline" hidden>
+              <span class="tour-play-icon" aria-hidden="true"></span>
+              <span id="lesson-start-inline-label">Take the guided tour</span>
+            </button>
+            <button type="button" class="tour-play" id="tour-play">
+              <span class="tour-play-icon" aria-hidden="true"></span>
+              <span id="tour-play-label">Play walkthrough</span>
+            </button>
+            <p class="tour-caption" id="tour-caption" aria-live="polite">Watch the steps play.</p>
+            <div class="tour-actions">
+              <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
+              <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
+            </div>
+          </div>
+
+          <!-- Guided tour launcher. Shown only on a view that has a tour (Level 3). -->
+          <div class="diagram-tour lesson-launch" id="lesson-launch" hidden>
+            <button type="button" class="tour-play" id="lesson-start">
+              <span class="tour-play-icon" aria-hidden="true"></span>
+              <span id="lesson-start-label">Take the guided tour</span>
+            </button>
+            <p class="tour-caption" id="lesson-launch-caption">Or click any box to have it explained.</p>
+          </div>
+
+          <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
+          <div class="diagram-viewport">
+            <button type="button" class="zoom-toggle" id="zoom-toggle" aria-expanded="false" aria-controls="zoom-controls" aria-label="Zoom controls">
+              <img src="assets/icons/zoom-plus.svg" alt="" width="45" height="45" />
+            </button>
+            <div class="zoom-controls" id="zoom-controls" role="group" aria-label="Zoom diagram">
+              <button type="button" id="zoom-out" aria-label="Zoom out">&minus;</button>
+              <span class="zoom-level" id="zoom-level">100%</span>
+              <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+              <div class="zoom-divider"></div>
+              <button type="button" id="zoom-fit" aria-label="Fit diagram to screen">Fit</button>
+              <button type="button" id="zoom-reset" aria-label="Reset zoom">Reset</button>
+            </div>
+            <div class="diagram-stage-wrap" id="diagram-stage-wrap">
+              <div class="zoom-sizer" id="zoom-sizer">
+                <div class="diagram-crop" id="diagram-crop">
+                  <div class="diagram-stage" id="diagram-stage">
+                    <svg class="arrows-layer" id="arrows-layer"></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sits below the diagram, not above it: the simple form should be read
+               first and this offered as the way on. Populated per view from
+               content.js. -->
+          <p class="view-next" id="view-next" hidden><a class="inline-link" id="view-next-link" href="#"></a></p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
 
   <!-- Guided tour (Level 3 only): the page dims, a spotlight cuts out around the
        current box, and this card is placed next to that box with an arrow
@@ -141,11 +212,6 @@
     <button type="button" class="lesson-lightbox-close" id="lesson-lightbox-close" aria-label="Close picture">&times;</button>
     <img id="lesson-lightbox-img" alt="" />
   </div>
-
-  <!-- Sits below the diagram, not above it: the simple form should be read
-       first and this offered as the way on, rather than pulling visitors
-       past the thing they came for. Populated per view from content.js. -->
-  <p class="view-next" id="view-next" hidden><a class="inline-link" id="view-next-link" href="#"></a></p>
 
   <!-- Sits below the diagram on purpose — opening/closing this can be a few
        hundred px of text, and having it above the diagram meant toggling
@@ -183,14 +249,56 @@
 
   <!-- /PAGE:CONTENT -->
 
-  <!-- LAYOUT:FOOTER — identical on every page, same as the header above -->
+  <!-- LAYOUT:FOOTER — identical on every page, same as the header above.
+       Laid out and linked like the footer on dare.ac.uk. -->
   <footer class="site-footer">
-    <div class="container">
-      <p class="footer-label">Funded by &middot; Led by</p>
-      <a class="footer-lockup-link" href="https://dare.ac.uk" aria-label="DARe Hub website (dare.ac.uk)">
-        <img class="footer-lockup" src="assets/img/funders-partners.png" alt="Funders and partners of the DARe Hub" width="2160" height="103" loading="lazy" />
-      </a>
-      <p class="footer-line">DARe &middot; Decarbonised, Adaptable, Resilient Transport Infrastructures Hub &middot; <a href="https://dare.ac.uk">dare.ac.uk</a></p>
+    <div class="footer-main">
+      <div class="container footer-grid">
+        <a class="footer-logo-link" href="index.html" aria-label="DARe TPRAF — home"><img class="footer-logo" src="assets/icons/logo-footer.svg" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" /></a>
+
+        <div class="footer-contacts">
+          <div class="footer-col">
+            <h2 class="footer-heading">Keep in Touch</h2>
+            <p><a href="https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list" target="_blank" rel="noopener">Sign up to our mailing list</a></p>
+          </div>
+          <div class="footer-col">
+            <h2 class="footer-heading">Contact Us</h2>
+            <p><a href="mailto:darehub@newcastle.ac.uk">darehub@newcastle.ac.uk</a></p>
+          </div>
+          <div class="footer-col footer-social">
+            <h2 class="footer-heading">Follow Us</h2>
+            <ul>
+              <li><a href="https://www.linkedin.com/company/dare-hub/" target="_blank" rel="noopener">LinkedIn</a></li>
+              <li><a href="https://www.youtube.com/channel/UC3SeTcZlJQdFaYH5gdXmw1Q" target="_blank" rel="noopener">Youtube</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-address">
+          <p>DARe Hub<br />Stephenson Building<br />Newcastle University<br />NE1 7RU<br />United Kingdom</p>
+          <p>Find us on <a href="https://maps.app.goo.gl/P6UAs6S34K7V2CSP9" target="_blank" rel="noopener">Google</a></p>
+        </div>
+
+        <div class="footer-logos">
+          <h2 class="footer-heading">Funders</h2>
+          <a href="https://dare.ac.uk/about-us/our-funders/" target="_blank" rel="noopener" aria-label="DARe Hub funders">
+            <img class="footer-funders" src="assets/img/footer-funders.png" alt="Funders: Department for Transport, UK Research and Innovation, Engineering and Physical Sciences Research Council" width="1000" height="116" loading="lazy" />
+          </a>
+          <h2 class="footer-heading footer-heading-partners">Partners</h2>
+          <a href="https://dare.ac.uk/about-us/our-partners/" target="_blank" rel="noopener" aria-label="DARe Hub partners">
+            <img class="footer-partners" src="assets/img/footer-partners.png" alt="Partners: Newcastle University, University of Cambridge, University of Glasgow, Heriot-Watt University, Anglia Ruskin University" width="1400" height="104" loading="lazy" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-signoff">
+      <div class="container">
+        <ul>
+          <li><a href="https://dare.ac.uk/cookie-policy/" target="_blank" rel="noopener">Cookie Policy</a></li>
+          <li><a href="https://dare.ac.uk/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a></li>
+        </ul>
+      </div>
     </div>
   </footer>
   <!-- /LAYOUT:FOOTER -->

@@ -3101,14 +3101,11 @@ html.menu-open { overflow: hidden; }
 
 .landing-diagram { --box-border-radius: 14px; display: flex; flex-direction: column; }
 
-/* Diagram boxes as drawn in the design: 14px corners, 20px regular text, no
-   outline or shadow. */
+/* Diagram boxes as drawn in the design: no outline or shadow. Text size,
+   weight and corners come from the shared diagram rules (see --fs). */
 .home .landing-diagram .diagram-box {
   border: 0;
   box-shadow: none;
-  font-size: clamp(0.8rem, 1.04vw, 20px);
-  font-weight: 400;
-  line-height: 1.3;
 }
 
 .home .landing-diagram .diagram-title {
@@ -3506,4 +3503,77 @@ html.menu-open { overflow: hidden; }
 
 @media (max-width: 380px) {
   .home .footer-grid { --fs-body2: 18px; --logo-h: 35px; }
+}
+
+/* ==========================================================================
+   Diagram page — same design language as the homepage: Leaf title band,
+   pill tabs, and the diagram in a white card on the off-white band.
+   Only the page furniture lives here; the diagrams themselves are styled
+   above.
+   ========================================================================== */
+
+/* Shorter than the homepage hero, with a title that can be a whole sentence. */
+.diagram-page .diagram-hero .hero-grid {
+  padding-top: clamp(2rem, 4.4vw, 84px);
+  padding-bottom: clamp(2rem, 4.4vw, 84px);
+}
+
+.diagram-page .diagram-hero h1 {
+  max-width: none;
+  font-size: clamp(1.75rem, 3vw, 58px);
+}
+
+.diagram-page .diagram-hero .tagline { margin: 0; }
+
+/* Fits the diagram card to the same edges as the homepage's simple-form card. */
+.diagram-page .diagram-band {
+  padding-top: clamp(2rem, 3.2vw, 62px);
+  padding-bottom: clamp(3rem, 6vw, 115px);
+}
+
+.diagram-page .diagram-band .container {
+  max-width: 1920px;
+  padding-left: clamp(1.25rem, 5.26vw, 101px);
+  padding-right: clamp(1.25rem, 5.26vw, 101px);
+}
+
+/* Level tabs as pills, like the homepage's "Overview" / "Level 1" labels: white
+   with navy text, the current one navy. Still one swipeable row. */
+.diagram-page .diagram-toolbar {
+  gap: clamp(0.5rem, 0.75vw, 14px);
+  margin-bottom: clamp(1.25rem, 2vw, 38px);
+  padding: 0;
+  background: none;
+}
+
+.diagram-page .level-tab {
+  padding: clamp(0.5rem, 0.83vw, 16px) clamp(0.9rem, 1.1vw, 21px);
+  border-radius: clamp(8px, 0.73vw, 14px);
+  font-size: clamp(0.95rem, 1.25vw, 24px);
+  font-weight: 400;
+  line-height: 1.1197;
+  white-space: nowrap;
+}
+
+.diagram-page .level-tab:focus-visible { outline: 3px solid var(--color-water); outline-offset: 2px; }
+
+/* The card holds diagrams up to twice its width, so it is padded less than the
+   homepage's. */
+.diagram-page .landing-diagram .diagram-viewport {
+  margin-top: clamp(1.25rem, 2vw, 38px);
+  padding: clamp(0.75rem, 2vw, 38px);
+}
+
+.diagram-page .landing-diagram .view-next { order: 7; margin: clamp(1rem, 1.6vw, 30px) 0 0; }
+.diagram-page .landing-diagram .diagram-guide { margin-top: clamp(1rem, 1.6vw, 30px); }
+
+@media (max-width: 760px) {
+  .diagram-page .landing-diagram .diagram-viewport { padding: 0.5rem; border-radius: 16px; }
+}
+
+/* Filter buttons line up with the tabs and tour buttons, not centred. */
+.diagram-page .landing-diagram .process-toggle {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin: 0 0 clamp(0.75rem, 1.2vw, 24px);
 }
