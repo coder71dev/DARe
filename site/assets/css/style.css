@@ -3100,10 +3100,11 @@ html.menu-open { overflow: hidden; }
 
 .landing-diagram { --box-border-radius: 14px; display: flex; flex-direction: column; }
 
-/* Diagram boxes as drawn in the design: no outline or shadow. Text size,
-   weight and corners come from the shared diagram rules (see --fs). */
+/* Diagram boxes as drawn in the design: no shadow. The brand-colour boxes have
+   no outline either (see .variant-navy/-sky/-leaf); white and tinted boxes keep
+   theirs, which is what defines them against the white card. Text size, weight
+   and corners come from the shared diagram rules (see --fs). */
 .home .landing-diagram .diagram-box {
-  border: 0;
   box-shadow: none;
 }
 
@@ -3894,3 +3895,13 @@ html.menu-open { overflow: hidden; }
 
   .diagram-page .diagram-tour:has(.tour-caption.is-active) .tour-btn { color: var(--color-white); }
 }
+
+/* IMP docks its zoom controls bottom-left (see .diagram-viewport[data-view="imp"]
+   above), but inside the card the controls open beside the round button at the
+   right. Without this both edges were set and the panel stretched across the
+   whole card, pushing Fit and Reset out of place. */
+.home .landing-diagram .diagram-viewport[data-view="imp"] .zoom-controls { left: auto; }
+
+/* The diagram is sized to its own height, so the frame never needs a vertical
+   scrollbar (only the sideways one, for a zoomed-in diagram). */
+.diagram-page .diagram-stage-wrap { overflow-y: hidden; }
