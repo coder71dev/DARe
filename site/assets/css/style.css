@@ -1275,7 +1275,8 @@ a { color: var(--color-sky); }
 .diagram-cluster-bg.variant-c4,
 .diagram-cluster-bg.variant-c5,
 .diagram-cluster-bg.variant-c6 {
-  border-radius: 0 0 14px 14px;
+  border-radius: calc(var(--fs, 12px) * 0.55);
+  border-width: 0.5px;
 }
 
 /* IMP cluster backgrounds — the fills from level_2_slide_12.png itself.
@@ -1431,7 +1432,8 @@ a { color: var(--color-sky); }
    source diagram, via clip-path rather than rotation so the label stays
    upright and readable inside the point. */
 .diagram-box.shape-diamond {
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  /* A diamond with rounded points, as in the Figma design. */
+  clip-path: polygon(35.0% 15.0%, 38.8% 11.7%, 42.5% 9.4%, 46.2% 8.0%, 50.0% 7.5%, 53.8% 8.0%, 57.5% 9.4%, 61.2% 11.7%, 65.0% 15.0%, 85.0% 35.0%, 88.3% 38.8%, 90.6% 42.5%, 92.0% 46.2%, 92.5% 50.0%, 92.0% 53.8%, 90.6% 57.5%, 88.3% 61.2%, 85.0% 65.0%, 65.0% 85.0%, 61.2% 88.3%, 57.5% 90.6%, 53.8% 92.0%, 50.0% 92.5%, 46.2% 92.0%, 42.5% 90.6%, 38.8% 88.3%, 35.0% 85.0%, 15.0% 65.0%, 11.7% 61.2%, 9.4% 57.5%, 8.0% 53.8%, 7.5% 50.0%, 8.0% 46.2%, 9.4% 42.5%, 11.7% 38.8%, 15.0% 35.0%);
   padding: 0.3em 0.7em;
   font-size: calc(var(--fs, 0.8rem) * 0.75);
   line-height: 1.1;
@@ -2536,8 +2538,7 @@ a { color: var(--color-sky); }
   display: flex;
   align-items: center;
   margin-left: auto;
-  /* Room for the absolutely-positioned Menu button (label + 62px bars). */
-  margin-right: calc(clamp(120px, 8.2vw, 157px) + clamp(2rem, 6vw, 116px));
+  margin-right: clamp(2rem, 6vw, 116px);
 }
 
 .header-search {
@@ -3905,3 +3906,576 @@ html.menu-open { overflow: hidden; }
 /* The diagram is sized to its own height, so the frame never needs a vertical
    scrollbar (only the sideways one, for a zoomed-in diagram). */
 .diagram-page .diagram-stage-wrap { overflow-y: hidden; }
+
+/* ==========================================================================
+   Header (both pages): Home and Explore TPRAF, as in the 26 Sept design.
+   ========================================================================== */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.2vw, 42px);
+}
+
+.site-header .header-nav a {
+  margin-left: 0; /* beats the older ".site-header nav a" spacing */
+  color: var(--color-white);
+  font-size: clamp(0.95rem, 1.04vw, 20px);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.site-header .header-nav .header-home { text-decoration: underline; text-underline-offset: 0.2em; }
+.site-header .header-nav .header-home:hover,
+.site-header .header-nav .header-home:focus-visible { text-decoration-thickness: 2px; }
+
+.site-header .header-nav .header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  height: clamp(36px, 2.3vw, 44px);
+  padding: 0 0.7em 0 0.9em;
+  border-radius: 7px;
+  background: var(--color-white);
+  color: var(--color-water);
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+.site-header .header-nav .header-cta:hover { transform: translateY(-2px); text-decoration: none; }
+.header-nav a:focus-visible { outline: 2px solid var(--color-leaf); outline-offset: 4px; }
+
+@media (max-width: 640px) {
+  /* The logo already goes home, so a phone keeps just the button beside it. */
+  .site-header .header-nav .header-home { display: none; }
+}
+
+/* ==========================================================================
+   Homepage simple form, as in the 26 Sept design: the "Explore the extended
+   form" button under the title, the guide as a white bar that opens on demand,
+   and the card holding the tour buttons at its top and the zoom bar at its
+   foot. Scoped away from the diagram page, which keeps its own arrangement.
+   ========================================================================== */
+.home:not(.diagram-page) .landing-diagram .landing-extend {
+  order: 0;
+  align-self: flex-start;
+  margin-top: clamp(0.9rem, 1.3vw, 25px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-guide {
+  order: 1;
+  margin-top: clamp(1rem, 1.6vw, 30px);
+  border: 0;
+  border-radius: clamp(6px, 0.5vw, 10px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-guide-toggle {
+  background: var(--color-white);
+  font-size: clamp(0.85rem, 0.95vw, 18px);
+  padding: clamp(0.7rem, 0.95vw, 18px) clamp(1rem, 1.3vw, 25px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-guide-icon { display: none; }
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport {
+  margin-top: clamp(1rem, 1.6vw, 30px);
+  padding-top: clamp(0.75rem, 2.4vw, 46px);
+}
+
+/* Tour buttons: "Take a tour" in Leaf, "Play walkthrough" in navy, on a line of
+   their own with a hairline under it. */
+.home:not(.diagram-page) .landing-diagram .diagram-viewport > .diagram-tour {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: auto;
+  max-width: none;
+  margin: 0 0 clamp(0.75rem, 1.5vw, 28px);
+  padding: 0 0 clamp(0.75rem, 1.5vw, 28px);
+  border-bottom: 1px solid #ececec;
+  border-radius: 0;
+  background: none;
+  gap: 0.6rem clamp(0.75rem, 1.1vw, 21px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play {
+  flex-direction: row-reverse;
+  height: clamp(2.1rem, 2.1vw, 40px);
+  padding: 0 clamp(0.8rem, 0.95vw, 18px);
+  border-radius: 7px;
+  background: var(--color-water);
+  color: var(--color-white);
+  font-size: clamp(0.85rem, 0.95vw, 18px);
+  font-weight: 400;
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play.tour-guide {
+  background: var(--color-leaf);
+  color: var(--color-water);
+}
+
+/* A circled arrow after "Take a tour", in place of the play triangle. */
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-guide .tour-play-icon {
+  width: 1.15em;
+  height: 1.15em;
+  border: 0;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath transform='translate%286.04 6.04%29 scale%28.72%29' d='M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath transform='translate%286.04 6.04%29 scale%28.72%29' d='M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-caption { color: var(--color-water); }
+.home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-btn { color: var(--color-water); }
+
+/* The zoom bar is always showing at the card's bottom-right, quiet and plain
+   (the round zoom button is not in this design). */
+.home:not(.diagram-page) .landing-diagram .zoom-toggle { display: none; }
+
+.home:not(.diagram-page) .landing-diagram .zoom-controls {
+  display: flex;
+  right: clamp(1rem, 5.4vw, 103px);
+  bottom: clamp(0.75rem, 3.2vw, 60px);
+  border: 0;
+  background: var(--color-mist);
+  box-shadow: none;
+  font-size: clamp(0.75rem, 0.8vw, 15px);
+}
+
+.home:not(.diagram-page) .landing-diagram .diagram-viewport.zoom-open .zoom-controls { display: flex; }
+
+/* The bar's chevron points down when closed and up when open, as in the design. */
+.home:not(.diagram-page) .landing-diagram .diagram-guide-toggle[aria-expanded="false"] .diagram-guide-chevron { transform: none; }
+.home:not(.diagram-page) .landing-diagram .diagram-guide-toggle[aria-expanded="true"] .diagram-guide-chevron { transform: rotate(180deg); }
+
+/* Section labels ("Overview", "The resource") are thin outlined pills in the
+   design; only the "Level 1" label is a solid navy one. */
+.home .pill:not(.pill-navy) {
+  padding: clamp(0.3rem, 0.42vw, 8px) clamp(0.7rem, 0.9vw, 17px);
+  border: 1px solid var(--color-water);
+  background: none;
+  color: var(--color-water);
+  font-size: clamp(0.8rem, 0.83vw, 16px);
+}
+
+.home .band-navy .pill:not(.pill-navy) { border-color: rgba(255, 255, 255, 0.45); color: var(--color-white); }
+
+/* "The resource" sits above the heading, at the left, as in the design. */
+.home .band-navy .section-head {
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: clamp(0.6rem, 1vw, 20px);
+}
+
+/* DSP, as drawn in the Figma design: the stage title sits inside its group as
+   a rounded bar (not a tab on top of it), no shadow, and the box text is
+   semi-bold. */
+.diagram-heading.variant-c1,
+.diagram-heading.variant-c2,
+.diagram-heading.variant-c3,
+.diagram-heading.variant-c4,
+.diagram-heading.variant-c5,
+.diagram-heading.variant-c6 {
+  border-radius: calc(var(--fs, 12px) * 0.45);
+  box-shadow: none;
+}
+
+.diagram-heading.variant-c2,
+.diagram-heading.variant-c3 { color: var(--color-white); }
+
+.diagram-viewport[data-view="dsp"] .diagram-box { font-weight: 600; }
+
+/* The Criteria X, Y, Z box sits over the foot of this strip, so its label
+   (which reads upward from the bottom) starts above it instead of under it. */
+.diagram-box[data-box-id="dsp-multi-criteria-cost-benefit"] {
+  padding-top: 3.2em;
+  font-size: calc(var(--fs, 12px) * 0.8);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Homepage refresh, from the 24 Sept Figma export (1920px frame). Sizes are the
+   Figma px divided by 19.2 (vw) and capped at the Figma px, so they are exact at
+   1920 and shrink with the screen. Wide screens only where the layout changes.
+   ========================================================================== */
+
+/* ---- Header: a touch shorter, bigger Home / Explore TPRAF ---- */
+@media (min-width: 900px) {
+  .home .site-header { --header-pad: clamp(1rem, 2.14vw, 41px); }
+  .home .site-header .header-tools { margin-right: clamp(2rem, 12.7vw, 244px); }
+  .home .site-header { padding-right: clamp(1.25rem, 5.94vw, 114px); }
+  .home .site-header .header-nav { gap: clamp(1rem, 1.82vw, 35px); }
+  .home .site-header .header-nav a { font-size: clamp(0.95rem, 1.354vw, 26px); }
+  .home .site-header .header-nav .header-cta {
+    height: clamp(36px, 2.66vw, 51px);
+    padding: 0 0.7em 0 0.9em;
+    gap: 0.45em;
+    border-radius: clamp(6px, 0.42vw, 8px);
+  }
+  .home .site-header .header-nav .btn-sm-icon { width: 0.95em; height: 0.95em; }
+}
+
+/* ---- Hero: 590px tall, tagline and link a little lower ---- */
+@media (min-width: 820px) {
+  .home .hero-grid { padding-top: clamp(3rem, 8.72vw, 167px); padding-bottom: clamp(3rem, 8.72vw, 167px); }
+  .home .hero-side { align-self: start; margin-top: clamp(0px, 3.7vw, 71px); }
+  .home .hero .tagline { margin-bottom: clamp(1.25rem, 2.86vw, 55px); }
+}
+
+/* ---- What is TPRAF?: the picture sits straight on the page, no white card ---- */
+.home .what-figure { background: none; }
+.home .what-copy .what-lead { max-width: none; }
+.audience-tile { gap: 0; }
+
+/* Outlined labels ("Overview", "The resource") are as big as the Level 1 label. */
+.home .pill:not(.pill-navy) {
+  padding: clamp(0.5rem, 0.83vw, 16px) clamp(0.9rem, 1.3vw, 25px);
+  border-radius: clamp(8px, 0.63vw, 12px);
+  font-size: clamp(1rem, 1.25vw, 24px);
+}
+
+.home .band-navy .pill:not(.pill-navy) { border-color: var(--color-leaf); }
+
+/* "About the TPRAF Diagram" is one line. */
+@media (min-width: 820px) {
+  .home .band-navy .section-head h2 { max-width: none; }
+}
+
+/* ---- The simple form ---- */
+@media (min-width: 900px) {
+  .home .band-leaf .container { padding-left: clamp(1.25rem, 7.19vw, 138px); }
+  .home .band-leaf .section-head h2,
+  .home .landing-diagram .diagram-title { margin-left: 0; }
+  .home .landing-diagram { margin-right: clamp(0px, 0.42vw, 8px); }
+  .home .band-leaf { padding-bottom: clamp(3rem, 8.4vw, 161px); }
+
+  .home:not(.diagram-page) .landing-diagram .landing-extend {
+    margin-top: clamp(0.9rem, 2.08vw, 40px);
+    height: clamp(2.75rem, 3.02vw, 58px);
+    min-width: 0;
+    padding: 0 clamp(0.8rem, 1vw, 19px) 0 clamp(0.9rem, 1.2vw, 23px);
+    gap: clamp(0.5rem, 0.7vw, 13px);
+    border-radius: clamp(8px, 0.52vw, 10px);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    font-weight: 400;
+  }
+  .home:not(.diagram-page) .landing-diagram .btn-sm-icon,
+  .home:not(.diagram-page) .landing-diagram .tour-guide .tour-play-icon { width: 1em; height: 1em; }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-guide { margin-top: clamp(1rem, 2.34vw, 45px); }
+  .home:not(.diagram-page) .landing-diagram .diagram-guide-toggle {
+    font-size: clamp(1rem, 1.25vw, 24px);
+    min-height: clamp(3rem, 3.96vw, 76px);
+    padding: 0 clamp(1rem, 2.4vw, 46px) 0 clamp(1rem, 1.04vw, 20px);
+    line-height: 1.2;
+  }
+  .home:not(.diagram-page) .landing-diagram .diagram-guide-chevron { width: clamp(14px, 1.25vw, 24px); height: clamp(14px, 1.25vw, 24px); }
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport { margin-top: clamp(1rem, 3.5vw, 67px); }
+}
+
+/* The card: 100px inside on every side, a hairline above and below the diagram. */
+@media (min-width: 1100px) {
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport {
+    position: relative;
+    padding: clamp(0.75rem, 3.1vw, 60px) clamp(0.75rem, 5.2vw, 100px) clamp(0.75rem, 4.98vw, 96px);
+  }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport::after {
+    content: "";
+    position: absolute;
+    left: clamp(0.75rem, 5.2vw, 100px);
+    right: clamp(0.75rem, 5.2vw, 100px);
+    bottom: clamp(0.75rem, 3.5vw, 67px);
+    height: 1px;
+    background: #ececec;
+  }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport > .diagram-tour {
+    margin-bottom: clamp(0.5rem, 1.15vw, 22px);
+    padding-bottom: clamp(0.75rem, 2.55vw, 49px);
+    gap: clamp(0.75rem, 1.25vw, 24px);
+  }
+
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play {
+    height: clamp(2.75rem, 3.02vw, 58px);
+    padding: 0 clamp(0.9rem, 1.2vw, 23px);
+    gap: 0.6em;
+    border-radius: clamp(8px, 0.52vw, 10px);
+    font-size: clamp(1rem, 1.25vw, 24px);
+  }
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play:not(.tour-guide) {
+    padding-left: clamp(1rem, 1.6vw, 31px);
+    padding-right: clamp(0.9rem, 1.25vw, 24px);
+    gap: clamp(0.6rem, 0.85vw, 16px);
+  }
+  .home:not(.diagram-page) .landing-diagram .diagram-viewport .tour-play:not(.tour-guide) .tour-play-icon {
+    border-left-width: 12px;
+    border-top-width: 8px;
+    border-bottom-width: 8px;
+  }
+
+  /* The diagram fills the card's whole inner width: the simple form leaves 4% of
+     empty stage each side, so the frame is stretched past the card's padding by
+     that much and the empty edges are clipped. */
+  .home:not(.diagram-page) .landing-diagram .diagram-stage-wrap {
+    width: 108.8%;
+    margin-left: -4.4%;
+  }
+
+  .home:not(.diagram-page) .landing-diagram .zoom-controls {
+    right: clamp(0.75rem, 5.2vw, 100px);
+    bottom: clamp(0.75rem, 6.25vw, 120px);
+    min-height: clamp(2.5rem, 3.1vw, 60px);
+    padding: 0 clamp(0.75rem, 1.1vw, 21px);
+    border-radius: clamp(8px, 0.6vw, 12px);
+    font-size: clamp(0.8rem, 0.9vw, 17px);
+    align-items: center;
+  }
+}
+
+/* ---- Further Information: no italics in the funding line, less air on top ---- */
+.home .ack strong em { font-style: normal; }
+@media (min-width: 820px) {
+  .home .section-further { padding-top: clamp(3rem, 4.8vw, 92px); }
+}
+
+/* ---- Footer: the 1920px design is set about 11% larger than dare.ac.uk's ---- */
+@media (min-width: 1701px) {
+  .home .footer-grid {
+    --fs-body1: 21px;
+    --fs-body2: 24.4px;
+    --logo-h: 80px;
+    grid-template-columns: 21.56vw minmax(0, 1fr);
+  }
+  .home .footer-grid { max-width: 1920px; padding-left: 117px; padding-right: 117px; }
+  .home .footer-logo { width: 361px; transform: translateX(-114px); }
+  .home .footer-contacts { padding-top: 78px; padding-left: 16px; }
+  .home .footer-funders { height: 86px; }
+  .home .footer-signoff .container { max-width: 1920px; padding-left: 117px; }
+}
+
+/* ==========================================================================
+   Diagram page on a desktop, from the 24 Sept Figma export (1920px frame): a
+   centred title band, coloured level tabs, the "How to explore" bar that opens
+   on demand, and the diagram in the same white card as the homepage. Phones
+   and small tablets (900px and under) keep their own layouts, above.
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* The design has no phone layout: the guide stays open there, as before. */
+  .diagram-page .diagram-guide[data-collapsed="true"] .diagram-guide-body { display: grid; }
+  .diagram-page .diagram-guide-chevron { display: none; }
+  .diagram-page .diagram-guide-toggle { pointer-events: none; cursor: default; }
+}
+
+@media (min-width: 901px) {
+  /* Title band */
+  .diagram-page .diagram-hero .breadcrumb { display: none; }
+  .diagram-page .diagram-hero-inner {
+    display: block;
+    padding-top: clamp(2rem, 6.67vw, 128px);
+    padding-bottom: clamp(2rem, 6.8vw, 130px);
+    text-align: center;
+  }
+  .diagram-page .diagram-hero .hero-label {
+    min-width: clamp(6rem, 7.08vw, 136px);
+    margin: 0 0 clamp(1rem, 1.6vw, 31px);
+    padding: clamp(0.5rem, 0.83vw, 16px) clamp(0.9rem, 1.45vw, 28px);
+    border: 0;
+    border-radius: clamp(8px, 0.63vw, 12px);
+    background: var(--color-water);
+    color: var(--color-white);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    font-weight: 400;
+    line-height: 1.1197;
+    text-align: center;
+  }
+  .diagram-page .diagram-hero h1 {
+    max-width: 44.8vw;
+    margin: 0 auto;
+    font-size: clamp(2rem, 3.96vw, 76px);
+    font-weight: 400;
+    line-height: 1.1197;
+    color: var(--color-water);
+  }
+
+  /* Grey page, the card on the design's 138px margins */
+  .diagram-page .diagram-band {
+    background: #e9e9e9;
+    padding-top: clamp(1.5rem, 5.05vw, 97px);
+    padding-bottom: clamp(2rem, 5.26vw, 101px);
+  }
+  .diagram-page .diagram-band .container {
+    padding-left: clamp(1.25rem, 7.19vw, 138px);
+    padding-right: clamp(1.25rem, 6.3vw, 121px);
+  }
+  .diagram-page .landing-diagram {
+    --card-pad: clamp(0.75rem, 5.2vw, 100px);
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    align-items: start;
+  }
+  /* Views other than the simple form keep their tighter card until they have a design. */
+  .diagram-page .landing-diagram:has(.diagram-viewport:not([data-view="simple"])) { --card-pad: clamp(0.75rem, 1.5vw, 28px); }
+
+  /* Level tabs: green when current, white otherwise */
+  .diagram-page .landing-diagram .diagram-toolbar { grid-column: 1; grid-row: 1; padding: 4px; margin: -4px; gap: clamp(0.75rem, 2.24vw, 43px); }
+  .diagram-page .level-tab {
+    height: clamp(2.75rem, 3.13vw, 60px);
+    padding: 0 clamp(1rem, 1.4vw, 27px);
+    border-radius: clamp(8px, 0.52vw, 10px);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    font-weight: 400;
+  }
+  .diagram-page .level-tab[aria-selected="true"] { background: var(--color-leaf); color: var(--color-water); }
+
+  /* How to explore: a white bar that opens on demand */
+  .diagram-page .landing-diagram .diagram-guide {
+    grid-row: 2;
+    max-width: none;
+    margin: clamp(1rem, 3.28vw, 63px) 0 0;
+    border: 0;
+    border-radius: clamp(6px, 0.52vw, 10px);
+    background: var(--color-white);
+  }
+  .diagram-page .diagram-guide-toggle {
+    min-height: clamp(3rem, 3.96vw, 76px);
+    padding: 0 clamp(1rem, 2.4vw, 46px) 0 clamp(1rem, 1.04vw, 20px);
+    background: var(--color-white);
+    font-size: clamp(1rem, 1.25vw, 24px);
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  .diagram-page .diagram-guide-icon { display: none; }
+  .diagram-page .diagram-guide-chevron { width: clamp(14px, 1.25vw, 24px); height: clamp(14px, 1.25vw, 24px); }
+  .diagram-page .diagram-guide-toggle[aria-expanded="false"] .diagram-guide-chevron { transform: none; }
+  .diagram-page .diagram-guide-toggle[aria-expanded="true"] .diagram-guide-chevron { transform: rotate(180deg); }
+
+  .diagram-page .landing-diagram .process-toggle { grid-row: 3; }
+  .diagram-page .landing-diagram .view-next { display: none; }
+
+  /* The card: the tour buttons and a hairline at the top, the zoom bar at the foot */
+  .diagram-page .landing-diagram .diagram-viewport {
+    position: relative;
+    grid-row: 4;
+    margin-top: clamp(1rem, 4.17vw, 80px);
+    padding: clamp(5.5rem, 9.9vw, 190px) var(--card-pad) clamp(0.75rem, 4.98vw, 96px);
+    border-radius: clamp(16px, 1.3vw, 25px);
+  }
+  .diagram-page .landing-diagram .diagram-viewport::before,
+  .diagram-page .landing-diagram .diagram-viewport::after {
+    content: "";
+    position: absolute;
+    left: var(--card-pad);
+    right: var(--card-pad);
+    height: 1px;
+    background: #ececec;
+    pointer-events: none;
+  }
+  .diagram-page .landing-diagram .diagram-viewport::before { top: clamp(4rem, 8.7vw, 167px); }
+  .diagram-page .landing-diagram .diagram-viewport::after { bottom: clamp(0.75rem, 3.5vw, 67px); }
+
+  .diagram-page .landing-diagram > .diagram-tour {
+    grid-row: 4;
+    grid-column: 1;
+    justify-self: start;
+    align-self: start;
+    z-index: 12;
+    flex-wrap: nowrap;
+    width: auto;
+    max-width: none;
+    margin: calc(clamp(1rem, 4.17vw, 80px) + clamp(0.75rem, 3.1vw, 60px)) 0 0 var(--card-pad);
+    padding: 0;
+    gap: 0.6rem clamp(0.75rem, 1.25vw, 24px);
+    background: none;
+  }
+  .diagram-page .landing-diagram > .diagram-tour[hidden] { display: none; }
+  .diagram-page .landing-diagram .tour-caption,
+  .diagram-page .landing-diagram .tour-btn { color: var(--color-water); }
+
+  .diagram-page .landing-diagram .tour-play {
+    flex-direction: row-reverse;
+    height: clamp(2.75rem, 3.02vw, 58px);
+    padding: 0 clamp(0.9rem, 1.2vw, 23px);
+    gap: 0.6em;
+    border-radius: clamp(8px, 0.52vw, 10px);
+    background: var(--color-water);
+    color: var(--color-white);
+    font-size: clamp(1rem, 1.25vw, 24px);
+  }
+  .diagram-page .landing-diagram .tour-play:not(.tour-guide):not(#lesson-start) {
+    padding-left: clamp(1rem, 1.6vw, 31px);
+    padding-right: clamp(0.9rem, 1.25vw, 24px);
+    gap: clamp(0.6rem, 0.85vw, 16px);
+  }
+  .diagram-page .landing-diagram .tour-play:not(.tour-guide):not(#lesson-start) .tour-play-icon {
+    border-left-width: 12px;
+    border-top-width: 8px;
+    border-bottom-width: 8px;
+  }
+  .diagram-page .landing-diagram .tour-play.tour-guide,
+  .diagram-page .landing-diagram .lesson-launch .tour-play { background: var(--color-leaf); color: var(--color-water); }
+  .diagram-page .landing-diagram .tour-guide .tour-play-icon,
+  .diagram-page .landing-diagram .lesson-launch .tour-play-icon {
+    width: 1em;
+    height: 1em;
+    border: 0;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath transform='translate%286.04 6.04%29 scale%28.72%29' d='M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath transform='translate%286.04 6.04%29 scale%28.72%29' d='M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  .diagram-page .landing-diagram .zoom-toggle { display: none; }
+  .diagram-page .landing-diagram .zoom-controls {
+    display: flex;
+    right: var(--card-pad);
+    bottom: clamp(0.75rem, 6.25vw, 120px);
+    align-items: center;
+    min-height: clamp(2.5rem, 3.1vw, 60px);
+    padding: 0 clamp(0.75rem, 1.1vw, 21px);
+    border: 0;
+    border-radius: clamp(8px, 0.6vw, 12px);
+    background: var(--color-mist);
+    box-shadow: none;
+    font-size: clamp(0.8rem, 0.9vw, 17px);
+  }
+}
+
+/* The simple form fills the card's whole inner width: the frame is stretched past
+   the card's padding by the 4% of empty stage it leaves each side. */
+@media (min-width: 1100px) {
+  .diagram-page .diagram-viewport[data-view="simple"] .diagram-stage-wrap {
+    width: 108.8%;
+    margin-left: -4.4%;
+  }
+}
+
+/* ==========================================================================
+   The zoom controls never sit on top of the diagram. On a desktop the bar has
+   its own band at the foot of the card, between the diagram and the hairline;
+   on a tablet the round button does; on a phone the bar, when opened, makes
+   room for itself under the strip of icon buttons.
+   ========================================================================== */
+@media (min-width: 901px) {
+  :is(.home:not(.diagram-page), .diagram-page) .landing-diagram .diagram-viewport {
+    padding-bottom: clamp(5.75rem, 8.7vw, 167px);
+  }
+  :is(.home:not(.diagram-page), .diagram-page) .landing-diagram .zoom-controls {
+    bottom: clamp(0.75rem, 4.6vw, 88px);
+  }
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  .home .landing-diagram .diagram-viewport { padding-bottom: 5rem; }
+  .home .landing-diagram .zoom-toggle { bottom: 0.75rem; }
+  .home .landing-diagram .zoom-controls { bottom: 0.75rem; }
+}
+
+@media (max-width: 760px) {
+  .diagram-page .landing-diagram .diagram-viewport.zoom-open { padding-top: 6.4rem; }
+  .diagram-page .landing-diagram .zoom-controls { top: 3.5rem; }
+}
+
+/* Home stays in the phone header on the diagram page (the logo already goes
+   home on the homepage itself, so it stays hidden there). */
+@media (max-width: 640px) {
+  .diagram-page .site-header .header-nav .header-home { display: inline; }
+}

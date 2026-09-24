@@ -27,46 +27,11 @@
         <button type="submit" aria-label="Search"><svg class="search-icon" viewBox="0 0 28.425 45.048" aria-hidden="true"><path class="si-t" transform="translate(-117.565 -0.001)" d="M128.571,17.563a22.105,22.105,0,0,1,2.243.624,21.828,21.828,0,0,1,2.194.87.488.488,0,0,0,.588-.118L144.087,6.282a.489.489,0,0,0-.107-.73q-1.026-.648-2.1-1.234a.491.491,0,0,0-.606.113l-8.9,10.73a.488.488,0,0,1-.858-.313L131.617.9a.49.49,0,0,0-.39-.476q-1.2-.247-2.4-.415a.489.489,0,0,0-.553.49l-.075,16.6a.488.488,0,0,0,.374.469"/><path class="si-m" transform="translate(0 -24.998)" d="M27.584,34.746a.464.464,0,0,0-.792-.134l-2.04,2.461a.469.469,0,0,0-.1.393A10.382,10.382,0,1,1,8.217,31.243a.46.46,0,0,0,.184-.364l.014-3.154a.465.465,0,0,0-.693-.406A13.937,13.937,0,0,0,8.078,51.9l-.734,2.068-1.481-.562a1.628,1.628,0,0,0-2.1.935L.328,63.227a5.031,5.031,0,0,0,9.4,3.583l3.436-8.879a1.628,1.628,0,0,0-.94-2.11l-1.542-.586.749-2.11a13.946,13.946,0,0,0,16.152-18.38M8.905,59.046,6.4,65.533A1.46,1.46,0,0,1,3.663,64.5L6.179,58a.618.618,0,0,1,.8-.355l1.574.6a.618.618,0,0,1,.357.8"/></svg></button>
       </form>
     </div>
-    <button type="button" class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="site-menu">
-      <span class="label">Menu</span>
-      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
-    </button>
-    <!-- Slide-in menu, styled like dare.ac.uk's: the TPRAF links first, then
-         the DARe hub's own menu. -->
-    <nav class="site-menu" id="site-menu" aria-label="Primary Menu">
-      <ul class="top-level">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="diagram.html#extended">Explore TPRAF</a></li>
-      <li class="has-sub">
-        <a href="https://dare.ac.uk/about-us/" target="_blank" rel="noopener" aria-expanded="false">About DARe <span class="sub-icon" aria-hidden="true"><svg viewBox="0 0 41 41"><circle cx="20.5" cy="20.5" r="19.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 12 9 8.5-9 8.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-        <div class="sub-menu-wrap">
-          <button type="button" class="sub-nav-back">Back</button>
-          <ul class="sub-menu">
-            <li><a href="https://dare.ac.uk/about-us/" target="_blank" rel="noopener">About DARe</a></li>
-            <li><a href="https://dare.ac.uk/about-us/our-team/" target="_blank" rel="noopener">Our team</a></li>
-            <li><a href="https://dare.ac.uk/about-us/our-partners/" target="_blank" rel="noopener">Our partners</a></li>
-            <li><a href="https://dare.ac.uk/about-us/our-funders/" target="_blank" rel="noopener">Our funders</a></li>
-          </ul>
-        </div>
-      </li>
-      <li><a href="https://dare.ac.uk/research/" target="_blank" rel="noopener">Our work</a></li>
-      <li class="has-sub">
-        <a href="https://dare.ac.uk/latest/" target="_blank" rel="noopener" aria-expanded="false">Latest <span class="sub-icon" aria-hidden="true"><svg viewBox="0 0 41 41"><circle cx="20.5" cy="20.5" r="19.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 12 9 8.5-9 8.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-        <div class="sub-menu-wrap">
-          <button type="button" class="sub-nav-back">Back</button>
-          <ul class="sub-menu">
-            <li><a href="https://dare.ac.uk/news/" target="_blank" rel="noopener">News</a></li>
-            <li><a href="https://dare.ac.uk/blog/" target="_blank" rel="noopener">Blog</a></li>
-            <li><a href="https://dare.ac.uk/events/" target="_blank" rel="noopener">Events</a></li>
-            <li><a href="https://dare.ac.uk/latest/" target="_blank" rel="noopener">View All</a></li>
-          </ul>
-        </div>
-      </li>
-      <li><a href="https://dare.ac.uk/publications/" target="_blank" rel="noopener">Publications</a></li>
-      <li><a href="https://dare.ac.uk/flexible-funding/" target="_blank" rel="noopener">Flexible Funding</a></li>
-      <li><a href="https://repository.dare.ac.uk/" target="_blank" rel="noopener">DARe Repository</a></li>
-      <li><a href="https://dare.ac.uk/contact-us/" target="_blank" rel="noopener">Contact us</a></li>
-      </ul>
+    <!-- Home and the way into the diagrams, as in the design; the slide-in menu
+         it replaces is gone. -->
+    <nav class="header-nav" aria-label="Primary">
+      <a class="header-home" href="index.html">Home</a>
+      <a class="header-cta" href="diagram.html#extended">Explore TPRAF <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path transform="translate(6.04 6.04) scale(.72)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg></a>
     </nav>
   </header>
   <!-- /LAYOUT:HEADER -->
@@ -84,8 +49,7 @@
         <div class="hero-side">
           <p class="tagline">For people, for place, for a more sustainable future.</p>
           <div class="hero-actions">
-            <a class="btn-sm btn-sm-solid" href="diagram.html#extended">Explore TPRAF <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 6.2 12 10l-4 3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-            <a class="btn-sm btn-sm-link" href="#what-is-tpraf">What is TPRAF? <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 6.2 12 10l-4 3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="btn-sm btn-sm-link" href="#what-is-tpraf">What is TPRAF? <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path transform="translate(6.04 6.04) scale(.72)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg></a>
           </div>
         </div>
       </div>
@@ -217,14 +181,18 @@
           <h3 class="diagram-title" id="diagram-title"></h3>
           <p class="diagram-subtitle" id="diagram-subtitle"></p>
 
-          <!-- Always open — same as diagram.html's copy (see there) -->
-          <div class="diagram-guide" id="diagram-guide">
-            <div class="diagram-guide-toggle" id="diagram-guide-toggle">
+          <!-- The way on to the extended form, under the title. -->
+          <a class="btn-sm btn-sm-solid landing-extend" href="diagram.html#extended">Explore the extended form <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path transform="translate(6.04 6.04) scale(.72)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg></a>
+
+          <!-- Collapsed bar above the card, as in the design. (diagram.html keeps it open.) -->
+          <div class="diagram-guide" id="diagram-guide" data-collapsed="true">
+            <button type="button" class="diagram-guide-toggle" id="diagram-guide-toggle" aria-expanded="false" aria-controls="diagram-guide-body">
               <span class="diagram-guide-toggle-label">
                 <svg class="diagram-guide-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/></svg>
-                How to explore this diagram
+                How to explore this diagram?
               </span>
-            </div>
+              <svg class="diagram-guide-chevron" viewBox="0 0 11 11" aria-hidden="true"><path transform="rotate(90 5.5 5.5)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg>
+            </button>
             <div class="diagram-guide-body" id="diagram-guide-body"></div>
           </div>
 
@@ -234,25 +202,24 @@
             <button type="button" id="process-btn-imp" aria-pressed="false">IMP only</button>
           </div>
 
-          <!-- Walkthrough — same markup/behaviour as diagram.html's (see there) -->
-          <div class="diagram-tour" id="diagram-tour">
-            <button type="button" class="tour-play tour-guide" id="lesson-start-inline" hidden>
-              <span class="tour-play-icon" aria-hidden="true"></span>
-              <span id="lesson-start-inline-label">Take the guided tour</span>
-            </button>
-            <button type="button" class="tour-play" id="tour-play">
-              <span class="tour-play-icon" aria-hidden="true"></span>
-              <span id="tour-play-label">Play walkthrough</span>
-            </button>
-            <p class="tour-caption" id="tour-caption" aria-live="polite">Watch the steps play.</p>
-            <div class="tour-actions">
-              <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
-              <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
-            </div>
-          </div>
-
           <p class="scroll-hint">&larr; Swipe or drag to explore the full diagram &rarr;</p>
           <div class="diagram-viewport">
+            <!-- Walkthrough — same markup/behaviour as diagram.html's (see there) -->
+            <div class="diagram-tour" id="diagram-tour">
+              <button type="button" class="tour-play tour-guide" id="lesson-start-inline" hidden>
+                <span class="tour-play-icon" aria-hidden="true"></span>
+                <span id="lesson-start-inline-label">Take a tour</span>
+              </button>
+              <button type="button" class="tour-play" id="tour-play">
+                <span class="tour-play-icon" aria-hidden="true"></span>
+                <span id="tour-play-label">Play walkthrough</span>
+              </button>
+              <p class="tour-caption" id="tour-caption" aria-live="polite">Watch the steps play.</p>
+              <div class="tour-actions">
+                <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
+                <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
+              </div>
+            </div>
             <button type="button" class="zoom-toggle" id="zoom-toggle" aria-expanded="false" aria-controls="zoom-controls" aria-label="Zoom controls">
               <img src="assets/icons/zoom-plus.svg" alt="" width="45" height="45" />
             </button>
@@ -298,7 +265,7 @@
             <summary>
               <img class="info-bar-icon" src="assets/icons/bar-website.svg" alt="" width="36" height="59" style="--w:36;--h:59;--left:31" />
               <span class="info-bar-label">DARe Website</span>
-              <svg class="bar-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6.5 10 13.5l6.5-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="bar-chevron" viewBox="0 0 11 11" aria-hidden="true"><path transform="rotate(90 5.5 5.5)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg>
             </summary>
             <div class="info-bar-body">
               <p>The DARe Hub&rsquo;s main site, at dare.ac.uk.</p>
@@ -309,7 +276,7 @@
             <summary>
               <img class="info-bar-icon" src="assets/icons/bar-repository.svg" alt="" width="55" height="55" style="--w:55;--h:55;--left:31" />
               <span class="info-bar-label">DARe Repository</span>
-              <svg class="bar-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6.5 10 13.5l6.5-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="bar-chevron" viewBox="0 0 11 11" aria-hidden="true"><path transform="rotate(90 5.5 5.5)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg>
             </summary>
             <div class="info-bar-body">
               <p>Datasets, models, and outputs from across the DARe Hub.</p>
@@ -320,7 +287,7 @@
             <summary>
               <img class="info-bar-icon" src="assets/icons/bar-email.svg" alt="" width="46" height="36" style="--w:46;--h:36;--left:35" />
               <span class="info-bar-label">Email us</span>
-              <svg class="bar-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6.5 10 13.5l6.5-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="bar-chevron" viewBox="0 0 11 11" aria-hidden="true"><path transform="rotate(90 5.5 5.5)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg>
             </summary>
             <div class="info-bar-body">
               <p>Questions about TPRAF or the DARe Hub&rsquo;s work.</p>
@@ -367,7 +334,7 @@
             through the extended diagram and the Level 2 component maps.
           </p>
         </div>
-        <a class="cta-button" href="diagram.html#extended">Explore TPRAF <svg class="cta-circle" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 6.2 12 10l-4 3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="cta-button" href="diagram.html#extended">Explore TPRAF <svg class="cta-circle" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path transform="translate(6.04 6.04) scale(.72)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg></a>
       </div>
     </section>
 
