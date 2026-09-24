@@ -3593,11 +3593,11 @@ html.menu-open { overflow: hidden; }
 }
 
 .diagram-page .landing-diagram > * { grid-column: 1 / -1; }
-.diagram-page .landing-diagram > .diagram-toolbar { grid-column: 1; grid-row: 1; order: 0; }
+.diagram-page .landing-diagram .diagram-toolbar { grid-column: 1; grid-row: 1; order: 0; }
 .diagram-page .landing-diagram > .diagram-tour { grid-column: 2; grid-row: 1; margin: 0; justify-self: end; }
 
 @media (max-width: 900px) {
-  .diagram-page .landing-diagram > .diagram-toolbar { grid-column: 1 / -1; }
+  .diagram-page .landing-diagram .diagram-toolbar { grid-column: 1 / -1; }
   .diagram-page .landing-diagram > .diagram-tour { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; margin-top: 0.75rem; }
 }
 
@@ -3718,4 +3718,78 @@ html.menu-open { overflow: hidden; }
   }
 
   .diagram-page .landing-diagram .diagram-viewport.zoom-open .zoom-controls { display: flex; }
+}
+
+/* Level picker. On a desktop the wrapper disappears and the tabs are the row of
+   pills styled above; the dropdown button only exists on phones. */
+.level-select { display: contents; }
+.level-current { display: none; }
+
+@media (max-width: 760px) {
+  /* The breadcrumb repeats the logo and menu link, so a phone drops it. */
+  .breadcrumb { display: none; }
+  .diagram-hero-inner { padding-top: 0.85rem; padding-bottom: 0.9rem; }
+  .diagram-page .diagram-hero h1 { font-size: 1.35rem; }
+
+  .level-select { display: block; position: relative; grid-column: 1 / -1; grid-row: 1; }
+
+  .level-current {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: 12px;
+    background: var(--color-white);
+    color: var(--color-water);
+    font-family: var(--font-brand);
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .level-current:focus-visible { outline: 3px solid var(--color-water); outline-offset: 2px; }
+  .level-current-chevron { width: 1.1rem; height: 1.1rem; flex: none; transition: transform 0.15s ease; }
+  .level-select.is-open .level-current-chevron { transform: rotate(180deg); }
+
+  /* The pills become the list under the button. */
+  .diagram-page .level-select .diagram-toolbar {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.35rem;
+    overflow: visible;
+    border-radius: 12px;
+    background: var(--color-white);
+    box-shadow: 0 8px 24px rgba(0, 41, 94, 0.18);
+    cursor: default;
+  }
+
+  .diagram-page .level-select.is-open .diagram-toolbar { display: flex; }
+
+  .diagram-page .level-select .level-tab {
+    padding: 0.8rem 0.9rem;
+    border-radius: 8px;
+    background: none;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .diagram-page .level-select .level-tab[aria-selected="true"] { background: var(--color-water); color: var(--color-white); }
+
+  /* Actions: the tour buttons in one row, then the filter as three equal
+     segments across the full width. */
+  .diagram-page .landing-diagram > .diagram-tour { grid-row: 2; }
+  .diagram-page .landing-diagram .process-toggle { justify-self: stretch; width: 100%; margin-top: 0.5rem; }
+  .diagram-page .landing-diagram .process-toggle button { flex: 1 1 0; text-align: center; padding-left: 0.4rem; padding-right: 0.4rem; }
 }

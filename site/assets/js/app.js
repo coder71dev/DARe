@@ -2172,7 +2172,33 @@
     document.querySelectorAll(".level-tab").forEach((t) => {
       t.setAttribute("aria-selected", String(t.dataset.view === viewKey));
     });
+    syncLevelPicker();
     renderDiagram(viewKey);
+  }
+
+  // Phone level picker: the tabs fold into a dropdown whose button names the
+  // current level. Choosing a level closes it; so does tapping elsewhere or Escape.
+  const levelSelect = document.getElementById("level-select");
+  const levelCurrent = document.getElementById("level-current");
+  const levelCurrentLabel = document.getElementById("level-current-label");
+
+  function setLevelPickerOpen(open) {
+    if (!levelSelect) return;
+    levelSelect.classList.toggle("is-open", open);
+    levelCurrent.setAttribute("aria-expanded", String(open));
+  }
+
+  function syncLevelPicker() {
+    if (!levelSelect) return;
+    const active = document.querySelector('.level-tab[aria-selected="true"]');
+    if (active) levelCurrentLabel.textContent = active.textContent.trim();
+    setLevelPickerOpen(false);
+  }
+
+  if (levelSelect) {
+    levelCurrent.addEventListener("click", () => setLevelPickerOpen(!levelSelect.classList.contains("is-open")));
+    document.addEventListener("click", (e) => { if (!levelSelect.contains(e.target)) setLevelPickerOpen(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setLevelPickerOpen(false); });
   }
 
   document.querySelectorAll(".level-tab").forEach((tab) => {

@@ -93,13 +93,20 @@
         <!-- Same block as the homepage's simple form: the diagram sits in a white
              card, with the tour buttons above it and the guide below. -->
         <div class="landing-diagram">
-          <!-- Level tabs: a row of pills, swiped or dragged when it overflows. -->
-          <div class="diagram-toolbar" id="diagram-toolbar" role="tablist" aria-label="Diagram level">
-            <button class="level-tab" data-view="simple" aria-selected="true">Level 1 &middot; Simple</button>
-            <button class="level-tab" data-view="extended">Level 1 &middot; Extended</button>
-            <button class="level-tab" data-view="dsp">Level 2 &middot; DSP</button>
-            <button class="level-tab" data-view="imp">Level 2 &middot; IMP</button>
-            <button class="level-tab" data-view="level3">Level 3 &middot; Example</button>
+          <!-- Level picker. On a desktop it is the row of pills below; on a phone
+               the pills fold into one dropdown showing the current level. -->
+          <div class="level-select" id="level-select">
+            <button type="button" class="level-current" id="level-current" aria-expanded="false" aria-controls="diagram-toolbar">
+              <span class="level-current-label" id="level-current-label">Level 1 &middot; Simple</span>
+              <svg class="level-current-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="diagram-toolbar" id="diagram-toolbar" role="tablist" aria-label="Diagram level">
+              <button class="level-tab" data-view="simple" aria-selected="true">Level 1 &middot; Simple</button>
+              <button class="level-tab" data-view="extended">Level 1 &middot; Extended</button>
+              <button class="level-tab" data-view="dsp">Level 2 &middot; DSP</button>
+              <button class="level-tab" data-view="imp">Level 2 &middot; IMP</button>
+              <button class="level-tab" data-view="level3">Level 3 &middot; Example</button>
+            </div>
           </div>
 
       <!-- How to explore: always open. It sits below the diagram, so it never
