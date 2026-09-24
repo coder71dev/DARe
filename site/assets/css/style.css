@@ -3667,9 +3667,55 @@ html.menu-open { overflow: hidden; }
   font-size: clamp(0.9rem, 1vw, 19px);
 }
 
-/* Phone: give the swipe hint room under the filter, and keep the filter off the
-   tour buttons above it. */
+/* Phone: a lot less above the diagram, so it starts near the top of the
+   screen. The search box moves out of the header (the menu still has every
+   link), the title band drops to a breadcrumb and a short title, the two tour
+   buttons share one row, and the zoom controls fold behind the round button
+   at the corner of the card instead of taking a row of their own. */
 @media (max-width: 760px) {
-  .diagram-page .landing-diagram .scroll-hint { margin: 0.75rem 0 0.6rem; }
-  .diagram-page .landing-diagram .process-toggle { margin-top: 0.75rem; }
+  .diagram-page .site-header .header-tools { display: none; }
+
+  .diagram-hero-inner { gap: 0.25rem; padding-top: 0.6rem; padding-bottom: 0.7rem; }
+  .diagram-hero .hero-label { display: none; }
+  .breadcrumb { font-size: 0.75rem; }
+  .diagram-page .diagram-hero h1 { font-size: 1.2rem; line-height: 1.2; }
+
+  .diagram-page .diagram-band { padding-top: 0.75rem; padding-bottom: 2rem; }
+  .diagram-page .landing-diagram > .diagram-tour { margin-top: 0.5rem; padding: 0; gap: 0.5rem; flex-wrap: nowrap; }
+  .diagram-page .landing-diagram .tour-play { flex: 1 1 0; height: 2.6rem; padding: 0 0.5rem; font-size: 0.85rem; white-space: nowrap; }
+  .diagram-page .landing-diagram .tour-caption:not(.is-active) { display: none; }
+  .diagram-page .landing-diagram .tour-caption.is-active { flex: 1 0 100%; }
+  .diagram-page .landing-diagram .process-toggle { margin-top: 0.5rem; }
+  .diagram-page .landing-diagram .scroll-hint { margin: 0.5rem 0 0.4rem; font-size: 0.8rem; }
+  .diagram-page .landing-diagram .diagram-viewport { margin-top: 0; padding: 0.4rem; border-radius: 16px; }
+
+  .diagram-page .zoom-toggle {
+    position: absolute;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-leaf);
+    color: var(--color-white);
+    cursor: pointer;
+  }
+
+  .diagram-page .zoom-toggle img { display: block; width: 50%; height: auto; }
+
+  .diagram-page .landing-diagram .zoom-controls {
+    display: none;
+    position: absolute;
+    right: 3.6rem;
+    bottom: 0.6rem;
+    margin: 0;
+  }
+
+  .diagram-page .landing-diagram .diagram-viewport.zoom-open .zoom-controls { display: flex; }
 }
