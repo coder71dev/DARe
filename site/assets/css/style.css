@@ -3635,12 +3635,30 @@ html.menu-open { overflow: hidden; }
   .diagram-page .landing-diagram .diagram-viewport { padding: 0.5rem; border-radius: 16px; }
 }
 
-/* Filter buttons line up with the tabs and tour buttons, not centred. */
+/* Show all / DSP only / IMP only: one segmented control in the same white-pill
+   style as the level tabs (current one navy), lined up with them on the left. */
 .diagram-page .landing-diagram .process-toggle {
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  margin: 0 0 clamp(0.75rem, 1.2vw, 24px);
+  justify-self: start;
+  gap: 0;
+  margin: clamp(0.5rem, 0.8vw, 15px) 0 0;
+  padding: clamp(3px, 0.25vw, 5px);
+  background: var(--color-white);
+  border-radius: clamp(8px, 0.73vw, 14px);
 }
+
+.diagram-page .process-toggle button {
+  border: 0;
+  background: none;
+  padding: clamp(0.35rem, 0.45vw, 9px) clamp(0.8rem, 0.9vw, 17px);
+  border-radius: clamp(6px, 0.55vw, 11px);
+  font-size: clamp(0.85rem, 0.95vw, 18px);
+  font-weight: 400;
+  line-height: 1.1197;
+  white-space: nowrap;
+}
+
+.diagram-page .process-toggle button[aria-pressed="true"] { background: var(--color-water); color: var(--color-white); }
+.diagram-page .process-toggle button:focus-visible { outline: 3px solid var(--color-water); outline-offset: 2px; }
 
 /* Tour buttons on the tabs' row are a touch smaller than on the homepage. */
 .diagram-page .landing-diagram .tour-play {
