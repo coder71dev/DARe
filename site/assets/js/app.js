@@ -832,7 +832,9 @@
     if (!crop || !sizer || !wrap || !zoomInBtn || !zoomOutBtn || !zoomFitBtn || !zoomResetBtn || !zoomLevelEl) return;
 
     const MIN_NATURAL_WIDTH = 900; // same floor the original static CSS used
-    const MAX_NATURAL_WIDTH = 1200; // same ceiling the original static CSS used
+    // Same ceiling the original static CSS used — except on the landing page,
+    // where the design gives the diagram the card's full width (about 1450px).
+    const MAX_NATURAL_WIDTH = document.querySelector(".landing-diagram") ? 1600 : 1200;
     const ABSOLUTE_MIN_ZOOM = 0.25; // safety floor so it can never become unusably tiny
     const MAX_ZOOM = 2;
     const STEP = 0.15;
@@ -2164,11 +2166,58 @@
     }
   }
 
-  // It should start open by default (the "open" attribute in index.html
-  // handles a fresh load) — but some browsers restore a <details> element's
-  // open/closed state on a plain reload the same way they restore scroll
-  // position, so a visitor who closed it could have it come back closed on
-  // their next reload. Force it open on every load so the default is
-  // consistent regardless of that.
-  document.querySelectorAll(".ack-card").forEach((el) => { el.open = true; });
+  // Round zoom button on the home page's diagram card: shows/hides the zoom controls.
+  const zoomToggle = document.getElementById("zoom-toggle");
+  if (zoomToggle) {
+    const viewport = zoomToggle.closest(".diagram-viewport");
+    zoomToggle.addEventListener("click", () => {
+      const open = viewport.classList.toggle("zoom-open");
+      zoomToggle.setAttribute("aria-expanded", String(open));
+    });
+  }
+
+  // Header "Menu" button on the home page: slides the menu panel in from the
+  // right, like dare.ac.uk's. Items with a circle arrow open a second panel;
+  // Escape closes it, then the menu.
+  const menuToggle = document.getElementById("menu-toggle");
+  const siteMenu = document.getElementById("site-menu");
+  if (menuToggle && siteMenu) {
+    const root = document.documentElement;
+    const subItems = siteMenu.querySelectorAll(".has-sub");
+    const closeSubs = () => {
+      subItems.forEach((li) => {
+        li.classList.remove("is-open");
+        li.querySelector(":scope > a").setAttribute("aria-expanded", "false");
+      });
+      root.classList.remove("menu-sub-open");
+    };
+    const setMenu = (open) => {
+      siteMenu.classList.toggle("is-open", open);
+      siteMenu.inert = !open;
+      menuToggle.setAttribute("aria-expanded", String(open));
+      root.classList.toggle("menu-open", open);
+      if (!open) closeSubs();
+    };
+    setMenu(false);
+    menuToggle.addEventListener("click", () => setMenu(!siteMenu.classList.contains("is-open")));
+    subItems.forEach((li) => {
+      const link = li.querySelector(":scope > a");
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        li.classList.add("is-open");
+        link.setAttribute("aria-expanded", "true");
+        root.classList.add("menu-sub-open");
+        li.querySelector(".sub-menu a").focus({ preventScroll: true });
+      });
+      li.querySelector(".sub-nav-back").addEventListener("click", () => { closeSubs(); link.focus(); });
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || !siteMenu.classList.contains("is-open")) return;
+      if (root.classList.contains("menu-sub-open")) closeSubs();
+      else { setMenu(false); menuToggle.focus(); }
+    });
+    document.addEventListener("click", (e) => {
+      if (siteMenu.classList.contains("is-open") && !siteMenu.contains(e.target) && !menuToggle.contains(e.target)) setMenu(false);
+    });
+  }
 })();
