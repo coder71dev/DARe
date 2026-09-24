@@ -953,7 +953,9 @@
       const cropH = ((natW * 6858 * currentScale) / 12192) * currentCropRatio;
       const top = wrap.getBoundingClientRect().top + window.scrollY;
       const availH = window.innerHeight - top - FIT_BOTTOM_GAP;
-      zoom = Math.max(FIT_ON_LOAD_MIN_ZOOM, Math.min(1, availableWidth() / fullWidth(), availH / cropH));
+      const fit = Math.min(1, availableWidth() / fullWidth(), availH / cropH);
+      // A hair under the exact fit, so rounding never tips it into scrollbars.
+      zoom = Math.max(FIT_ON_LOAD_MIN_ZOOM, fit < 1 ? fit * 0.985 : fit);
       wrap.scrollLeft = 0;
       applyZoom();
     };
