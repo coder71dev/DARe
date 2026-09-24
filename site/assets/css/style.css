@@ -1275,7 +1275,8 @@ a { color: var(--color-sky); }
 .diagram-cluster-bg.variant-c4,
 .diagram-cluster-bg.variant-c5,
 .diagram-cluster-bg.variant-c6 {
-  border-radius: 0 0 14px 14px;
+  border-radius: calc(var(--fs, 12px) * 0.55);
+  border-width: 0.5px;
 }
 
 /* IMP cluster backgrounds — the fills from level_2_slide_12.png itself.
@@ -4062,4 +4063,30 @@ html.menu-open { overflow: hidden; }
   align-items: flex-start;
   justify-content: flex-end;
   gap: clamp(0.6rem, 1vw, 20px);
+}
+
+/* DSP, as drawn in the Figma design: the stage title sits inside its group as
+   a rounded bar (not a tab on top of it), no shadow, and the box text is
+   semi-bold. */
+.diagram-heading.variant-c1,
+.diagram-heading.variant-c2,
+.diagram-heading.variant-c3,
+.diagram-heading.variant-c4,
+.diagram-heading.variant-c5,
+.diagram-heading.variant-c6 {
+  border-radius: calc(var(--fs, 12px) * 0.45);
+  box-shadow: none;
+}
+
+.diagram-heading.variant-c2,
+.diagram-heading.variant-c3 { color: var(--color-white); }
+
+.diagram-viewport[data-view="dsp"] .diagram-box { font-weight: 600; }
+
+/* The Criteria X, Y, Z box sits over the foot of this strip, so its label
+   (which reads upward from the bottom) starts above it instead of under it. */
+.diagram-box[data-box-id="dsp-multi-criteria-cost-benefit"] {
+  padding-top: 3.2em;
+  font-size: calc(var(--fs, 12px) * 0.8);
+  white-space: nowrap;
 }

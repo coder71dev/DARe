@@ -511,6 +511,7 @@ const TPRAF_CONTENT = {
      process-stage groupings from the source image are preserved as
      labelled clusters left-to-right in the same order. */
   dsp: {
+    scale: 1.4,
     title: "Overview of DSP Components",
     subtitle: "Level 2 — Decision Support Process",
     legend: [
@@ -534,29 +535,29 @@ const TPRAF_CONTENT = {
       // generic "input" colour (Transport/Climate Scenarios match Asset/
       // Network Evaluation's blue; Requirements/Context/Constraints match
       // Problem Framing's grey).
-      { id: "dsp-transport-scenarios", label: "Transport Scenarios", pos: { left: 2.7, top: 12, width: 14, height: 6 }, text: "Input to the Asset/Network Evaluation Process: Representation of current and/or future travel demand and transport network supply; may be modelled utilising the methods contained within the Integrated Modelling Platform (IMP).", isPlaceholder: false, handbookUrl: "#", variant: "sky-pale" },
-      { id: "dsp-climate-scenarios", label: "Climate Scenarios", pos: { left: 2.7, top: 21, width: 14, height: 6 }, text: "Input to the Asset/Network Evaluation Process: Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections); also contained within the Integrated Modelling Platform (IMP).", isPlaceholder: false, handbookUrl: "#", variant: "sky-pale" },
-      { id: "dsp-requirements", label: "Requirements", pos: { left: 25.7, top: 7, width: 14, height: 5 }, text: "Input to the Problem Framing and Context Process. Relevant service, safety, regulatory, design, and performance requirements.", isPlaceholder: false, handbookUrl: "#", variant: "c2-input" },
-      { id: "dsp-context", label: "Context", pos: { left: 25.7, top: 14.5, width: 14, height: 5 }, text: "Input to the Problem Framing and Context Process. Relevant operational, spatial, environmental, access, planning, delivery, and resource constraints.", isPlaceholder: false, handbookUrl: "#", variant: "c2-input" },
+      { id: "dsp-transport-scenarios", label: "Transport Scenarios", pos: { left: 3.93, top: 12.88, width: 10.74, height: 3.93 }, text: "Input to the Asset/Network Evaluation Process: Representation of current and/or future travel demand and transport network supply; may be modelled utilising the methods contained within the Integrated Modelling Platform (IMP).", isPlaceholder: false, handbookUrl: "#", variant: "sky-pale" },
+      { id: "dsp-climate-scenarios", label: "Climate Scenarios", pos: { left: 3.93, top: 19.76, width: 10.74, height: 3.93 }, text: "Input to the Asset/Network Evaluation Process: Models for testing how the climate responds to different environmental conditions, such as UKCP18-Local (UK Climate Projections); also contained within the Integrated Modelling Platform (IMP).", isPlaceholder: false, handbookUrl: "#", variant: "sky-pale" },
+      { id: "dsp-requirements", label: "Requirements", pos: { left: 19.93, top: 6.0, width: 10.74, height: 3.93 }, text: "Input to the Problem Framing and Context Process. Relevant service, safety, regulatory, design, and performance requirements.", isPlaceholder: false, handbookUrl: "#", variant: "c2-input" },
+      { id: "dsp-context", label: "Context", pos: { left: 19.93, top: 12.88, width: 10.74, height: 3.93 }, text: "Input to the Problem Framing and Context Process. Relevant operational, spatial, environmental, access, planning, delivery, and resource constraints.", isPlaceholder: false, handbookUrl: "#", variant: "c2-input" },
       // Same wording as Context, deliberately — the client's 23 Sept note says the team may delete this box later (tbc); fine to stay for now.
-      { id: "dsp-constraints", label: "Constraints", pos: { left: 25.7, top: 22, width: 14, height: 5 }, text: "Input to the Problem Framing and Context Process. Relevant operational, spatial, environmental, access, planning, delivery, and resource constraints.", isPlaceholder: false, handbookUrl: "#", variant: "c2-input" },
+      { id: "dsp-constraints", label: "Constraints", pos: { left: 19.93, top: 19.76, width: 10.74, height: 3.93 }, text: "Input to the Problem Framing and Context Process. Relevant operational, spatial, environmental, access, planning, delivery, and resource constraints.", isPlaceholder: false, handbookUrl: "#", variant: "c2-input" },
 
       // Cluster 1 — Asset/Network Evaluation, doubled in width to match the
       // source's much wider leftmost stage. Middle three still sit in the
       // dashed sub-group; the Asset Performance connectors are one-way
       // (up into Risk Assessment, down into Resilience Assessment).
-      { id: "dsp-sustainability", label: "Sustainability", pos: { left: 3.9, top: 34, width: 14, height: 5.8 }, text: "Identifies and measures sustainability and environmental goals in line with net zero, decarbonisation, pollution, and biodiversity plans, supporting sustainable supply chains and embedding environmental criteria into procurement, design, construction, and the asset lifecycle within available budgets.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-risk-assessment", label: "Risk Assessment", pos: { left: 3.9, top: 43.8, width: 14, height: 5.8 }, text: "Quantifies risks of failure and disruption, evaluates risks of inaction measures at asset, system, and network levels, including risks from infrastructure ageing, extreme weather, climate change, and other shocks. Engaging with different organisations to understand their risk tolerance and, based on this, identify and/or prioritise their risk reduction needs.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-asset-performance", label: "Asset Performance", pos: { left: 3.9, top: 53.6, width: 14, height: 5.8 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-resilience-assessment", label: "Resilience Assessment", pos: { left: 3.9, top: 63.4, width: 14, height: 5.8 }, text: "Uses asset condition and performance information to understand how assets, systems and networks may respond to disruption and recover following disruptive events. Resilience assessments may identify performance vulnerabilities that require further investigation within the Asset Performance Module.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-asset-registry", label: "Asset Registry", pos: { left: 3.9, top: 73.2, width: 14, height: 5.8 }, text: "Catalogues all existing assets (type, location, condition, history) and serves as the central database from which all other analyses are conducted, ensuring asset information is accessible.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-sustainability", label: "Sustainability", pos: { left: 3.93, top: 34.68, width: 10.74, height: 3.93 }, text: "Identifies and measures sustainability and environmental goals in line with net zero, decarbonisation, pollution, and biodiversity plans, supporting sustainable supply chains and embedding environmental criteria into procurement, design, construction, and the asset lifecycle within available budgets.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-risk-assessment", label: "Risk Assessment", pos: { left: 3.93, top: 41.56, width: 10.74, height: 3.93 }, text: "Quantifies risks of failure and disruption, evaluates risks of inaction measures at asset, system, and network levels, including risks from infrastructure ageing, extreme weather, climate change, and other shocks. Engaging with different organisations to understand their risk tolerance and, based on this, identify and/or prioritise their risk reduction needs.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-performance", label: "Asset Performance", pos: { left: 3.93, top: 48.74, width: 10.74, height: 3.93 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment", label: "Resilience Assessment", pos: { left: 3.93, top: 55.93, width: 10.74, height: 3.93 }, text: "Uses asset condition and performance information to understand how assets, systems and networks may respond to disruption and recover following disruptive events. Resilience assessments may identify performance vulnerabilities that require further investigation within the Asset Performance Module.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-asset-registry", label: "Asset Registry", pos: { left: 3.93, top: 63.11, width: 10.74, height: 3.93 }, text: "Catalogues all existing assets (type, location, condition, history) and serves as the central database from which all other analyses are conducted, ensuring asset information is accessible.", isPlaceholder: false, handbookUrl: "#" },
 
       // Cluster 2 — Problem Framing and Scope, doubled to match the source's
       // wider second stage (same treatment as Asset/Network Evaluation).
-      { id: "dsp-system-interdependencies", label: "System Interdependencies", pos: { left: 25.7, top: 34, width: 14, height: 8.25 }, text: "Establishes, and where possible quantifies, relationships between the asset and other assets, networks, users, and its wider policy and organisational, and climate change/environment context, in order to define the scope or boundary of assets considered in investment decisions and to identify the information sources required to support those decisions.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-problem-definition", label: "Problem Definition", pos: { left: 25.7, top: 46.25, width: 14, height: 8.25 }, text: "Problem statements translate identified vulnerabilities, risk and system challenges into clearly articulated transport problems. These may initially be developed as macro-level problem statement(s) representing strategic transport challenges associated with one or more vulnerability vectors.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-primary-impact-identification", label: "Primary Impact Identification", pos: { left: 25.7, top: 58.5, width: 14, height: 8.25 }, text: "The primary impacts of the problem statements on different transports system levels such as assets, networks, users and policy and organisational elements are identified.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-option-ideation", label: "Option Ideation (Long List)", pos: { left: 25.7, top: 70.75, width: 14, height: 8.25 }, text: "Intervention ideation is used to explore potential responses to the identified problem statement and their associated impacts.", isPlaceholder: false, handbookUrl: "#", stacked: true },
+      { id: "dsp-system-interdependencies", label: "System Interdependencies", pos: { left: 20.21, top: 34.68, width: 10.74, height: 5.4 }, text: "Establishes, and where possible quantifies, relationships between the asset and other assets, networks, users, and its wider policy and organisational, and climate change/environment context, in order to define the scope or boundary of assets considered in investment decisions and to identify the information sources required to support those decisions.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-problem-definition", label: "Problem Definition", pos: { left: 20.21, top: 43.52, width: 10.74, height: 5.4 }, text: "Problem statements translate identified vulnerabilities, risk and system challenges into clearly articulated transport problems. These may initially be developed as macro-level problem statement(s) representing strategic transport challenges associated with one or more vulnerability vectors.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-primary-impact-identification", label: "Primary Impact Identification", pos: { left: 20.21, top: 52.37, width: 10.74, height: 5.4 }, text: "The primary impacts of the problem statements on different transports system levels such as assets, networks, users and policy and organisational elements are identified.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-option-ideation", label: "Option Ideation (Long List)", pos: { left: 20.21, top: 61.21, width: 10.74, height: 5.4 }, text: "Intervention ideation is used to explore potential responses to the identified problem statement and their associated impacts.", isPlaceholder: false, handbookUrl: "#" },
 
       // Cluster 3 — Risk Reduction Analysis. Risk Thresholds on top (full
       // width); below it, well-spaced: Option Matrix (rotated vertical
@@ -564,11 +565,11 @@ const TPRAF_CONTENT = {
       // Interventions "long list" — each with a real 2.5-unit gap between
       // them so the connecting arrows are legible, not overlapping the
       // boxes. Resilience Assessment sits underneath as its own row.
-      { id: "dsp-risk-thresholds", label: "Risk Thresholds", pos: { left: 46.1, top: 34, width: 20, height: 7 }, text: "Compare the assessed risk against user-defined or organisational thresholds, tolerability criteria, statutory requirements, service standards, and risk appetite. This step determines whether the risk can be accepted or whether a defined risk reduction need must be established.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-option-matrix", label: "Option Matrix", pos: { left: 46.1, top: 46, width: 3.5, height: 14 }, vertical: true, text: "Options may be screened against factors such as strategic alignment, technical feasibility, environmental constraints, deliverability, affordability, stakeholder acceptability, and consistency with the objectives defined during the Problem Framing stage. The assessment should be transparent and documented to provide a clear rationale for the inclusion or exclusion of options.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-selection-screened-list", label: "Selection/\nScreened list", pos: { left: 51.4, top: 48, width: 9.5, height: 9.5 }, shape: "diamond", text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
-      { id: "dsp-interventions", label: "Interventions", pos: { left: 62.6, top: 46, width: 3.5, height: 14 }, vertical: true, stacked: true, text: "A list of interventions that are feasible, compliant, appropriate and able to achieve the required risk reductions. These could be a single intervention, multiple, adaptations or transformational pathways.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-resilience-assessment-2", label: "Resilience Assessment", pos: { left: 46.1, top: 65, width: 20, height: 7 }, text: "Based on the resilience analysis results from the IMP, considering both long-term trends and short-term event-based perspectives, to qualitatively assess whether resilience-related risks are present.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-risk-thresholds", label: "Risk Thresholds", pos: { left: 35.27, top: 34.68, width: 13.27, height: 3.93 }, text: "Compare the assessed risk against user-defined or organisational thresholds, tolerability criteria, statutory requirements, service standards, and risk appetite. This step determines whether the risk can be accepted or whether a defined risk reduction need must be established.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-option-matrix", label: "Option Matrix", pos: { left: 35.27, top: 41.07, width: 2.21, height: 19.1 }, vertical: true, text: "Options may be screened against factors such as strategic alignment, technical feasibility, environmental constraints, deliverability, affordability, stakeholder acceptability, and consistency with the objectives defined during the Problem Framing stage. The assessment should be transparent and documented to provide a clear rationale for the inclusion or exclusion of options.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-selection-screened-list", label: "Selection/\nScreened list", pos: { left: 38.91, top: 45.2, width: 5.98, height: 10.68 }, shape: "diamond", text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#" },
+      { id: "dsp-interventions", label: "Interventions", pos: { left: 46.32, top: 41.07, width: 2.21, height: 19.1 }, vertical: true, text: "A list of interventions that are feasible, compliant, appropriate and able to achieve the required risk reductions. These could be a single intervention, multiple, adaptations or transformational pathways.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment-2", label: "Resilience Assessment", pos: { left: 35.27, top: 62.68, width: 13.27, height: 3.93 }, text: "Based on the resilience analysis results from the IMP, considering both long-term trends and short-term event-based perspectives, to qualitatively assess whether resilience-related risks are present.", isPlaceholder: false, handbookUrl: "#" },
 
       // Cluster 4 — Detailed Option Assessment. "Multi Criteria / Cost
       // Benefit Analysis" runs as a rotated vertical label down the full
@@ -578,52 +579,48 @@ const TPRAF_CONTENT = {
       // Analysis" strip: their left edge lines up with the strip's right edge
       // and its left corners are squared (attachLeft), so they read as one
       // connected unit inside the group box.
-      { id: "dsp-multi-criteria-cost-benefit", label: "Multi Criteria / Cost Benefit Analysis", pos: { left: 71.6, top: 34, width: 4, height: 45 }, vertical: true, square: true, text: "This process involves a criteria selection process and a detailed development and assessment of shortlisted options / pathways.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-asset-performance-2", label: "Asset Performance", pos: { left: 75.6, top: 34, width: 14.5, height: 5.8 }, attachLeft: true, text: "Captures and updates the physical condition of assets, tracking deterioration and deformation as condition degrades over time.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-resilience-assessment-3", label: "Resilience Assessment", pos: { left: 75.6, top: 43.8, width: 14.5, height: 5.8 }, attachLeft: true, text: "Assesses how different interventions perform and how quickly assets and networks recover after implementation, including under disruptive events.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-sustainability-2", label: "Sustainability", pos: { left: 75.6, top: 53.6, width: 14.5, height: 5.8 }, attachLeft: true, text: "Identifies and measures sustainability and environmental goals in line with net zero, decarbonisation, pollution, and biodiversity plans, supporting sustainable supply chains and embedding environmental criteria into procurement, design, construction, and the asset lifecycle within available budgets.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-economic-impact", label: "Economic Impact", pos: { left: 75.6, top: 63.4, width: 14.5, height: 5.8 }, attachLeft: true, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-criteria-xyz", label: "Criteria X, Y, Z", pos: { left: 75.6, top: 73.2, width: 14.5, height: 5.8 }, attachLeft: true, text: "The full appraisal can be expanded beyond the current module functionality to capture a wide range of user needs and project requirements. Additional criteria may include deliverability, supply-chain security, constructability, reputational effects, strategic alignment, governance, and stakeholder acceptability.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-multi-criteria-cost-benefit", label: "Multi Criteria / Cost Benefit Analysis", pos: { left: 51.54, top: 34.68, width: 2.21, height: 32.36 }, vertical: true, text: "This process involves a criteria selection process and a detailed development and assessment of shortlisted options / pathways.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-performance-2", label: "Asset Performance", pos: { left: 54.44, top: 34.68, width: 10.33, height: 3.93 }, text: "Captures and updates the physical condition of assets, tracking deterioration and deformation as condition degrades over time.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-resilience-assessment-3", label: "Resilience Assessment", pos: { left: 54.44, top: 41.56, width: 10.33, height: 3.93 }, text: "Assesses how different interventions perform and how quickly assets and networks recover after implementation, including under disruptive events.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-sustainability-2", label: "Sustainability", pos: { left: 54.44, top: 48.74, width: 10.33, height: 3.93 }, text: "Identifies and measures sustainability and environmental goals in line with net zero, decarbonisation, pollution, and biodiversity plans, supporting sustainable supply chains and embedding environmental criteria into procurement, design, construction, and the asset lifecycle within available budgets.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-economic-impact", label: "Economic Impact", pos: { left: 53.4, top: 55.93, width: 11.37, height: 3.93 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-criteria-xyz", label: "Criteria X, Y, Z", pos: { left: 52.02, top: 63.11, width: 12.75, height: 3.93 }, text: "The full appraisal can be expanded beyond the current module functionality to capture a wide range of user needs and project requirements. Additional criteria may include deliverability, supply-chain security, constructability, reputational effects, strategic alignment, governance, and stakeholder acceptability.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
 
       // Cluster 5 — Portfolio Optimisation, widened to match Detailed Option
       // Assessment (same treatment as the other groups); its three steps sit
       // inside a dashed sub-group, matching the source.
-      { id: "dsp-system-interdependencies-2", label: "System Interdependencies", pos: { left: 97.8, top: 34, width: 16.6, height: 12.33 }, text: "Establishes, and where possible quantifies, relationships between the asset and other assets, networks, users, and its wider policy and organisational, and climate change/environment context, in order to define the scope or boundary of assets considered in investment decisions and to identify the information sources required to support those decisions.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-solution-bundling", label: "Solution Bundling", pos: { left: 97.8, top: 50.33, width: 16.6, height: 12.33 }, text: "This process looks at combining and sequencing multiple interventions/pathways to utilise and bundle resources if possible.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-resource-feasibility", label: "Resource and Feasibility", pos: { left: 97.8, top: 66.67, width: 16.6, height: 12.33 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-system-interdependencies-2", label: "System Interdependencies", pos: { left: 69.05, top: 36.03, width: 10.74, height: 7.68 }, text: "Establishes, and where possible quantifies, relationships between the asset and other assets, networks, users, and its wider policy and organisational, and climate change/environment context, in order to define the scope or boundary of assets considered in investment decisions and to identify the information sources required to support those decisions.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-solution-bundling", label: "Solution Bundling", pos: { left: 69.05, top: 46.66, width: 10.74, height: 7.68 }, text: "This process looks at combining and sequencing multiple interventions/pathways to utilise and bundle resources if possible.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-resource-feasibility", label: "Resource and Feasibility", pos: { left: 69.05, top: 57.34, width: 10.74, height: 7.68 }, text: "Content coming soon — awaiting text from DARe.", isPlaceholder: true, handbookUrl: "#", variant: "navy" },
 
       // Cluster 6 — Outcome Assessment. Plain tool box, no special
       // highlight — the source doesn't single this step out visually.
-      { id: "dsp-asset-performance-3", label: "Asset Performance", pos: { left: 121.8, top: 34, width: 18.6, height: 12.33 }, text: "To evaluate whether assets continue to meet required performance objectives, service levels and operational requirements, using condition, capacity and serviceability information as evidence.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-intervention-effectiveness", label: "Intervention / Adaptation Effectiveness", pos: { left: 121.8, top: 50.33, width: 18.6, height: 12.33 }, text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-asset-registry-2", label: "Asset Registry", pos: { left: 121.8, top: 66.67, width: 18.6, height: 12.33 }, text: "Catalogues all existing assets (type, location, condition, history) and serves as the central database from which all other analyses are conducted, ensuring asset information is accessible.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-asset-performance-3", label: "Asset Performance", pos: { left: 85.32, top: 34.68, width: 10.74, height: 7.68 }, text: "To evaluate whether assets continue to meet required performance objectives, service levels and operational requirements, using condition, capacity and serviceability information as evidence.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-intervention-effectiveness", label: "Intervention / Adaptation Effectiveness", pos: { left: 85.32, top: 47.02, width: 10.74, height: 7.68 }, text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-asset-registry-2", label: "Asset Registry", pos: { left: 85.32, top: 59.37, width: 10.74, height: 7.68 }, text: "Catalogues all existing assets (type, location, condition, history) and serves as the central database from which all other analyses are conducted, ensuring asset information is accessible.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
 
       // Cross-cutting Risk Assessment step and its funding/governance inputs.
       // Kept off the far right/bottom edge on purpose — that corner is where
       // the floating zoom widget docks (see style.css), same reason Level 1's
       // last row always ends well clear of it.
-      { id: "dsp-risk-assessment-cross", label: "Risk Assessment", pos: { left: 86.6, top: 83, width: 14, height: 5 }, text: "Quantifies risks of failure and disruption, evaluates risks of inaction measures at asset, system, and network levels, including risks from decarbonisation strategies, extreme weather, climate change, and other shocks. Engaging with different organisations to understand their risk tolerance and, based on this, identify and/or prioritise their risk reduction needs.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-funding-budgets", label: "Funding / Budgets (Financial Case)", pos: { left: 70.1, top: 93, width: 13, height: 6 }, text: "Funding and budgeting processes, to test affordability and establish the financial case.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-procurement", label: "Procurement (Commercial Case)", pos: { left: 87.1, top: 93, width: 13, height: 6 }, text: "Procurement and commercial processes, to determine the delivery and contracting approach.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
-      { id: "dsp-pm-governance", label: "PM, Governance, Reporting (Management Case)", pos: { left: 104.1, top: 93, width: 18, height: 6.5 }, text: "Implementation and monitoring, to deliver the selected intervention and generate updated condition, cost and performance evidence for future risk and mitigation assessments.", isPlaceholder: false, handbookUrl: "#", variant: "navy" }
+      { id: "dsp-risk-assessment-cross", label: "Risk Assessment", pos: { left: 60.9, top: 72.51, width: 10.74, height: 3.93 }, text: "Quantifies risks of failure and disruption, evaluates risks of inaction measures at asset, system, and network levels, including risks from decarbonisation strategies, extreme weather, climate change, and other shocks. Engaging with different organisations to understand their risk tolerance and, based on this, identify and/or prioritise their risk reduction needs.", isPlaceholder: false, handbookUrl: "#", variant: "leaf" },
+      { id: "dsp-funding-budgets", label: "Funding / Budgets (Financial Case)", pos: { left: 50.81, top: 83.2, width: 9.64, height: 8.11 }, text: "Funding and budgeting processes, to test affordability and establish the financial case.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-procurement", label: "Procurement (Commercial Case)", pos: { left: 61.45, top: 83.2, width: 9.64, height: 8.11 }, text: "Procurement and commercial processes, to determine the delivery and contracting approach.", isPlaceholder: false, handbookUrl: "#", variant: "navy" },
+      { id: "dsp-pm-governance", label: "PM, Governance, Reporting (Management Case)", pos: { left: 72.09, top: 83.2, width: 9.64, height: 8.11 }, text: "Implementation and monitoring, to deliver the selected intervention and generate updated condition, cost and performance evidence for future risk and mitigation assessments.", isPlaceholder: false, handbookUrl: "#", variant: "navy" }
     ],
 
     containers: [
-      { id: "dsp-c1-bg", variant: "c1", pos: { left: 1.5, top: 32.5, width: 18.8, height: 48.5 } },
-      { id: "dsp-c2-bg", variant: "c2", pos: { left: 23.3, top: 32.5, width: 18.8, height: 48.5 } },
-      { id: "dsp-c3-bg", variant: "c3", pos: { left: 45.1, top: 32.5, width: 22, height: 48.5 } },
-      { id: "dsp-c4-bg", variant: "c4", pos: { left: 70.1, top: 32.5, width: 22, height: 48.5 } },
-      { id: "dsp-c5-bg", variant: "c5", pos: { left: 95.1, top: 32.5, width: 22, height: 48.5 } },
-      { id: "dsp-c6-bg", variant: "c6", pos: { left: 120.1, top: 32.5, width: 22, height: 48.5 } },
-      // Dashed sub-groupings, matching the source's own inner groupings.
-      { id: "dsp-c1-subgroup", style: "dashed", pos: { left: 1.9, top: 42.8, width: 18, height: 27.4 } },
-      { id: "dsp-c2-subgroup", style: "dashed", pos: { left: 23.7, top: 45.25, width: 18, height: 34.75 } },
-      { id: "dsp-c5-subgroup", style: "dashed", pos: { left: 96.6, top: 33.5, width: 19, height: 46.5 } },
-      // Outer dashed boundary around Detailed Option Assessment + Portfolio
-      // Optimisation together, plus the cross-cutting Risk Assessment step,
-      // matching the source's combined outline (the three funding/governance
-      // cases hang off its bottom border).
-      { id: "dsp-c4-c5-outer", style: "dashed", pos: { left: 68.6, top: 27, width: 49.5, height: 62 } }
+      { id: "dsp-c1-bg", variant: "c1", pos: { left: 2.0, top: 26.64, width: 14.6, height: 42.79 } },
+      { id: "dsp-c2-bg", variant: "c2", pos: { left: 18.28, top: 26.64, width: 14.6, height: 42.79 } },
+      { id: "dsp-c3-bg", variant: "c3", pos: { left: 34.58, top: 26.64, width: 14.6, height: 42.79 } },
+      { id: "dsp-c4-bg", variant: "c4", pos: { left: 50.85, top: 26.64, width: 14.6, height: 42.79 } },
+      { id: "dsp-c5-bg", variant: "c5", pos: { left: 67.12, top: 26.64, width: 14.6, height: 42.79 } },
+      { id: "dsp-c6-bg", variant: "c6", pos: { left: 83.4, top: 26.65, width: 14.6, height: 42.77 } },
+      // Dashed sub-groupings and the outer boundary, as drawn in the Figma design.
+      { id: "dsp-c1-subgroup", style: "dashed", pos: { left: 3.23, top: 40.11, width: 12.19, height: 21.06 } },
+      { id: "dsp-c2-subgroup", style: "dashed", pos: { left: 19.57, top: 42.14, width: 12.19, height: 25.73 } },
+      { id: "dsp-c5-subgroup", style: "dashed", pos: { left: 68.1, top: 34.34, width: 12.68, height: 32.79 } },
+      { id: "dsp-c4-c5-outer", style: "dashed", pos: { left: 50.03, top: 25.31, width: 32.51, height: 45.94 } }
     ],
 
     // Five of these six carry the column-level process summary the client
@@ -634,62 +631,51 @@ const TPRAF_CONTENT = {
     // the Multi Criteria/Cost Benefit Analysis box instead, so dsp-c4-heading
     // is left without text and stays a plain, non-clickable title bar.
     headings: [
-      { id: "dsp-c1-heading", label: "Asset/Network Evaluation", pos: { left: 1.5, top: 28.5, width: 18.8, height: 4 }, variant: "c1", text: "This process develops an understanding of how the system currently functions and establishes a baseline understanding of the condition, capacity and constraints (including infrastructure degradation/deterioration and vulnerabilities created by climate change).", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-c2-heading", label: "Problem Framing and Scope", pos: { left: 23.3, top: 28.5, width: 18.8, height: 4 }, variant: "c2", text: "This process involves setting objectives and scope/boundary by clearly identifying what needs to be adapted and why. Defining the geographic scope (e.g., specific rail corridor, coastal zone, urban catchment), temporal horizons (such as 2050, 2080, or 2100), and the assets or services required. As well as capturing external factors (stakeholder needs, policy environment, and socio-economic conditions) and constraints (budget, technical feasibility, environmental restrictions, and political considerations).", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-c3-heading", label: "Risk Reduction Analysis", pos: { left: 45.1, top: 28.5, width: 22, height: 4 }, variant: "c3", text: "This process applies a screening criteria to filter the long-list to a short-list of potential options for detailed pathway development informed by the risk and resilience assessment. As well as identifying / inputting thresholds / tipping points.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-c4-heading", label: "Detailed Option Assessment", pos: { left: 70.1, top: 28.5, width: 22, height: 4 }, variant: "c4" },
-      { id: "dsp-c5-heading", label: "Portfolio Optimisation", pos: { left: 95.1, top: 28.5, width: 22, height: 4 }, variant: "c5", text: "This process looks at combining and sequencing multiple interventions/pathways to utilise and bundle resources if possible.", isPlaceholder: false, handbookUrl: "#" },
-      { id: "dsp-c6-heading", label: "Outcome Assessment", pos: { left: 120.1, top: 28.5, width: 22, height: 4 }, variant: "c6", text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.", isPlaceholder: false, handbookUrl: "#" }
+      { id: "dsp-c1-heading", label: "Asset/Network Evaluation", pos: { left: 2.69, top: 27.62, width: 13.27, height: 3.81 }, variant: "c1", text: "This process develops an understanding of how the system currently functions and establishes a baseline understanding of the condition, capacity and constraints (including infrastructure degradation/deterioration and vulnerabilities created by climate change).", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-c2-heading", label: "Problem Framing and Scope", pos: { left: 18.96, top: 27.62, width: 13.27, height: 3.81 }, variant: "c2", text: "This process involves setting objectives and scope/boundary by clearly identifying what needs to be adapted and why. Defining the geographic scope (e.g., specific rail corridor, coastal zone, urban catchment), temporal horizons (such as 2050, 2080, or 2100), and the assets or services required. As well as capturing external factors (stakeholder needs, policy environment, and socio-economic conditions) and constraints (budget, technical feasibility, environmental restrictions, and political considerations).", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-c3-heading", label: "Risk Reduction Analysis", pos: { left: 35.27, top: 27.62, width: 13.27, height: 3.81 }, variant: "c3", text: "This process applies a screening criteria to filter the long-list to a short-list of potential options for detailed pathway development informed by the risk and resilience assessment. As well as identifying / inputting thresholds / tipping points.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-c4-heading", label: "Detailed Option Assessment", pos: { left: 51.54, top: 27.62, width: 13.27, height: 3.81 }, variant: "c4" },
+      { id: "dsp-c5-heading", label: "Portfolio Optimisation", pos: { left: 67.81, top: 27.62, width: 13.27, height: 3.81 }, variant: "c5", text: "This process looks at combining and sequencing multiple interventions/pathways to utilise and bundle resources if possible.", isPlaceholder: false, handbookUrl: "#" },
+      { id: "dsp-c6-heading", label: "Outcome Assessment", pos: { left: 84.08, top: 27.62, width: 13.27, height: 3.81 }, variant: "c6", text: "This process evaluates the effectiveness of interventions and feeds learning back into the decision cycle and future decisions.", isPlaceholder: false, handbookUrl: "#" }
     ],
 
+    /* Connectors as drawn in the Figma design (its coordinates mapped into
+       slide percentages). */
     arrows: [
-      { from: { x: 9.7, y: 18 }, to: { x: 9.7, y: 21 } },          // Transport Scenarios -> Climate Scenarios
-      { from: { x: 9.7, y: 27 }, to: { x: 9.7, y: 28.5 } },        // Climate Scenarios -> Asset/Network Evaluation
-      { from: { x: 32.7, y: 12 }, to: { x: 32.7, y: 14.5 } },      // Requirements -> Context
-      { from: { x: 32.7, y: 19.5 }, to: { x: 32.7, y: 22 } },      // Context -> Constraints
-      { from: { x: 32.7, y: 27 }, to: { x: 32.7, y: 28.5 } },      // Constraints -> Problem Framing
-      // Cluster-to-cluster hops, aligned to the vertical middle of the
-      // group bodies so the arrows read as one consistent flow line.
-      { from: { x: 20.3, y: 56.5 }, to: { x: 23.3, y: 56.5 } },    // Asset/Network Evaluation -> Problem Framing
-      { from: { x: 42.1, y: 56.5 }, to: { x: 45.1, y: 56.5 } },    // Problem Framing -> Risk Reduction Analysis
-      { from: { x: 67.1, y: 56.5 }, to: { x: 70.1, y: 56.5 } },    // Risk Reduction Analysis -> Detailed Option Assessment
-      { from: { x: 92.1, y: 56.5 }, to: { x: 95.1, y: 56.5 } },    // Detailed Option Assessment -> Portfolio Optimisation
-      { from: { x: 117.1, y: 56.5 }, to: { x: 120.1, y: 56.5 } },  // Portfolio Optimisation -> Outcome Assessment
-      // Within-cluster steps: the outer two connectors stay double-headed
-      // (Sustainability<->Risk, Resilience<->Asset Registry), while Asset
-      // Performance feeds one-way UP into Risk Assessment and DOWN into
-      // Resilience Assessment — matching the source's single arrowheads.
-      { from: { x: 10.9, y: 39.8 }, to: { x: 10.9, y: 43.8 }, bidirectional: true },   // Sustainability <-> Risk Assessment
-      { from: { x: 10.9, y: 53.6 }, to: { x: 10.9, y: 49.6 } },                        // Asset Performance -> Risk Assessment (up)
-      { from: { x: 10.9, y: 59.4 }, to: { x: 10.9, y: 63.4 } },                        // Asset Performance -> Resilience Assessment (down)
-      { from: { x: 10.9, y: 69.2 }, to: { x: 10.9, y: 73.2 }, bidirectional: true },   // Resilience Assessment <-> Asset Registry
-      { from: { x: 32.7, y: 42.25 }, to: { x: 32.7, y: 46.25 } },  // System Interdependencies -> Problem Definition
-      { from: { x: 32.7, y: 54.5 }, to: { x: 32.7, y: 58.5 } },    // Problem Definition -> Primary Impact ID
-      { from: { x: 32.7, y: 66.75 }, to: { x: 32.7, y: 70.75 } },  // Primary Impact ID -> Option Ideation
-      // Risk Reduction Analysis: the central Selection/Screened-list diamond
-      // is fed by the surrounding boxes — Risk Thresholds (above) and
-      // Resilience Assessment (below) — with Option Matrix and Interventions
-      // joining it horizontally (see elbowPaths below).
-      { from: { x: 56.15, y: 41 }, to: { x: 56.15, y: 48 } },      // Risk Thresholds -> Selection/Screened list
-      { from: { x: 56.15, y: 65 }, to: { x: 56.15, y: 57.5 } }     // Resilience Assessment -> Selection/Screened list
+      { from: { x: 9.32, y: 16.81 }, to: { x: 9.32, y: 19.76 } },   // Transport Scenarios -> Climate Scenarios
+      { from: { x: 9.32, y: 23.69 }, to: { x: 9.32, y: 26.65 } },   // Climate Scenarios -> Asset/Network Evaluation
+      { from: { x: 25.32, y: 9.93 }, to: { x: 25.32, y: 12.88 } },   // Requirements -> Context
+      { from: { x: 25.32, y: 16.81 }, to: { x: 25.32, y: 19.76 } },   // Context -> Constraints
+      { from: { x: 25.32, y: 23.69 }, to: { x: 25.32, y: 26.65 } },   // Constraints -> Problem Framing
+      { from: { x: 16.61, y: 47.26 }, to: { x: 18.28, y: 47.26 } },   // Asset/Network Evaluation -> Problem Framing
+      { from: { x: 32.88, y: 47.26 }, to: { x: 34.54, y: 47.26 } },   // Problem Framing -> Risk Reduction Analysis
+      { from: { x: 49.19, y: 47.26 }, to: { x: 50.85, y: 47.26 } },   // Risk Reduction Analysis -> Detailed Option Assessment
+      { from: { x: 65.46, y: 47.26 }, to: { x: 67.12, y: 47.26 } },   // Detailed Option Assessment -> Portfolio Optimisation
+      { from: { x: 81.73, y: 47.26 }, to: { x: 83.39, y: 47.26 } },   // Portfolio Optimisation -> Outcome Assessment
+      { from: { x: 9.32, y: 38.61 }, to: { x: 9.32, y: 41.55 }, bidirectional: true },   // Sustainability <-> Risk Assessment
+      { from: { x: 9.32, y: 48.74 }, to: { x: 9.32, y: 45.49 } },   // Asset Performance -> Risk Assessment (up)
+      { from: { x: 9.32, y: 52.67 }, to: { x: 9.32, y: 55.93 } },   // Asset Performance -> Resilience Assessment (down)
+      { from: { x: 9.32, y: 59.86 }, to: { x: 9.32, y: 63.12 }, bidirectional: true },   // Resilience Assessment <-> Asset Registry
+      { from: { x: 25.58, y: 40.09 }, to: { x: 25.58, y: 43.53 } },   // System Interdependencies -> Problem Definition
+      { from: { x: 25.58, y: 48.92 }, to: { x: 25.58, y: 52.36 } },   // Problem Definition -> Primary Impact ID
+      { from: { x: 25.58, y: 57.78 }, to: { x: 25.58, y: 61.21 } },   // Primary Impact ID -> Option Ideation
+      { from: { x: 41.9, y: 38.61 }, to: { x: 41.9, y: 45.22 } },   // Risk Thresholds -> Selection/Screened list
+      { from: { x: 41.9, y: 62.68 }, to: { x: 41.9, y: 55.89 } },   // Resilience Assessment -> Selection/Screened list
+      { from: { x: 37.48, y: 50.51 }, to: { x: 38.92, y: 50.51 } },   // Option Matrix -> Selection/Screened list
+      { from: { x: 44.94, y: 50.51 }, to: { x: 46.32, y: 50.51 } },   // Selection/Screened list -> Interventions
+      { from: { x: 66.23, y: 76.44 }, to: { x: 66.23, y: 83.2 } }   // Risk Assessment -> Procurement
     ],
 
     elbowPaths: [
-      // Cluster 3 internal flow: Option Matrix -> diamond -> Interventions,
-      // each with a real gap so the arrows read clearly between the shapes
-      // rather than touching them.
-      { points: [ { x: 49.6, y: 53 }, { x: 51.4, y: 53 } ] },                                          // Option Matrix -> Selection/Screened list
-      { points: [ { x: 60.9, y: 53 }, { x: 62.6, y: 53 } ] },                                          // Selection/Screened list -> Interventions
-      // Risk Assessment connects FROM the Portfolio Optimisation group border
-      // and back TO the Detailed Option Assessment group border — both at the
-      // group edge, not off an individual box.
-      { points: [ { x: 106.1, y: 81 }, { x: 106.1, y: 85.5 }, { x: 100.6, y: 85.5 } ] },             // Portfolio Optimisation -> Risk Assessment (cross)
-      { points: [ { x: 86.6, y: 85.5 }, { x: 81.6, y: 85.5 }, { x: 81.6, y: 81 } ] },                 // Risk Assessment (cross) -> Detailed Option Assessment group
-      // The three funding/governance cases hang off the dashed boundary's
-      // bottom border (not the Risk Assessment box), splitting downward.
-      { points: [ { x: 93.6, y: 89 }, { x: 93.6, y: 89.5 }, { x: 76.6, y: 89.5 }, { x: 76.6, y: 93 } ] }, // Boundary -> Funding/Budgets
-      { points: [ { x: 93.6, y: 89 }, { x: 93.6, y: 93 } ] },                                              // Boundary -> Procurement
-      { points: [ { x: 93.6, y: 89 }, { x: 93.6, y: 89.5 }, { x: 110.6, y: 89.5 }, { x: 110.6, y: 93 } ] } // Boundary -> PM/Governance
+      // The cross-cutting Risk Assessment sits under the Detailed Option
+      // Assessment and Portfolio Optimisation groups: out of Portfolio
+      // Optimisation, along beneath them, and back up into Detailed Option
+      // Assessment (only that end carries the arrowhead).
+      { points: [ { x: 74.94, y: 69.87 }, { x: 74.94, y: 74.48 }, { x: 71.64, y: 74.48 } ], head: false },   // Portfolio Optimisation -> Risk Assessment (cross)
+      { points: [ { x: 60.9, y: 74.48 }, { x: 58.14, y: 74.48 }, { x: 58.14, y: 69.87 } ] },   // Risk Assessment (cross) -> Detailed Option Assessment group
+      // The funding and governance cases hang off Risk Assessment.
+      { points: [ { x: 66.23, y: 79.24 }, { x: 55.75, y: 79.24 }, { x: 55.75, y: 83.2 } ] },   // Risk Assessment -> Funding/Budgets
+      { points: [ { x: 66.23, y: 79.24 }, { x: 77.2, y: 79.24 }, { x: 77.2, y: 83.2 } ] }    // Risk Assessment -> PM/Governance
     ],
 
     /* Inputs, then one process stage at a time left to right, reading each
