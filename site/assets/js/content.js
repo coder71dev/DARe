@@ -71,7 +71,7 @@ const TPRAF_CONTENT = {
         id: "hazard-model",
         label: "Hazard\nModel",
         pos: { left: 4.0, top: 54.31, width: 14.82, height: 12.2 },
-        text: "Tools to estimate the impact of a climate-related phenomenon on the transport system, such as CADDIES, CityCAT, and VITO UrbClim + HiREx.",
+        text: "Tools to estimate the impact of a climate-related phenomenon on the transport system, such as CityCAT, and VITO UrbClim + HiREx.",
         isPlaceholder: false,
         handbookUrl: "#",
         variant: "navy"
@@ -182,7 +182,7 @@ const TPRAF_CONTENT = {
         id: "transport-demand",
         label: "Transport Demand",
         pos: { left: 5.92, top: 25.48, width: 9.16, height: 6.88 },
-        text: "Models used to build a statistically representative population of the study area, with a variety of socio-demographic attributes (e.g., age, sex, income) and activity plans (e.g., trip purpose, starting time, main transport mode, origin-destination), such as NTEM, LUISA, UDM, SILO, and MITO, to represent the demand on the transport system. For freight, this is vehicle schedules and delivery plans.",
+        text: "Models used to build a statistically representative population of the study area, with a variety of socio-demographic attributes (e.g., age, sex, income) and activity plans (e.g., trip purpose, starting time, main transport mode, origin-destination), to represent the demand on the transport system. For freight, this is vehicle schedules and delivery plans.",
         isPlaceholder: false,
         handbookUrl: "#",
         variant: "navy",
@@ -247,7 +247,7 @@ const TPRAF_CONTENT = {
         id: "hazard-model",
         label: "Hazard Model",
         pos: { left: 9.78, top: 72.1, width: 10.36, height: 6.82 },
-        text: "Tools to estimate the impact of a climate-related phenomenon on the transport system, such as CADDIES, CityCAT, and VITO UrbClim + HiREx.",
+        text: "Tools to estimate the impact of a climate-related phenomenon on the transport system, such as CityCAT, and VITO UrbClim + HiREx.",
         isPlaceholder: false,
         handbookUrl: "#",
         variant: "navy",
@@ -287,7 +287,7 @@ const TPRAF_CONTENT = {
         id: "problem-framing",
         label: "Problem Framing",
         pos: { left: 32.82, top: 51.95, width: 9.16, height: 6.82 },
-        text: "This process involves setting objectives and scope/boundary by clearly identifying what needs to be adapted and why. Defining the geographic scope (e.g., specific rail corridor, coastal zone, urban catchment), temporal horizons (typically to 2050, 2080, or 2100), and the assets or services required. As well as capturing external factors (stakeholder needs, policy environment, and socio-economic conditions) and constraints (budget, technical feasibility, environmental restrictions, and political considerations).",
+        text: "This process involves setting objectives and scope/boundary by clearly identifying what needs to be adapted and why. Defining the geographic scope (e.g., specific rail corridor, coastal zone, urban catchment), temporal horizons (such as 2050, 2080, or 2100), and the assets or services required. As well as capturing external factors (stakeholder needs, policy environment, and socio-economic conditions) and constraints (budget, technical feasibility, environmental restrictions, and political considerations).",
         isPlaceholder: false,
         handbookUrl: "#",
         variant: "sky",
@@ -777,7 +777,7 @@ const TPRAF_CONTENT = {
       // Transport Demand (top right), running down the spine.
       { id: "imp-ntem", label: "Future Population Scenarios", pos: { left: 57.12, top: 4.9, width: 9.81, height: 4.62 }, text: "Demographic, socioeconomic, land-use, and travel-behaviour information to generate future trip-end forecasts.", isPlaceholder: false, handbookUrl: "#", variant: "tool" },
       { id: "imp-building-dev-model", label: "Building Development Model", pos: { left: 81.09, top: 14.43, width: 14.16, height: 4.62 }, text: "Spatial development of households, population, employment, housing, and land-use over time.", isPlaceholder: false, handbookUrl: "#", variant: "tool" },
-      { id: "imp-projected-population", label: "Projected Synthetic Population", pos: { left: 56.19, top: 24.79, width: 11.75, height: 5.04 }, text: "Synthetic population generation is used to construct a statistically representative population from available aggregate and sample data.", isPlaceholder: false, handbookUrl: "#", variant: "tool" },
+      { id: "imp-projected-population", label: "Projected Synthetic Population", pos: { left: 57.12, top: 24.79, width: 9.81, height: 5.04 }, text: "Synthetic population generation is used to construct a statistically representative population from available aggregate and sample data.", isPlaceholder: false, handbookUrl: "#", variant: "tool" },
       { id: "imp-activity-plans", label: "Activity Plans assignment", pos: { left: 57.51, top: 39.64, width: 9.18, height: 4.62 }, text: "Who is travelling, as well as activity plans that describe where, when, why, and how they travel. Together, these components provide a microscopic representation of travel demand that can subsequently be assigned to and simulated on a transport network.", isPlaceholder: false, handbookUrl: "#", variant: "tool" },
       { id: "imp-synthetic-travel-demand", label: "Synthetic travel demand", pos: { left: 57.12, top: 50.28, width: 9.73, height: 5.04 }, text: "Creates a statistically representative population and travel patterns to represent demand for transport services.", isPlaceholder: false, handbookUrl: "#" },
 
@@ -888,7 +888,7 @@ const TPRAF_CONTENT = {
       // Transport Demand's own loop out to the Building Development Model
       // and back into Projected Synthetic Population.
       { points: [ { x: 66.93, y: 7.1 }, { x: 88.09, y: 7.1 }, { x: 88.09, y: 14.43 } ] },                        // NTEM -> Building Development Model
-      { points: [ { x: 88.09, y: 19.05 }, { x: 88.09, y: 27.31 }, { x: 67.94, y: 27.31 } ] },                    // Building Development Model -> Projected Synthetic Population
+      { points: [ { x: 88.09, y: 19.05 }, { x: 88.09, y: 27.31 }, { x: 66.93, y: 27.31 } ] },                    // Building Development Model -> Projected Synthetic Population
 
       // Weather Event splits four ways: up the shared riser into Social
       // Behavioural Impacts and on to the threshold, and out to the two
@@ -903,7 +903,9 @@ const TPRAF_CONTENT = {
       // (head: false on the legs that merely join it), otherwise the bus
       // would sprout three separate arrowheads.
       { points: [ { x: 39.3, y: 56.66 }, { x: 43.97, y: 56.66 }, { x: 43.97, y: 69.33 }, { x: 47.08, y: 69.33 } ] },  // Transport-Specific Threshold -> Transport Network
-      { points: [ { x: 43.97, y: 56.66 }, { x: 43.97, y: 84.45 } ], head: false },                              // the bus
+      // The bus starts where the threshold line's rounded corner begins (not at
+      // the corner itself), so its square end can't poke out above the curve.
+      { points: [ { x: 43.97, y: 66.8 }, { x: 43.97, y: 84.45 } ], head: false },                               // the bus
       { points: [ { x: 41.01, y: 73.74 }, { x: 43.97, y: 73.74 } ], head: false },                               // Temporal air and surface temperature maps -> bus
       { points: [ { x: 41.01, y: 84.45 }, { x: 43.97, y: 84.45 } ], head: false },                               // Temporal flood maps -> bus
 
