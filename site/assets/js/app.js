@@ -47,6 +47,17 @@
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
+  // Each box's handbookUrl (content.js) is a path relative to the handbook
+  // site, e.g. "/imp/climate-scenarios/ukcp18-local", or "" for boxes with
+  // no specific page yet. HANDBOOK_BASE_URL is the only thing that should
+  // need to change once the real handbook replaces this temporary preview
+  // site, as long as its URL structure stays the same.
+  const HANDBOOK_BASE_URL = "https://dare-private.netlify.app";
+
+  function resolveHandbookUrl(path) {
+    return HANDBOOK_BASE_URL + (path || "");
+  }
+
   function openModal(item) {
     // Reading a box takes over from watching the walkthrough — otherwise the
     // diagram keeps panning around behind the popup.
@@ -54,9 +65,9 @@
     modalTitle.textContent = item.label;
     modalText.textContent = item.text;
     modalPlaceholderNote.hidden = !item.isPlaceholder;
-    if (item.handbookUrl) {
+    if (item.handbookUrl !== undefined) {
       modalHandbookLink.hidden = false;
-      modalHandbookLink.href = item.handbookUrl;
+      modalHandbookLink.href = resolveHandbookUrl(item.handbookUrl);
     } else {
       modalHandbookLink.hidden = true;
     }
@@ -1811,7 +1822,7 @@
     let example = "";
     let credit = "";
     let figure = null;
-    let handbookUrl = "";
+    let handbookUrl; // undefined = no link for this step; any string (even "") shows one
     let placeholder = false;
 
     if (isIntro) {
@@ -1833,7 +1844,7 @@
       example = step.example || "";
       credit = step.credit || "";
       figure = step.figure || null;
-      handbookUrl = box && box.handbookUrl ? box.handbookUrl : "";
+      handbookUrl = box && box.handbookUrl !== undefined ? resolveHandbookUrl(box.handbookUrl) : undefined;
       placeholder = !!(box && box.isPlaceholder);
     }
 
@@ -1845,8 +1856,8 @@
     setOptionalText(lessonExampleEl, example ? "In this example: " + example : "");
     setOptionalText(lessonCreditEl, credit);
     lessonPlaceholderNote.hidden = !placeholder;
-    lessonHandbookEl.hidden = !handbookUrl;
-    if (handbookUrl) lessonHandbookEl.href = handbookUrl;
+    lessonHandbookEl.hidden = handbookUrl === undefined;
+    if (handbookUrl !== undefined) lessonHandbookEl.href = handbookUrl;
     lessonBodyEl.scrollTop = 0;
 
     // The welcome card shows the stages ahead; the closing card offers a way on.

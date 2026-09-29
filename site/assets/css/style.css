@@ -3465,6 +3465,7 @@ html.menu-open { overflow: hidden; }
 .home .site-footer .footer-main a:focus-visible { text-decoration-thickness: 2px; }
 
 .home .footer-signoff { padding: 0 0 35px; font-size: 16px; }
+.home .footer-signoff .footer-copyright { margin: 0 0 0.75em; opacity: 0.85; }
 .home .footer-signoff ul { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
 .home .footer-signoff li { margin-right: 1em; }
 .home .site-footer .footer-signoff a { color: var(--color-white); font-weight: 500; text-decoration: underline; }
