@@ -3309,8 +3309,16 @@ html.menu-open { overflow: hidden; }
 /* Research Output Notice sits below Acknowledgements as its own labelled
    block — same text treatment, no icon, but a heading and a top margin so
    it reads as a separate section rather than a continuation of the quote
-   above it. */
-.ack-notice { margin-top: clamp(2rem, 4.5vw, 86px); }
+   above it. .ack's padding-left exists to clear the quote icon and its
+   max-width is a deliberate narrow "pull quote" measure — neither applies
+   here, so both are reset to match the section's other body text (e.g.
+   .section-text) instead of leaving a large empty gap on wide screens. */
+.ack-notice {
+  margin-top: clamp(2rem, 4.5vw, 86px);
+  padding-left: 0;
+}
+
+.ack-notice .ack-text { max-width: 1657px; }
 
 .ack-heading {
   margin: 0 0 clamp(0.75rem, 1.25vw, 24px);
