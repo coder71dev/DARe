@@ -3306,6 +3306,11 @@ html.menu-open { overflow: hidden; }
   padding-left: clamp(0rem, 8.75vw, 168px);
 }
 
+/* Two .ack blocks in a row (Acknowledgements, then the Research Output
+   Notice) need a visible break between them since neither carries its own
+   bottom margin. */
+.ack + .ack { margin-top: clamp(1.5rem, 3.44vw, 66px); }
+
 .home .ack-icon {
   flex: none;
   width: clamp(56px, 7.4vw, 142px);
