@@ -400,7 +400,7 @@ const TPRAF_CONTENT = {
         label: "Feedback loop",
         pos: { left: 36.67, top: 24.6, width: 14.24, height: 3.81 },
         text: "Adaptation/Interventions decisions loop back to reshape the transport scenarios considered.",
-        isPlaceholder: true,
+        isPlaceholder: false,
         type: "feedback"
       },
       {
@@ -408,7 +408,7 @@ const TPRAF_CONTENT = {
         label: "Feedback loop",
         pos: { left: 36.67, top: 76.4, width: 14.24, height: 3.81 },
         text: "Adaptation/Interventions decisions loop back to refine the hazard model.",
-        isPlaceholder: true,
+        isPlaceholder: false,
         type: "feedback"
       }
     ],
