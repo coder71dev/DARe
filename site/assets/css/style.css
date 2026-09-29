@@ -3306,10 +3306,17 @@ html.menu-open { overflow: hidden; }
   padding-left: clamp(0rem, 8.75vw, 168px);
 }
 
-/* Two .ack blocks in a row (Acknowledgements, then the Research Output
-   Notice) need a visible break between them since neither carries its own
-   bottom margin. */
-.ack + .ack { margin-top: clamp(1.5rem, 3.44vw, 66px); }
+/* Research Output Notice sits below Acknowledgements as its own labelled
+   block — same text treatment, no icon, but a heading and a top margin so
+   it reads as a separate section rather than a continuation of the quote
+   above it. */
+.ack-notice { margin-top: clamp(2rem, 4.5vw, 86px); }
+
+.ack-heading {
+  margin: 0 0 clamp(0.75rem, 1.25vw, 24px);
+  font-size: clamp(1.3rem, 1.875vw, 36px);
+  font-weight: 700;
+}
 
 .home .ack-icon {
   flex: none;
