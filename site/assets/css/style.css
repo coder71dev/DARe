@@ -2854,6 +2854,15 @@ html.menu-open { overflow: hidden; }
     linear-gradient(135deg, #4fbf68 0%, #2f8f6a 45%, var(--color-water) 100%);
 }
 
+/* Parallax: the background stays pinned to the viewport while the page
+   scrolls over it, so the strip appears to move slower than the rest of
+   the page. Left off below 820px -- background-attachment: fixed is
+   unreliable on mobile browsers (janky repaints on iOS in particular) and
+   the strip is too short there for the effect to read anyway. */
+@media (min-width: 820px) {
+  .hero-photo { background-attachment: fixed; }
+}
+
 /* ---------- What is TPRAF? ---------- */
 /* Figma frame is 1920px wide; every size below is its px value divided by 19.2
    (so it is exact at 1920 and shrinks with the screen), capped at the Figma px. */
