@@ -2846,7 +2846,7 @@ html.menu-open { overflow: hidden; }
 .btn-sm-link:hover { border-bottom-width: 1.5px; }
 
 .hero-photo {
-  height: clamp(200px, 30.2vw, 580px);
+  height: clamp(260px, 42vw, 860px);
   /* Drop the photograph in as assets/img/hero-road.jpg; until then the
      gradient below stands in for it. */
   background:
