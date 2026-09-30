@@ -2846,12 +2846,21 @@ html.menu-open { overflow: hidden; }
 .btn-sm-link:hover { border-bottom-width: 1.5px; }
 
 .hero-photo {
-  height: clamp(200px, 30.2vw, 580px);
+  height: clamp(260px, 42vw, 860px);
   /* Drop the photograph in as assets/img/hero-road.jpg; until then the
      gradient below stands in for it. */
   background:
     url("../img/hero-road.jpg") center / cover no-repeat,
     linear-gradient(135deg, #4fbf68 0%, #2f8f6a 45%, var(--color-water) 100%);
+}
+
+/* Parallax: the background stays pinned to the viewport while the page
+   scrolls over it, so the strip appears to move slower than the rest of
+   the page. Left off below 820px -- background-attachment: fixed is
+   unreliable on mobile browsers (janky repaints on iOS in particular) and
+   the strip is too short there for the effect to read anyway. */
+@media (min-width: 820px) {
+  .hero-photo { background-attachment: fixed; }
 }
 
 /* ---------- What is TPRAF? ---------- */
