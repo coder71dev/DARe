@@ -3,7 +3,10 @@
     <a class="resource-card-link" href="{{ $props['link_href'] }}" target="_blank" rel="noopener" aria-label="{{ $props['link_label'] ?? $props['title'] ?? '' }}"></a>
   @endif
   @if(! empty($props['icon']))
-    <img class="card-icon" src="{{ asset($props['icon']) }}" alt="" />
+    @php($iconDims = \App\Support\IconMetrics::dimensions($props['icon']))
+    <img class="card-icon" src="{{ asset($props['icon']) }}" alt=""
+      @if($iconDims) width="{{ $iconDims['width'] }}" height="{{ $iconDims['height'] }}" @endif
+      style="{{ \App\Support\IconMetrics::style($props['icon']) }}" />
   @endif
   <h3>{!! nl2br(e($props['title'] ?? '')) !!}</h3>
   <p>{{ $props['body'] ?? '' }}</p>
