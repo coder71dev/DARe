@@ -335,19 +335,29 @@
       });
     }
 
-    function cleanupField() {
-      if (!activeField) return;
-      activeField.target.classList.remove("live-edit-editing");
-      activeField.field.remove();
+    // cleanupField/cancelEdit/finishEdit all take the field's state as an
+    // explicit `af` rather than reading the module-level `activeField` once
+    // they've started: removing or disabling the field element below fires
+    // a *synchronous* blur on it (browsers unfocus a node the instant it's
+    // detached or disabled), which reenters here via our own blur listener
+    // -> finishEdit() -> cancelEdit(), while the outer call is still on the
+    // stack. Each of these clears `activeField` to null *before* doing that
+    // removal/disable, so the reentrant call's `if (!activeField) return`
+    // no-ops immediately instead of racing the outer call (which otherwise
+    // throws trying to remove a node the reentrant call already removed).
+    function cleanupField(af) {
+      af.target.classList.remove("live-edit-editing");
+      if (af.field.isConnected) af.field.remove();
       toolbar.classList.remove("is-visible");
-      activeField = null;
     }
 
     function cancelEdit() {
       if (!activeField) return;
-      restoreGroup(activeField.group);
+      const af = activeField;
+      activeField = null;
+      restoreGroup(af.group);
       hideStatus();
-      cleanupField();
+      cleanupField(af);
     }
 
     /**
@@ -435,6 +445,7 @@
         return;
       }
 
+      activeField = null;
       showStatus(pageRect(field), "saving", "Saving…");
       toolbar.classList.remove("is-visible");
       field.disabled = true;
@@ -444,13 +455,14 @@
           if (!res.ok) throw new Error("Save failed (" + res.status + ")");
           const statusRect = pageRect(field);
           const newNodes = applyGroupUpdate(af, newValue);
-          cleanupField();
+          cleanupField(af);
           showStatus(newNodes[0] ? pageRect(newNodes[0]) : statusRect, "saved", "Saved", 1200);
         })
         .catch(function () {
           field.disabled = false;
           showStatus(pageRect(field), "error", "Couldn't save — try again");
           toolbar.classList.add("is-visible");
+          activeField = af; // save failed — the field is still live, let Cancel/retry work
           positionToolbar(af);
           field.focus();
         });
