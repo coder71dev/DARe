@@ -101,6 +101,7 @@
     <script>
       const TPRAF_CONTENT = @json($tprafContent);
       const TPRAF_DSP_IMP = @json($tprafDspImp);
+      window.LIVE_EDIT_MODE = @json(\App\Support\LiveEdit::enabled());
     </script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
   @endif

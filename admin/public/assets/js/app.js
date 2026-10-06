@@ -58,12 +58,35 @@
     return HANDBOOK_BASE_URL + (path || "");
   }
 
+  // Admin-only, inert for every regular visitor: when window.LIVE_EDIT_MODE
+  // is set (see App\Support\LiveEdit — the page only defines it true for a
+  // signed-in admin who's turned live-edit on), tags the popup's title/body
+  // with the data-live-edit attributes public/assets/js/live-edit.js looks
+  // for, so they're click-to-edit right there in the popup. item.dbId is the
+  // underlying TprafElement's id (see TprafContentAssembler).
+  function wireLiveEdit(el, dbId, field, label, multiline) {
+    if (!window.LIVE_EDIT_MODE || !dbId) {
+      delete el.dataset.liveEdit;
+      return;
+    }
+    el.dataset.liveEdit = "element:" + dbId + ":" + field;
+    el.dataset.liveEditLabel = label;
+    if (multiline) el.setAttribute("data-live-edit-multiline", "");
+    else el.removeAttribute("data-live-edit-multiline");
+  }
+
   function openModal(item) {
     // Reading a box takes over from watching the walkthrough — otherwise the
     // diagram keeps panning around behind the popup.
     if (tourState.running) stopTour();
     modalTitle.textContent = item.label;
     modalText.textContent = item.text;
+    // multiline: a label can legitimately carry an embedded \n (e.g.
+    // "Transport\nScenarios", for a box's two-line wrap on the canvas) —
+    // a single-line <input> silently strips any newline assigned to its
+    // value, which would corrupt that layout the moment someone edited it.
+    wireLiveEdit(modalTitle, item.dbId, "label", "Label", true);
+    wireLiveEdit(modalText, item.dbId, "text", "Popup text", true);
     modalPlaceholderNote.hidden = !item.isPlaceholder;
     if (item.handbookUrl !== undefined) {
       modalHandbookLink.hidden = false;

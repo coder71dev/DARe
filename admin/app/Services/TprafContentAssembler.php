@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\TprafDspImp;
 use App\Models\TprafElement;
 use App\Models\TprafView;
+use Illuminate\Support\Collection;
 
 /**
  * Reshapes the tpraf_views / tpraf_elements / tpraf_lessons / tpraf_dsp_imp
@@ -98,12 +99,18 @@ class TprafContentAssembler
         return $data;
     }
 
-    /** @param  \Illuminate\Support\Collection<int, TprafElement>  $elements */
+    /** @param  Collection<int, TprafElement>  $elements */
     private function assembleElements($elements): array
     {
         return $elements->map(function (TprafElement $element) {
             $entry = $element->layout ?? [];
             $entry['id'] = $element->element_key;
+
+            // Only used by the public diagram's live-edit overlay (see
+            // app.js's openModal()) to know which row to save back to —
+            // never rendered or exposed as a link, so it's fine to ship to
+            // every visitor same as the rest of this JSON blob already is.
+            $entry['dbId'] = $element->id;
 
             if ($element->label !== null) {
                 $entry['label'] = $element->label;

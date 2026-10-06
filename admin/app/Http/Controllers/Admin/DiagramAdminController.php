@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TprafElement;
 use App\Models\TprafView;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,7 +30,7 @@ class DiagramAdminController extends Controller
         ]);
     }
 
-    public function update(Request $request, TprafElement $element): RedirectResponse
+    public function update(Request $request, TprafElement $element): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'label' => ['nullable', 'string', 'max:255'],
@@ -39,6 +40,14 @@ class DiagramAdminController extends Controller
         ]);
 
         $element->update($validated);
+
+        // The admin editor (Inertia/Vue) relies on the redirect-back response
+        // below, but the public diagram's live-edit overlay (plain fetch())
+        // needs a real JSON response instead — see the matching fix on
+        // PageBlockController::update() for why.
+        if ($request->wantsJson()) {
+            return response()->json(['status' => 'Saved.']);
+        }
 
         return back()->with('status', 'Saved.');
     }

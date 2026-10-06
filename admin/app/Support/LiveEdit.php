@@ -47,7 +47,7 @@ class LiveEdit
             return '';
         }
 
-        $attrs = sprintf('data-live-edit="%d:%s"', $block->id, e($field));
+        $attrs = sprintf('data-live-edit="block:%d:%s"', $block->id, e($field));
         $attrs .= ' data-live-edit-label="'.e(self::label($block, $field)).'"';
 
         if ($multiline) {

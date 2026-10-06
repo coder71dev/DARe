@@ -266,7 +266,7 @@
     function startEdit(target) {
       if (activeField) return;
 
-      const [blockId, field] = target.getAttribute("data-live-edit").split(":");
+      const [kind, recordId, field] = target.getAttribute("data-live-edit").split(":");
       const multiline = target.hasAttribute("data-live-edit-multiline");
       const format = target.getAttribute("data-live-edit-format") || "plain";
       const paragraphs = target.hasAttribute("data-live-edit-paragraphs");
@@ -303,7 +303,7 @@
       field_.focus();
       field_.select();
 
-      activeField = { field: field_, group, format, multiline, paragraphs, blockId, fieldName: field, target, rawText };
+      activeField = { field: field_, group, format, multiline, paragraphs, kind, recordId, fieldName: field, target, rawText };
       positionToolbar(activeField);
       toolbar.classList.add("is-visible");
 
@@ -315,6 +315,11 @@
       field_.addEventListener("keydown", function (e) {
         if (e.key === "Escape") {
           e.preventDefault();
+          // Stop this from also reaching page-level Escape handlers — e.g.
+          // the diagram popup's own Escape-closes-it listener, which would
+          // otherwise close the whole popup when you only meant to cancel
+          // the text edit inside it.
+          e.stopPropagation();
           cancelEdit();
         } else if (e.key === "Enter" && !multiline) {
           e.preventDefault();
@@ -345,14 +350,35 @@
       cleanupField();
     }
 
-    /** Replaces the (currently hidden) group elements with freshly rendered ones holding the new text, mirroring what the server would render. Returns the new elements, in place of the old ones in the DOM. */
+    /**
+     * Writes the new text into the group's elements, mirroring what the
+     * server would render, and returns the elements now holding it.
+     *
+     * A non-paragraph field (the common case) is always exactly one element
+     * and is updated in place (same node, just new innerHTML) — some of
+     * these are elements other scripts keep their own direct reference to
+     * (e.g. app.js's modalTitle/modalText for the diagram popup), which a
+     * clone-and-replace would silently leave stale after the first save.
+     *
+     * A paragraph field's edit can add or remove a paragraph, so there's no
+     * way around rebuilding that group's elements to match the new count —
+     * those genuinely are replaced, cloned from the first one as a template.
+     */
     function applyGroupUpdate(af, newValue) {
       const { group, format, paragraphs } = af;
+
+      if (!paragraphs) {
+        const el = group[0];
+        el.style.display = "";
+        el.classList.remove("live-edit-hover", "live-edit-editing");
+        el.innerHTML = renderFieldHtml(newValue, format);
+        return [el];
+      }
+
       const template = group[0];
       const parent = template.parentNode;
 
-      const texts = paragraphs ? splitParagraphs(newValue) : [newValue];
-      const newNodes = texts.map(function (text) {
+      const newNodes = splitParagraphs(newValue).map(function (text) {
         const node = template.cloneNode(false);
         node.style.display = "";
         // template may be the clicked element itself (still carrying these
@@ -369,10 +395,39 @@
       return newNodes;
     }
 
+    // "block" (a PageBlock field) and "element" (a TprafElement field, the
+    // diagram's box/popup text — see app.js's openModal()) save to different
+    // endpoints with differently shaped payloads.
+    function saveRequest(af, newValue) {
+      if (af.kind === "element") {
+        return fetch("/admin/elements/" + af.recordId, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "X-CSRF-TOKEN": csrfToken(),
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          body: JSON.stringify({ [af.fieldName]: newValue }),
+        });
+      }
+
+      return fetch("/admin/blocks/" + af.recordId, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-CSRF-TOKEN": csrfToken(),
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify({ props: { [af.fieldName]: newValue } }),
+      });
+    }
+
     function finishEdit() {
       if (!activeField) return;
       const af = activeField;
-      const { field, blockId, fieldName, rawText } = af;
+      const { field, rawText } = af;
       const newValue = field.value;
 
       if (newValue === rawText) {
@@ -384,16 +439,7 @@
       toolbar.classList.remove("is-visible");
       field.disabled = true;
 
-      fetch("/admin/blocks/" + blockId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "X-CSRF-TOKEN": csrfToken(),
-          "X-Requested-With": "XMLHttpRequest",
-        },
-        body: JSON.stringify({ props: { [fieldName]: newValue } }),
-      })
+      saveRequest(af, newValue)
         .then(function (res) {
           if (!res.ok) throw new Error("Save failed (" + res.status + ")");
           const statusRect = pageRect(field);
