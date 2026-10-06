@@ -15,6 +15,13 @@
   @endif
 </head>
 <body class="home @stack('body-class')">
+  @if(\App\Support\LiveEdit::enabled())
+    <div class="live-edit-badge">
+      <span class="live-edit-badge-dot" aria-hidden="true"></span>
+      Live Edit
+      <a href="?edit-mode=0">Exit</a>
+    </div>
+  @endif
   <header class="site-header">
     <a class="brand" href="{{ route('home') }}" aria-label="DARe TPRAF — home">
       <img class="logo" src="{{ asset('assets/icons/logo-header.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />

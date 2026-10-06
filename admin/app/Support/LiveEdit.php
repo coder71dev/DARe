@@ -10,12 +10,17 @@ use App\Models\PageBlock;
  * text right there, see public/assets/js/live-edit.js). Rendering stays
  * untouched for everyone else — attrs() returns '' when disabled, so the
  * markup is identical to the signed-out page.
+ *
+ * Off by default even for a signed-in admin just browsing the site — only
+ * active once they've entered live-edit mode via the "Live Edit" link on
+ * the admin pages list (?edit-mode=1, see SetLiveEditMode), so the editing
+ * chrome doesn't clutter every page they happen to visit.
  */
 class LiveEdit
 {
     public static function enabled(): bool
     {
-        return auth()->check() && auth()->user()->hasVerifiedEmail();
+        return auth()->check() && auth()->user()->hasVerifiedEmail() && session('live_edit_mode', false);
     }
 
     /**

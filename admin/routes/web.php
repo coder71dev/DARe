@@ -5,12 +5,15 @@ use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\SetLiveEditMode;
 use App\Support\ReservedSlugs;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn () => app(PageController::class)->show('home'))->name('home');
-Route::get('/diagram', fn () => app(PageController::class)->show('diagram'))->name('diagram');
+Route::middleware(SetLiveEditMode::class)->group(function () {
+    Route::get('/', fn () => app(PageController::class)->show('home'))->name('home');
+    Route::get('/diagram', fn () => app(PageController::class)->show('diagram'))->name('diagram');
+});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -44,5 +47,6 @@ require __DIR__.'/auth.php';
 // Catch-all for any published page by slug — must stay LAST so it never
 // shadows a route defined above it (admin/dashboard/profile/auth/etc.).
 Route::get('/{slug}', [PageController::class, 'show'])
+    ->middleware(SetLiveEditMode::class)
     ->where('slug', ReservedSlugs::routeExclusionPattern())
     ->name('page.show');

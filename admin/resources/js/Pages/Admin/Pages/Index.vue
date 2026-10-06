@@ -92,7 +92,8 @@ function createPage() {
                                         {{ page.status }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-right text-sm">
+                                <td class="px-6 py-4 text-right text-sm space-x-4">
+                                    <a :href="page.public_url + '?edit-mode=1'" class="text-emerald-600 hover:text-emerald-900">Live Edit</a>
                                     <Link :href="route('admin.pages.edit', page.id)" class="text-indigo-600 hover:text-indigo-900">Edit</Link>
                                 </td>
                             </tr>
