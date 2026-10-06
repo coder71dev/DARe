@@ -1,0 +1,31 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link } from '@inertiajs/vue3';
+
+defineProps({ views: Array });
+</script>
+
+<template>
+    <Head title="Diagrams" />
+
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">Diagrams</h2>
+        </template>
+
+        <div class="py-12">
+            <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <ul class="divide-y divide-gray-200">
+                        <li v-for="view in views" :key="view.key" class="flex items-center justify-between px-6 py-4">
+                            <span class="font-medium text-gray-900">{{ view.title }}</span>
+                            <Link :href="route('admin.diagrams.edit', view.key)" class="text-indigo-600 hover:text-indigo-900">
+                                Edit text
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </AuthenticatedLayout>
+</template>

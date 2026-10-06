@@ -1,13 +1,16 @@
 <?php
 
-use App\Http\Controllers\DiagramController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\DiagramAdminController;
+use App\Http\Controllers\Admin\PageAdminController;
+use App\Http\Controllers\Admin\PageBlockController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
+use App\Support\ReservedSlugs;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/diagram', [DiagramController::class, 'show'])->name('diagram');
+Route::get('/', fn () => app(PageController::class)->show('home'))->name('home');
+Route::get('/diagram', fn () => app(PageController::class)->show('diagram'))->name('diagram');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -19,4 +22,27 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/pages', [PageAdminController::class, 'index'])->name('pages.index');
+    Route::post('/pages', [PageAdminController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
+    Route::patch('/pages/{page}', [PageAdminController::class, 'update'])->name('pages.update');
+    Route::delete('/pages/{page}', [PageAdminController::class, 'destroy'])->name('pages.destroy');
+
+    Route::post('/pages/{page}/blocks', [PageBlockController::class, 'store'])->name('blocks.store');
+    Route::patch('/blocks/{block}', [PageBlockController::class, 'update'])->name('blocks.update');
+    Route::delete('/blocks/{block}', [PageBlockController::class, 'destroy'])->name('blocks.destroy');
+    Route::post('/pages/{page}/blocks/reorder', [PageBlockController::class, 'reorder'])->name('blocks.reorder');
+
+    Route::get('/diagrams', [DiagramAdminController::class, 'index'])->name('diagrams.index');
+    Route::get('/diagrams/{view}/elements', [DiagramAdminController::class, 'edit'])->name('diagrams.edit');
+    Route::patch('/elements/{element}', [DiagramAdminController::class, 'update'])->name('elements.update');
+});
+
 require __DIR__.'/auth.php';
+
+// Catch-all for any published page by slug — must stay LAST so it never
+// shadows a route defined above it (admin/dashboard/profile/auth/etc.).
+Route::get('/{slug}', [PageController::class, 'show'])
+    ->where('slug', ReservedSlugs::routeExclusionPattern())
+    ->name('page.show');

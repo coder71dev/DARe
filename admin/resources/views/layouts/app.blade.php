@@ -82,10 +82,16 @@
     </div>
   </footer>
 
-  <script>
-    const TPRAF_CONTENT = @json($tprafContent);
-    const TPRAF_DSP_IMP = @json($tprafDspImp);
-  </script>
-  <script src="{{ asset('assets/js/app.js') }}"></script>
+  @if(isset($page) && $page->blocks->contains('block_type', 'diagram_embed'))
+    {{-- app.js assumes the modal/lesson markup from partials.modal /
+         partials.lesson is always present (both included unconditionally by
+         blocks.diagram-embed) — only load it, and the data it reads, on a
+         page that actually has a diagram_embed block. --}}
+    <script>
+      const TPRAF_CONTENT = @json($tprafContent);
+      const TPRAF_DSP_IMP = @json($tprafDspImp);
+    </script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
+  @endif
 </body>
 </html>

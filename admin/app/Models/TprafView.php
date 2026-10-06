@@ -27,4 +27,9 @@ class TprafView extends Model
     {
         return $this->hasOne(TprafLesson::class, 'view_id');
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'key';
+    }
 }
