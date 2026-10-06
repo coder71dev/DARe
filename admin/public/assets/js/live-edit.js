@@ -1,9 +1,10 @@
 /* Phase 3: hover-to-edit affordance for signed-in admins on the public
-   pages. Hover an editable field -> a pencil button appears next to it ->
-   click the pencil -> the field swaps for a plain input/textarea holding
-   its raw stored text -> blur (or Enter on single-line fields) saves via
-   the existing admin block-update endpoint and reloads to show the
-   server-rendered result; Escape cancels without saving.
+   pages. Hover an editable field -> a labeled chip appears above it ->
+   click it -> the field swaps for a plain input/textarea holding its raw
+   stored text, with a small Save/Cancel toolbar -> Save (or Enter on
+   single-line fields, or clicking away) saves via the existing admin
+   block-update endpoint and reloads to show the server-rendered result;
+   Cancel (or Escape) backs out without saving.
 
    Only ever loaded for signed-in admins (see LiveEdit::enabled()); plain
    visitors get none of this markup or script. */
@@ -11,6 +12,18 @@
   "use strict";
 
   const SCROLL_KEY = "liveEditScrollY";
+
+  const ICONS = {
+    edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+  };
+
+  function svg(name) {
+    return (
+      '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[name] + "</svg>"
+    );
+  }
 
   function onReady(fn) {
     if (document.readyState === "loading") {
@@ -41,8 +54,21 @@
     return elements.map((el) => elementRawText(el, format).trim()).join("\n\n");
   }
 
+  /** Like getBoundingClientRect(), but relative to the document rather than the viewport — stays correct under position:absolute overlays as the page scrolls. */
+  function pageRect(el) {
+    const r = el.getBoundingClientRect();
+    return {
+      top: r.top + window.scrollY,
+      left: r.left + window.scrollX,
+      right: r.right + window.scrollX,
+      bottom: r.bottom + window.scrollY,
+      width: r.width,
+      height: r.height,
+    };
+  }
+
   function unionRect(elements) {
-    const rects = elements.map((el) => el.getBoundingClientRect());
+    const rects = elements.map(pageRect);
     const top = Math.min.apply(null, rects.map((r) => r.top));
     const left = Math.min.apply(null, rects.map((r) => r.left));
     const right = Math.max.apply(null, rects.map((r) => r.right));
@@ -50,14 +76,27 @@
     return { top, left, width: right - left, height: bottom - top };
   }
 
+  function clampLeft(left, width) {
+    return Math.min(Math.max(4, left), window.innerWidth - width - 4);
+  }
+
   onReady(function () {
-    const pencil = document.createElement("button");
-    pencil.type = "button";
-    pencil.className = "live-edit-pencil";
-    pencil.setAttribute("aria-label", "Edit this text");
-    pencil.innerHTML =
-      '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M14.85 2.15a1.5 1.5 0 0 1 2.12 0l.88.88a1.5 1.5 0 0 1 0 2.12L7.4 15.6l-3.6.9.9-3.6L14.85 2.15Z"/></svg>';
-    document.body.appendChild(pencil);
+    const chip = document.createElement("div");
+    chip.className = "live-edit-chip";
+    chip.innerHTML =
+      '<span class="live-edit-chip-icon">' + svg("edit") + '</span><span class="live-edit-chip-label"></span>';
+    document.body.appendChild(chip);
+    const chipLabel = chip.querySelector(".live-edit-chip-label");
+
+    const toolbar = document.createElement("div");
+    toolbar.className = "live-edit-toolbar";
+    toolbar.innerHTML =
+      '<button type="button" class="live-edit-save" aria-label="Save">' +
+      svg("check") +
+      '</button><button type="button" class="live-edit-cancel" aria-label="Cancel">' +
+      svg("x") +
+      "</button>";
+    document.body.appendChild(toolbar);
 
     const status = document.createElement("div");
     status.className = "live-edit-status";
@@ -65,74 +104,94 @@
 
     let hoverTarget = null;
     let hideTimer = null;
-    let activeField = null; // {input, group, format, multiline, groupKey}
+    let activeField = null;
 
-    function positionPencil(el) {
-      const rect = el.getBoundingClientRect();
-      const top = Math.max(4, rect.top - 2);
-      let left = rect.right + 6;
-      if (left > window.innerWidth - 30) {
-        left = Math.max(4, rect.left - 30);
-      }
-      pencil.style.top = top + "px";
-      pencil.style.left = left + "px";
-      pencil.classList.add("is-visible");
+    function positionChip(el) {
+      const rect = pageRect(el);
+      const chipRect = chip.getBoundingClientRect();
+      const width = chipRect.width || 70;
+      const top = Math.max(4 + window.scrollY, rect.top - 30);
+      const left = clampLeft(rect.right - width, width);
+      chip.style.top = top + "px";
+      chip.style.left = left + "px";
     }
 
-    function showPencilFor(el) {
+    function shortLabel(label) {
+      return label.length > 22 ? label.slice(0, 21).trimEnd() + "…" : label;
+    }
+
+    function showChipFor(el) {
       clearTimeout(hideTimer);
       hoverTarget = el;
       el.classList.add("live-edit-hover");
-      positionPencil(el);
+      chipLabel.textContent = shortLabel(el.getAttribute("data-live-edit-label") || "Edit");
+      chip.classList.add("is-visible");
+      positionChip(el);
     }
 
     function scheduleHide() {
       clearTimeout(hideTimer);
       hideTimer = setTimeout(function () {
-        if (hoverTarget) {
-          hoverTarget.classList.remove("live-edit-hover");
-        }
+        if (hoverTarget) hoverTarget.classList.remove("live-edit-hover");
         hoverTarget = null;
-        pencil.classList.remove("is-visible");
-      }, 180);
+        chip.classList.remove("is-visible");
+      }, 600);
     }
 
     document.querySelectorAll("[data-live-edit]").forEach(function (el) {
       el.addEventListener("mouseenter", function () {
         if (activeField) return;
-        showPencilFor(el);
+        showChipFor(el);
       });
       el.addEventListener("mouseleave", scheduleHide);
     });
 
-    pencil.addEventListener("mouseenter", function () {
+    chip.addEventListener("mouseenter", function () {
       clearTimeout(hideTimer);
     });
-    pencil.addEventListener("mouseleave", scheduleHide);
+    chip.addEventListener("mouseleave", scheduleHide);
 
+    // The hover chip only makes sense while the mouse and the hovered element
+    // line up; once the page scrolls that's no longer true, so hide it. The
+    // active field/toolbar/status are position:absolute (document-relative),
+    // so they track the scroll on their own and need no repositioning here.
     window.addEventListener(
       "scroll",
       function () {
-        if (!activeField) {
-          pencil.classList.remove("is-visible");
-          if (hoverTarget) hoverTarget.classList.remove("live-edit-hover");
-          hoverTarget = null;
-        }
+        if (activeField) return;
+        chip.classList.remove("is-visible");
+        if (hoverTarget) hoverTarget.classList.remove("live-edit-hover");
+        hoverTarget = null;
       },
       { passive: true }
     );
 
-    function showStatus(el, text, isError) {
-      const rect = el.getBoundingClientRect();
-      status.textContent = text;
-      status.classList.toggle("is-error", !!isError);
-      status.style.top = Math.max(4, rect.top - 28) + "px";
-      status.style.left = rect.left + "px";
+    function hideStatus() {
+      status.classList.remove("is-visible");
+    }
+
+    function showStatus(rect, variant, text) {
+      const icon = variant === "error" ? svg("x") : '<span class="live-edit-spinner"></span>';
+      status.innerHTML = '<span class="live-edit-status-icon">' + icon + "</span><span>" + text + "</span>";
+      status.classList.toggle("is-error", variant === "error");
+      const top = Math.max(4 + window.scrollY, rect.top - 34);
+      status.style.top = top + "px";
+      status.style.left = clampLeft(rect.left, 140) + "px";
       status.classList.add("is-visible");
     }
 
-    function hideStatus() {
-      status.classList.remove("is-visible");
+    function autoGrow(field) {
+      if (field.tagName !== "TEXTAREA") return;
+      field.style.height = "auto";
+      field.style.height = field.scrollHeight + 2 + "px";
+    }
+
+    function positionToolbar(af) {
+      const rect = pageRect(af.field);
+      const toolbarRect = toolbar.getBoundingClientRect();
+      const width = toolbarRect.width || 58;
+      toolbar.style.top = rect.bottom + 6 + "px";
+      toolbar.style.left = clampLeft(rect.right - width, width) + "px";
     }
 
     function restoreGroup(group) {
@@ -151,7 +210,7 @@
       const group = Array.from(document.querySelectorAll('[data-live-edit="' + CSS.escape(groupKey) + '"]'));
       const rawText = groupRawText(group, format);
 
-      pencil.classList.remove("is-visible");
+      chip.classList.remove("is-visible");
       target.classList.remove("live-edit-hover");
       target.classList.add("live-edit-editing");
 
@@ -163,8 +222,8 @@
       if (!multiline) field_.type = "text";
       field_.style.top = rect.top + "px";
       field_.style.left = rect.left + "px";
-      field_.style.width = Math.max(rect.width, 120) + "px";
-      field_.style.height = Math.max(rect.height, multiline ? 80 : 0) + "px";
+      field_.style.width = Math.max(rect.width, 160) + "px";
+      field_.style.minHeight = Math.max(rect.height, multiline ? 60 : 0) + "px";
       field_.style.fontSize = computed.fontSize;
       field_.style.fontFamily = computed.fontFamily;
       field_.style.fontWeight = computed.fontWeight;
@@ -176,10 +235,18 @@
         el.style.display = "none";
       });
 
+      autoGrow(field_);
       field_.focus();
       field_.select();
 
       activeField = { field: field_, group, format, multiline, blockId, fieldName: field, target, rawText };
+      positionToolbar(activeField);
+      toolbar.classList.add("is-visible");
+
+      field_.addEventListener("input", function () {
+        autoGrow(field_);
+        positionToolbar(activeField);
+      });
 
       field_.addEventListener("keydown", function (e) {
         if (e.key === "Escape") {
@@ -187,11 +254,14 @@
           cancelEdit();
         } else if (e.key === "Enter" && !multiline) {
           e.preventDefault();
-          field_.blur();
+          finishEdit();
         }
       });
 
       field_.addEventListener("blur", function () {
+        // Toolbar buttons preventDefault() on mousedown so clicking them
+        // never blurs the field in the first place — this only fires for a
+        // genuine click-away, so it's safe to treat as "done, save it".
         finishEdit();
       });
     }
@@ -200,6 +270,7 @@
       if (!activeField) return;
       activeField.target.classList.remove("live-edit-editing");
       activeField.field.remove();
+      toolbar.classList.remove("is-visible");
       hideStatus();
     }
 
@@ -220,7 +291,8 @@
         return;
       }
 
-      showStatus(group[0], "Saving…", false);
+      showStatus(pageRect(field), "saving", "Saving…");
+      toolbar.classList.remove("is-visible");
       field.disabled = true;
 
       fetch("/admin/blocks/" + blockId, {
@@ -245,17 +317,32 @@
         })
         .catch(function () {
           field.disabled = false;
-          showStatus(group[0], "Couldn't save — try again or press Esc", true);
+          showStatus(pageRect(field), "error", "Couldn't save — try again");
+          toolbar.classList.add("is-visible");
+          positionToolbar(activeField);
           field.focus();
         });
     }
 
-    pencil.addEventListener("click", function (e) {
+    chip.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      if (hoverTarget) {
-        startEdit(hoverTarget);
-      }
+      if (hoverTarget) startEdit(hoverTarget);
+    });
+
+    toolbar.querySelector(".live-edit-save").addEventListener("mousedown", function (e) {
+      e.preventDefault();
+    });
+    toolbar.querySelector(".live-edit-save").addEventListener("click", function (e) {
+      e.preventDefault();
+      finishEdit();
+    });
+    toolbar.querySelector(".live-edit-cancel").addEventListener("mousedown", function (e) {
+      e.preventDefault();
+    });
+    toolbar.querySelector(".live-edit-cancel").addEventListener("click", function (e) {
+      e.preventDefault();
+      cancelEdit();
     });
 
     try {

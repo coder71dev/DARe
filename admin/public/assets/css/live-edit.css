@@ -1,80 +1,207 @@
 /* Phase 3: hover-to-edit affordance for signed-in admins on the public
    pages. Never loaded for signed-out visitors (see LiveEdit::enabled()).
    Kept separate from style.css, which stays a pixel-exact match of the
-   original static site. */
+   original static site. Uses the site's own brand colors (navy/sky) so the
+   editing chrome reads as part of the product, not a bolted-on tool. */
+
+:root {
+  --le-navy: #00295e;
+  --le-navy-dark: #001a3d;
+  --le-sky: #0096ff;
+  --le-radius: 6px;
+}
 
 [data-live-edit] {
-  cursor: text;
+  border-radius: var(--le-radius);
+  transition: box-shadow 150ms ease, background-color 150ms ease;
 }
 
 [data-live-edit].live-edit-hover {
-  outline: 1px dashed rgba(27, 94, 167, 0.55);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-[data-live-edit].live-edit-editing {
-  outline: none;
-}
-
-.live-edit-pencil {
-  position: fixed;
-  z-index: 9000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: #1b5ea7;
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 2px rgba(0, 150, 255, 0.55);
+  background-color: rgba(0, 150, 255, 0.07);
   cursor: pointer;
 }
 
-.live-edit-pencil.is-visible {
+[data-live-edit].live-edit-editing {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+/* The floating label + edit chip that appears above a hovered field. */
+.live-edit-chip {
+  position: absolute;
+  z-index: 9000;
   display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  background: var(--le-navy);
+  color: #fff;
+  font: 600 11.5px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(0, 20, 50, 0.28), 0 1px 3px rgba(0, 20, 50, 0.2);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(3px) scale(0.96);
+  pointer-events: none;
+  transition: opacity 130ms ease, transform 130ms ease, background-color 120ms ease;
 }
 
-.live-edit-pencil svg {
-  width: 14px;
-  height: 14px;
-  fill: currentColor;
+.live-edit-chip.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
+.live-edit-chip:hover {
+  background: var(--le-navy-dark);
+}
+
+.live-edit-chip .live-edit-chip-icon {
+  display: flex;
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+.live-edit-chip .live-edit-chip-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #8fc8ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.live-edit-chip .live-edit-chip-label {
+  opacity: 0.92;
+}
+
+/* The in-place editable field itself. */
 .live-edit-field {
-  position: fixed;
+  position: absolute;
   z-index: 9001;
   box-sizing: border-box;
   background: #fff;
-  color: #10243e;
-  border: 2px solid #1b5ea7;
-  border-radius: 4px;
-  padding: 4px 6px;
+  color: inherit;
+  border: none;
+  border-radius: var(--le-radius);
+  padding: 4px 7px;
   font: inherit;
   line-height: inherit;
   resize: none;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--le-sky), 0 10px 28px rgba(0, 20, 50, 0.16);
 }
 
-.live-edit-status {
-  position: fixed;
+/* The small Save / Cancel toolbar attached to a field in edit mode. */
+.live-edit-toolbar {
+  position: absolute;
   z-index: 9002;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  padding: 3px 8px;
-  border-radius: 3px;
-  background: #10243e;
-  color: #fff;
-  pointer-events: none;
   display: none;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--le-navy);
+  box-shadow: 0 6px 16px rgba(0, 20, 50, 0.28);
+}
+
+.live-edit-toolbar.is-visible {
+  display: flex;
+}
+
+.live-edit-toolbar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.live-edit-toolbar button svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.live-edit-toolbar .live-edit-save:hover {
+  background: #1d7a3e;
+}
+
+.live-edit-toolbar .live-edit-cancel:hover {
+  background: #8f2323;
+}
+
+/* Status toast (saving / saved / error). */
+.live-edit-status {
+  position: absolute;
+  z-index: 9003;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 500 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: var(--le-navy);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 20, 50, 0.28);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 130ms ease, transform 130ms ease;
 }
 
 .live-edit-status.is-visible {
-  display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .live-edit-status.is-error {
-  background: #a42323;
+  background: #7a2323;
+}
+
+.live-edit-status .live-edit-status-icon {
+  display: flex;
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+.live-edit-status .live-edit-status-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.live-edit-status .live-edit-spinner {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: live-edit-spin 650ms linear infinite;
+}
+
+@keyframes live-edit-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

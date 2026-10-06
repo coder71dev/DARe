@@ -36,6 +36,7 @@ class LiveEdit
         }
 
         $attrs = sprintf('data-live-edit="%d:%s"', $block->id, e($field));
+        $attrs .= ' data-live-edit-label="'.e(self::label($block, $field)).'"';
 
         if ($multiline) {
             $attrs .= ' data-live-edit-multiline';
@@ -46,5 +47,13 @@ class LiveEdit
         }
 
         return $attrs;
+    }
+
+    /** The field's admin-form label (BlockTypes), trimmed of its parenthetical hint for the compact chip. */
+    private static function label(PageBlock $block, string $field): string
+    {
+        $label = BlockTypes::fields($block->block_type)[$field]['label'] ?? ucfirst(str_replace('_', ' ', $field));
+
+        return trim(strstr($label, ' (', true) ?: $label);
     }
 }
