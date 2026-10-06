@@ -33,7 +33,13 @@ class PageBlockController extends Controller
 
     public function update(UpdatePageBlockRequest $request, PageBlock $block): RedirectResponse
     {
-        $block->update(['props' => array_merge($block->props ?? [], $request->validated('props') ?? [])]);
+        $validated = $request->validated();
+
+        $block->update([
+            'props' => array_merge($block->props ?? [], $validated['props'] ?? []),
+            'section_class' => array_key_exists('section_class', $validated) ? $validated['section_class'] : $block->section_class,
+            'section_id' => array_key_exists('section_id', $validated) ? $validated['section_id'] : $block->section_id,
+        ]);
 
         return back()->with('status', 'Block saved.');
     }

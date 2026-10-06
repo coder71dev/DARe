@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BlockFieldsForm from '@/Components/Admin/BlockFieldsForm.vue';
+import SectionForm from '@/Components/Admin/SectionForm.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -128,6 +129,15 @@ function onDrop(targetId) {
                         </div>
 
                         <BlockFieldsForm :block="block" />
+
+                        <details class="mt-4 border-t pt-3">
+                            <summary class="cursor-pointer text-sm text-gray-500">Section background (advanced)</summary>
+                            <p class="mt-2 text-xs text-gray-400">
+                                Blocks sharing the same background sit together on one coloured band — this is
+                                how, e.g., the "What is TPRAF?" text and its tiles share one green section today.
+                            </p>
+                            <SectionForm :block="block" />
+                        </details>
                     </div>
 
                     <p v-if="blocks.length === 0" class="text-sm text-gray-500">No blocks yet — add one below.</p>

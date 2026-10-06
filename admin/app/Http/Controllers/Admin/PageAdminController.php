@@ -36,6 +36,8 @@ class PageAdminController extends Controller
             'fields' => BlockTypes::fields($block->block_type),
             'props' => $block->props,
             'position' => $block->position,
+            'section_class' => $block->section_class,
+            'section_id' => $block->section_id,
         ]);
 
         return Inertia::render('Admin/Pages/Edit', [

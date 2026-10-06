@@ -3,6 +3,10 @@
   $tabbed = $mode === 'tabbed';
 @endphp
 @if($tabbed)
+  {{-- A large chunk of style.css's diagram layout (toolbar grid position,
+       process-toggle styling, responsive tweaks, ...) is gated behind this
+       body class — see `.diagram-page` rules in style.css. --}}
+  @push('body-class') diagram-page @endpush
   <section class="hero diagram-hero" aria-labelledby="diagram-title">
     <div class="container diagram-hero-inner">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -17,6 +21,14 @@
 @endif
 <section class="section {{ $tabbed ? 'band-mist diagram-band' : 'band-leaf' }}" aria-label="TPRAF diagram">
 <div class="container">
+@if(! $tabbed && ! empty($props['section_heading']))
+  <header class="section-head reveal">
+    <h2>{{ $props['section_heading'] }}</h2>
+    @if(! empty($props['section_pill']))
+      <span class="pill pill-navy">{{ $props['section_pill'] }}</span>
+    @endif
+  </header>
+@endif
 <div class="landing-diagram" data-default-view="{{ $props['default_view'] ?? 'simple' }}">
   @if($tabbed)
     <div class="level-select" id="level-select">
@@ -122,20 +134,3 @@
 </div>
 </div>
 </section>
-
-@if($tabbed)
-  @include('partials.lesson')
-  <div class="process-panel process-sheet" id="process-panel" role="region" aria-labelledby="process-panel-title" hidden>
-    <button type="button" class="lesson-close process-sheet-close" id="process-panel-close" aria-label="Close this explanation"></button>
-    <h2 id="process-panel-title"></h2>
-    <p id="process-panel-text"></p>
-    <div class="process-sheet-more" id="process-panel-more"></div>
-    <div class="process-sheet-actions">
-      <button type="button" class="process-sheet-toggle" id="process-panel-toggle" aria-expanded="false" aria-controls="process-panel-more" hidden>Read more</button>
-      <a class="process-panel-explore" id="process-panel-explore" href="#" hidden></a>
-    </div>
-  </div>
-@else
-  @include('partials.lesson')
-@endif
-@include('partials.modal')

@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="{{ asset('assets/icons/favicon-192.png') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
 </head>
-<body class="home @yield('body-class')">
+<body class="home @stack('body-class')">
   <header class="site-header">
     <a class="brand" href="{{ route('home') }}" aria-label="DARe TPRAF — home">
       <img class="logo" src="{{ asset('assets/icons/logo-header.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />

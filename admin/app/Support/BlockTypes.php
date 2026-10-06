@@ -54,6 +54,11 @@ class BlockTypes
                     'icon' => ['type' => 'image', 'label' => 'Icon (figure style only)'],
                     'body' => ['type' => 'textarea', 'label' => 'Body text (blank line between paragraphs)'],
                     'lead' => ['type' => 'text', 'label' => 'Short lead line after the body (optional)'],
+                    'paragraph_style' => [
+                        'type' => 'select',
+                        'label' => 'Paragraph spacing (plain style only)',
+                        'options' => ['normal' => 'Normal', 'closing' => 'Closing paragraph (more space above)'],
+                    ],
                 ],
             ],
             'audience_tile' => [
@@ -98,7 +103,7 @@ class BlockTypes
                 'view' => 'blocks.acknowledgements',
                 'fields' => [
                     'icon' => ['type' => 'image', 'label' => 'Icon'],
-                    'body' => ['type' => 'textarea', 'label' => 'Body text (blank line between paragraphs)'],
+                    'body' => ['type' => 'textarea', 'label' => 'Body text (blank line between paragraphs; **bold**, *italic*)'],
                 ],
             ],
             'research_notice' => [
@@ -106,7 +111,7 @@ class BlockTypes
                 'view' => 'blocks.research-notice',
                 'fields' => [
                     'heading' => ['type' => 'text', 'label' => 'Heading'],
-                    'body' => ['type' => 'textarea', 'label' => 'Body text (blank line between paragraphs)'],
+                    'body' => ['type' => 'textarea', 'label' => 'Body text (blank line between paragraphs; **bold**, *italic*)'],
                 ],
             ],
             'cta_band' => [
@@ -137,6 +142,8 @@ class BlockTypes
                     ],
                     'show_extend_link' => ['type' => 'boolean', 'label' => 'Show "Explore the extended form" link'],
                     'extend_link_href' => ['type' => 'text', 'label' => 'Extended-form link target (single mode only)'],
+                    'section_heading' => ['type' => 'text', 'label' => 'Section heading above the diagram (single mode only, optional)'],
+                    'section_pill' => ['type' => 'text', 'label' => 'Small label beside the heading (single mode only, optional)'],
                 ],
             ],
         ];

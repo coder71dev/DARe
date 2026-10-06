@@ -35,8 +35,9 @@
       @endif
     </header>
   @endif
+  @php($paragraphClass = ($props['paragraph_style'] ?? 'normal') === 'closing' ? 'what-closing' : 'section-text')
   @foreach($paragraphs as $paragraph)
-    <p class="section-text">{{ $paragraph }}</p>
+    <p class="{{ $paragraphClass }}">{{ $paragraph }}</p>
   @endforeach
   @if(! empty($props['lead']))
     <p class="what-lead">{{ $props['lead'] }}</p>

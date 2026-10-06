@@ -18,7 +18,10 @@ class UpdatePageBlockRequest extends FormRequest
         $block = $this->route('block');
         $fields = BlockTypes::fields($block->block_type);
 
-        $rules = [];
+        $rules = [
+            'section_class' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'section_id' => ['sometimes', 'nullable', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/'],
+        ];
 
         foreach ($fields as $key => $definition) {
             $rules["props.{$key}"] = match ($definition['type']) {
