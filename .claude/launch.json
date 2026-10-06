@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "8743", "--directory", "site"],
       "port": 8743
+    },
+    {
+      "name": "dare-admin",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["D:/DARe/admin/artisan", "serve", "--port=8744"],
+      "port": 8744
     }
   ]
 }
