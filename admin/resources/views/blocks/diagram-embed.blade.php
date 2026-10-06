@@ -23,9 +23,9 @@
 <div class="container">
 @if(! $tabbed && ! empty($props['section_heading']))
   <header class="section-head reveal">
-    <h2>{{ $props['section_heading'] }}</h2>
+    <h2 {!! \App\Support\LiveEdit::attrs($block, 'section_heading') !!}>{{ $props['section_heading'] }}</h2>
     @if(! empty($props['section_pill']))
-      <span class="pill pill-navy">{{ $props['section_pill'] }}</span>
+      <span class="pill pill-navy" {!! \App\Support\LiveEdit::attrs($block, 'section_pill') !!}>{{ $props['section_pill'] }}</span>
     @endif
   </header>
 @endif

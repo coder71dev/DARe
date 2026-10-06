@@ -8,6 +8,6 @@
       @if($iconDims) width="{{ $iconDims['width'] }}" height="{{ $iconDims['height'] }}" @endif
       style="{{ \App\Support\IconMetrics::style($props['icon']) }}" />
   @endif
-  <h3>{!! nl2br(e($props['title'] ?? '')) !!}</h3>
-  <p>{{ $props['body'] ?? '' }}</p>
+  <h3 {!! \App\Support\LiveEdit::attrs($block, 'title', multiline: true, format: 'br') !!}>{!! nl2br(e($props['title'] ?? '')) !!}</h3>
+  <p {!! \App\Support\LiveEdit::attrs($block, 'body', multiline: true) !!}>{{ $props['body'] ?? '' }}</p>
 </li>

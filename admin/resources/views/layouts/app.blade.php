@@ -4,11 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="@yield('description', "An interactive walkthrough of DARe's Transport Performance & Risk Analysis Framework (TPRAF).")" />
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
   <title>@yield('title', 'TPRAF — DARe')</title>
   <link rel="icon" href="{{ asset('assets/icons/favicon-32.png') }}" sizes="32x32" />
   <link rel="icon" href="{{ asset('assets/icons/favicon-192.png') }}" sizes="192x192" />
   <link rel="apple-touch-icon" href="{{ asset('assets/icons/favicon-192.png') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+  @if(\App\Support\LiveEdit::enabled())
+    <link rel="stylesheet" href="{{ asset('assets/css/live-edit.css') }}" />
+  @endif
 </head>
 <body class="home @stack('body-class')">
   <header class="site-header">
@@ -92,6 +96,9 @@
       const TPRAF_DSP_IMP = @json($tprafDspImp);
     </script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
+  @endif
+  @if(\App\Support\LiveEdit::enabled())
+    <script src="{{ asset('assets/js/live-edit.js') }}"></script>
   @endif
 </body>
 </html>

@@ -1,0 +1,80 @@
+/* Phase 3: hover-to-edit affordance for signed-in admins on the public
+   pages. Never loaded for signed-out visitors (see LiveEdit::enabled()).
+   Kept separate from style.css, which stays a pixel-exact match of the
+   original static site. */
+
+[data-live-edit] {
+  cursor: text;
+}
+
+[data-live-edit].live-edit-hover {
+  outline: 1px dashed rgba(27, 94, 167, 0.55);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+[data-live-edit].live-edit-editing {
+  outline: none;
+}
+
+.live-edit-pencil {
+  position: fixed;
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #1b5ea7;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.live-edit-pencil.is-visible {
+  display: flex;
+}
+
+.live-edit-pencil svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.live-edit-field {
+  position: fixed;
+  z-index: 9001;
+  box-sizing: border-box;
+  background: #fff;
+  color: #10243e;
+  border: 2px solid #1b5ea7;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font: inherit;
+  line-height: inherit;
+  resize: none;
+}
+
+.live-edit-status {
+  position: fixed;
+  z-index: 9002;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: #10243e;
+  color: #fff;
+  pointer-events: none;
+  display: none;
+}
+
+.live-edit-status.is-visible {
+  display: block;
+}
+
+.live-edit-status.is-error {
+  background: #a42323;
+}

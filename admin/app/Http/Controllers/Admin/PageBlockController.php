@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePageBlockRequest;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Support\BlockTypes;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -31,7 +32,7 @@ class PageBlockController extends Controller
         return back()->with('status', 'Block added.');
     }
 
-    public function update(UpdatePageBlockRequest $request, PageBlock $block): RedirectResponse
+    public function update(UpdatePageBlockRequest $request, PageBlock $block): RedirectResponse|JsonResponse
     {
         $validated = $request->validated();
 
@@ -40,6 +41,15 @@ class PageBlockController extends Controller
             'section_class' => array_key_exists('section_class', $validated) ? $validated['section_class'] : $block->section_class,
             'section_id' => array_key_exists('section_id', $validated) ? $validated['section_id'] : $block->section_id,
         ]);
+
+        // The admin editor (Inertia/Vue) relies on the redirect-back response
+        // below, but the public pages' live-edit overlay (Phase 3, plain
+        // fetch()) needs a real JSON response instead — a redirect's method
+        // gets preserved onto whatever page the fetch originated from, which
+        // doesn't accept PATCH.
+        if ($request->wantsJson()) {
+            return response()->json(['status' => 'Block saved.']);
+        }
 
         return back()->with('status', 'Block saved.');
     }
