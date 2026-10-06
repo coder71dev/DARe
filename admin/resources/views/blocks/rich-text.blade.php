@@ -1,7 +1,7 @@
 @php
   $paragraphs = \App\Support\Markup::paragraphs($props['body'] ?? null);
   $style = $props['heading_style'] ?? 'plain';
-  $bodyAttrs = \App\Support\LiveEdit::attrs($block, 'body', multiline: true);
+  $bodyAttrs = \App\Support\LiveEdit::attrs($block, 'body', multiline: true, paragraphs: true);
 @endphp
 @if($style === 'figure')
   <div class="what-intro">

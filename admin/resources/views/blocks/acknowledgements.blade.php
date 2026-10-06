@@ -4,7 +4,7 @@
   @endif
   <div class="ack-text">
     @foreach(\App\Support\Markup::paragraphs($props['body'] ?? null) as $paragraph)
-      <p {!! \App\Support\LiveEdit::attrs($block, 'body', multiline: true, format: 'markdown') !!}>{!! \App\Support\Markup::inline(e($paragraph)) !!}</p>
+      <p {!! \App\Support\LiveEdit::attrs($block, 'body', multiline: true, format: 'markdown', paragraphs: true) !!}>{!! \App\Support\Markup::inline(e($paragraph)) !!}</p>
     @endforeach
   </div>
 </div>

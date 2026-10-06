@@ -24,12 +24,19 @@ class LiveEdit
      * string; single-line fields edit as an <input type="text">.
      *
      * $format tells the client how to turn this field's rendered HTML back
-     * into the raw text it was stored as, when reconstructing an edit group
-     * (see live-edit.js): 'plain' (default, no transform needed), 'markdown'
-     * (strong/em tags were Markup::inline()'s emphasis markers), or 'br'
-     * (br tags were nl2br()'s line break).
+     * into the raw text it was stored as, and how to re-render it after a
+     * save without a page reload (see live-edit.js): 'plain' (default, no
+     * transform needed), 'markdown' (strong/em tags are Markup::inline()'s
+     * emphasis markers), or 'br' (br tags are nl2br()'s line break).
+     *
+     * $paragraphs marks a field whose stored value is one blank-line-
+     * separated string (Markup::paragraphs()) rendered as several sibling
+     * <p> tags sharing this same attrs() call in a loop — rich_text/
+     * acknowledgements/research_notice's 'body'. Without it, a multiline
+     * field is assumed to render as a single element holding the whole
+     * value verbatim.
      */
-    public static function attrs(PageBlock $block, string $field, bool $multiline = false, string $format = 'plain'): string
+    public static function attrs(PageBlock $block, string $field, bool $multiline = false, string $format = 'plain', bool $paragraphs = false): string
     {
         if (! self::enabled()) {
             return '';
@@ -44,6 +51,10 @@ class LiveEdit
 
         if ($format !== 'plain') {
             $attrs .= ' data-live-edit-format="'.e($format).'"';
+        }
+
+        if ($paragraphs) {
+            $attrs .= ' data-live-edit-paragraphs';
         }
 
         return $attrs;

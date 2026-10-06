@@ -1,17 +1,15 @@
-/* Phase 3: hover-to-edit affordance for signed-in admins on the public
-   pages. Hover an editable field -> a labeled chip appears above it ->
-   click it -> the field swaps for a plain input/textarea holding its raw
+/* Phase 3: inline editing on the public pages for signed-in admins. Hover
+   an editable field -> a labeled chip names it -> click the field itself
+   (or the chip) -> it swaps for a plain input/textarea holding its raw
    stored text, with a small Save/Cancel toolbar -> Save (or Enter on
    single-line fields, or clicking away) saves via the existing admin
-   block-update endpoint and reloads to show the server-rendered result;
-   Cancel (or Escape) backs out without saving.
+   block-update endpoint and re-renders the field in place — no page
+   reload. Cancel (or Escape) backs out without saving.
 
    Only ever loaded for signed-in admins (see LiveEdit::enabled()); plain
    visitors get none of this markup or script. */
 (function () {
   "use strict";
-
-  const SCROLL_KEY = "liveEditScrollY";
 
   const ICONS = {
     edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
@@ -45,13 +43,49 @@
       clone.querySelectorAll("em").forEach((n) => n.replaceWith("*" + n.textContent + "*"));
       clone.querySelectorAll("strong").forEach((n) => n.replaceWith("**" + n.textContent + "**"));
     } else if (format === "br") {
-      clone.querySelectorAll("br").forEach((n) => n.replaceWith("\n"));
+      // nl2br() inserts <br> but *keeps* the original \n right after it in
+      // the text, so just dropping the element (not replacing it with our
+      // own \n) leaves exactly one newline, not two.
+      clone.querySelectorAll("br").forEach((n) => n.remove());
     }
     return clone.textContent;
   }
 
   function groupRawText(elements, format) {
     return elements.map((el) => elementRawText(el, format).trim()).join("\n\n");
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /** Mirrors App\Support\Markup::inline() — turns escaped bold/italic emphasis markers into tags. */
+  function applyMarkdown(escaped) {
+    return escaped.replace(/\*\*(.+?)\*\*/gs, "<strong>$1</strong>").replace(/\*(.+?)\*/gs, "<em>$1</em>");
+  }
+
+  /** Mirrors PHP's nl2br(). */
+  function applyBr(escaped) {
+    return escaped.replace(/\n/g, "<br>");
+  }
+
+  /** Renders one field's raw stored text back to the HTML App\Support\Markup / nl2br would produce. */
+  function renderFieldHtml(rawText, format) {
+    const escaped = escapeHtml(rawText);
+    if (format === "markdown") return applyMarkdown(escaped);
+    if (format === "br") return applyBr(escaped);
+    return escaped;
+  }
+
+  /** Mirrors App\Support\Markup::paragraphs() — splits on blank lines. */
+  function splitParagraphs(text) {
+    if (!text) return [];
+    return text
+      .split(/\n\s*\n/)
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
 
   /** Like getBoundingClientRect(), but relative to the document rather than the viewport — stays correct under position:absolute overlays as the page scrolls. */
@@ -104,6 +138,7 @@
 
     let hoverTarget = null;
     let hideTimer = null;
+    let statusTimer = null;
     let activeField = null;
 
     function positionChip(el) {
@@ -138,12 +173,35 @@
       }, 600);
     }
 
-    document.querySelectorAll("[data-live-edit]").forEach(function (el) {
-      el.addEventListener("mouseenter", function () {
-        if (activeField) return;
-        showChipFor(el);
-      });
-      el.addEventListener("mouseleave", scheduleHide);
+    // Delegated from document (rather than bound per-element) so that nodes
+    // a save regenerates (see applyGroupUpdate) stay fully interactive
+    // without needing their listeners re-attached.
+    document.addEventListener("mouseover", function (e) {
+      if (activeField) return;
+      const el = e.target.closest("[data-live-edit]");
+      if (!el || el === hoverTarget) return;
+      showChipFor(el);
+    });
+
+    document.addEventListener("mouseout", function (e) {
+      const el = e.target.closest("[data-live-edit]");
+      if (!el) return;
+      // mouseout fires when moving between an element's own descendants
+      // too; only treat it as "left" once relatedTarget is truly outside.
+      if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+      scheduleHide();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (activeField) return;
+      const el = e.target.closest("[data-live-edit]");
+      if (!el) return;
+      // True inline editing: click the text itself, not just the chip.
+      // preventDefault() blocks the element's own default action (link
+      // navigation, <summary> toggle) for this click.
+      e.preventDefault();
+      e.stopPropagation();
+      startEdit(el);
     });
 
     chip.addEventListener("mouseenter", function () {
@@ -167,17 +225,22 @@
     );
 
     function hideStatus() {
+      clearTimeout(statusTimer);
       status.classList.remove("is-visible");
     }
 
-    function showStatus(rect, variant, text) {
-      const icon = variant === "error" ? svg("x") : '<span class="live-edit-spinner"></span>';
+    function showStatus(rect, variant, text, autoHideMs) {
+      clearTimeout(statusTimer);
+      const icon = variant === "error" ? svg("x") : variant === "saved" ? svg("check") : '<span class="live-edit-spinner"></span>';
       status.innerHTML = '<span class="live-edit-status-icon">' + icon + "</span><span>" + text + "</span>";
       status.classList.toggle("is-error", variant === "error");
       const top = Math.max(4 + window.scrollY, rect.top - 34);
       status.style.top = top + "px";
       status.style.left = clampLeft(rect.left, 140) + "px";
       status.classList.add("is-visible");
+      if (autoHideMs) {
+        statusTimer = setTimeout(hideStatus, autoHideMs);
+      }
     }
 
     function autoGrow(field) {
@@ -206,6 +269,7 @@
       const [blockId, field] = target.getAttribute("data-live-edit").split(":");
       const multiline = target.hasAttribute("data-live-edit-multiline");
       const format = target.getAttribute("data-live-edit-format") || "plain";
+      const paragraphs = target.hasAttribute("data-live-edit-paragraphs");
       const groupKey = target.getAttribute("data-live-edit");
       const group = Array.from(document.querySelectorAll('[data-live-edit="' + CSS.escape(groupKey) + '"]'));
       const rawText = groupRawText(group, format);
@@ -239,7 +303,7 @@
       field_.focus();
       field_.select();
 
-      activeField = { field: field_, group, format, multiline, blockId, fieldName: field, target, rawText };
+      activeField = { field: field_, group, format, multiline, paragraphs, blockId, fieldName: field, target, rawText };
       positionToolbar(activeField);
       toolbar.classList.add("is-visible");
 
@@ -271,19 +335,44 @@
       activeField.target.classList.remove("live-edit-editing");
       activeField.field.remove();
       toolbar.classList.remove("is-visible");
-      hideStatus();
+      activeField = null;
     }
 
     function cancelEdit() {
       if (!activeField) return;
       restoreGroup(activeField.group);
+      hideStatus();
       cleanupField();
-      activeField = null;
+    }
+
+    /** Replaces the (currently hidden) group elements with freshly rendered ones holding the new text, mirroring what the server would render. Returns the new elements, in place of the old ones in the DOM. */
+    function applyGroupUpdate(af, newValue) {
+      const { group, format, paragraphs } = af;
+      const template = group[0];
+      const parent = template.parentNode;
+
+      const texts = paragraphs ? splitParagraphs(newValue) : [newValue];
+      const newNodes = texts.map(function (text) {
+        const node = template.cloneNode(false);
+        node.style.display = "";
+        // template may be the clicked element itself (still carrying these
+        // transient state classes until cleanupField() runs) — never let a
+        // freshly rendered node inherit them.
+        node.classList.remove("live-edit-hover", "live-edit-editing");
+        node.innerHTML = renderFieldHtml(text, format);
+        return node;
+      });
+
+      newNodes.forEach((node) => parent.insertBefore(node, template));
+      group.forEach((el) => el.remove());
+
+      return newNodes;
     }
 
     function finishEdit() {
       if (!activeField) return;
-      const { field, group, blockId, fieldName, rawText } = activeField;
+      const af = activeField;
+      const { field, blockId, fieldName, rawText } = af;
       const newValue = field.value;
 
       if (newValue === rawText) {
@@ -307,19 +396,16 @@
       })
         .then(function (res) {
           if (!res.ok) throw new Error("Save failed (" + res.status + ")");
-          try {
-            sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
-          } catch (_) {
-            // Storage can be unavailable (private browsing, sandboxed preview); losing
-            // the scroll-restore is harmless, the save itself already succeeded.
-          }
-          location.reload();
+          const statusRect = pageRect(field);
+          const newNodes = applyGroupUpdate(af, newValue);
+          cleanupField();
+          showStatus(newNodes[0] ? pageRect(newNodes[0]) : statusRect, "saved", "Saved", 1200);
         })
         .catch(function () {
           field.disabled = false;
           showStatus(pageRect(field), "error", "Couldn't save — try again");
           toolbar.classList.add("is-visible");
-          positionToolbar(activeField);
+          positionToolbar(af);
           field.focus();
         });
     }
@@ -344,15 +430,5 @@
       e.preventDefault();
       cancelEdit();
     });
-
-    try {
-      const savedScroll = sessionStorage.getItem(SCROLL_KEY);
-      if (savedScroll !== null) {
-        sessionStorage.removeItem(SCROLL_KEY);
-        window.scrollTo(0, parseInt(savedScroll, 10) || 0);
-      }
-    } catch (_) {
-      // Storage can be unavailable; just skip the scroll restore.
-    }
   });
 })();
