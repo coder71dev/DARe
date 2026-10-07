@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({ views: Array });
@@ -10,7 +11,7 @@ defineProps({ views: Array });
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Diagrams</h2>
+            <PageHeading icon="chart" accent="green" title="Diagrams" />
         </template>
 
         <div class="py-12">
@@ -19,9 +20,12 @@ defineProps({ views: Array });
                     <ul class="divide-y divide-gray-200">
                         <li v-for="view in views" :key="view.key" class="flex items-center justify-between px-6 py-4">
                             <span class="font-medium text-gray-900">{{ view.title }}</span>
-                            <Link :href="route('admin.diagrams.edit', view.key)" class="text-indigo-600 hover:text-indigo-900">
-                                Edit text
-                            </Link>
+                            <span class="space-x-4 text-sm">
+                                <a :href="`${route('diagram')}#${view.key}`" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-900">View</a>
+                                <Link :href="route('admin.diagrams.edit', view.key)" class="text-dare-sky hover:text-dare-navy">
+                                    Edit text
+                                </Link>
+                            </span>
                         </li>
                     </ul>
                 </div>

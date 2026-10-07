@@ -14,7 +14,7 @@ const showingNavigationDropdown = ref(false);
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav
-                class="border-b border-gray-100 bg-white"
+                class="bg-dare-navy"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -23,9 +23,7 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
+                                    <ApplicationLogo class="block h-9 w-auto" />
                                 </Link>
                             </div>
 
@@ -51,10 +49,30 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Diagrams
                                 </NavLink>
+                                <NavLink
+                                    v-if="$page.props.auth.user.is_admin"
+                                    :href="route('admin.users.index')"
+                                    :active="route().current('admin.users.*')"
+                                >
+                                    Admin users
+                                </NavLink>
                             </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                            <a
+                                href="/"
+                                target="_blank"
+                                rel="noopener"
+                                title="Visit site"
+                                class="inline-flex items-center gap-1.5 rounded-md border border-transparent bg-white/5 px-3 py-2 text-sm font-medium leading-4 text-white/70 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:outline-none"
+                            >
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                </svg>
+                                <span>Visit site</span>
+                            </a>
+
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
@@ -62,7 +80,7 @@ const showingNavigationDropdown = ref(false);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white/5 px-3 py-2 text-sm font-medium leading-4 text-white/70 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:outline-none"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -107,7 +125,7 @@ const showingNavigationDropdown = ref(false);
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                class="inline-flex items-center justify-center rounded-md p-2 text-white/60 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white focus:outline-none"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -149,7 +167,7 @@ const showingNavigationDropdown = ref(false);
                         block: showingNavigationDropdown,
                         hidden: !showingNavigationDropdown,
                     }"
-                    class="sm:hidden"
+                    class="bg-white shadow-lg sm:hidden"
                 >
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
@@ -170,6 +188,24 @@ const showingNavigationDropdown = ref(false);
                         >
                             Diagrams
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.is_admin"
+                            :href="route('admin.users.index')"
+                            :active="route().current('admin.users.*')"
+                        >
+                            Admin users
+                        </ResponsiveNavLink>
+                        <a
+                            href="/"
+                            target="_blank"
+                            rel="noopener"
+                            class="flex items-center gap-2 border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+                        >
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>
+                            Visit site
+                        </a>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -205,10 +241,10 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Heading -->
             <header
-                class="bg-white shadow"
+                class="border-b border-gray-200 bg-white"
                 v-if="$slots.header"
             >
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>

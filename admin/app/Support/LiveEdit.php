@@ -15,12 +15,18 @@ use App\Models\PageBlock;
  * active once they've entered live-edit mode via the "Live Edit" link on
  * the admin pages list (?edit-mode=1, see SetLiveEditMode), so the editing
  * chrome doesn't clutter every page they happen to visit.
+ *
+ * Gated to is_admin specifically (not just any authenticated account) so
+ * this stays correct if a non-admin role is ever added later.
  */
 class LiveEdit
 {
     public static function enabled(): bool
     {
-        return auth()->check() && auth()->user()->hasVerifiedEmail() && session('live_edit_mode', false);
+        return auth()->check()
+            && auth()->user()->is_admin
+            && auth()->user()->hasVerifiedEmail()
+            && session('live_edit_mode', false);
     }
 
     /**

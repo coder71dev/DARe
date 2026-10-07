@@ -1,6 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BlockFieldsForm from '@/Components/Admin/BlockFieldsForm.vue';
+import CollapsibleSection from '@/Components/Admin/CollapsibleSection.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import SectionForm from '@/Components/Admin/SectionForm.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -62,49 +64,59 @@ function onDrop(targetId) {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Edit page: {{ page.title }}</h2>
+            <PageHeading
+                icon="pencil"
+                accent="sky"
+                :title="`Edit page: ${page.title}`"
+                :back="{ href: route('admin.pages.index'), label: 'Pages' }"
+            />
         </template>
 
         <div class="py-12">
             <div class="mx-auto max-w-4xl space-y-6 sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg">
-                    <h3 class="mb-4 text-lg font-medium text-gray-900">Page settings</h3>
-                    <form class="grid grid-cols-2 gap-4" @submit.prevent="savePage">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Title</label>
-                            <input v-model="pageForm.title" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">URL slug</label>
-                            <input v-model="pageForm.slug" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                            <p v-if="pageForm.errors.slug" class="mt-1 text-sm text-red-600">{{ pageForm.errors.slug }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">SEO title (optional)</label>
-                            <input v-model="pageForm.meta_title" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Status</label>
-                            <select v-model="pageForm.status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                                <option value="draft">Draft</option>
-                                <option value="published">Published</option>
-                            </select>
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-sm font-medium text-gray-700">SEO description (optional)</label>
-                            <textarea v-model="pageForm.meta_description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                        </div>
-                        <div class="col-span-2">
-                            <button
-                                type="submit"
-                                :disabled="pageForm.processing"
-                                class="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-                            >
-                                Save page settings
-                            </button>
-                            <span v-if="pageForm.recentlySuccessful" class="ml-3 text-sm text-green-600">Saved.</span>
-                        </div>
-                    </form>
+                    <CollapsibleSection>
+                        <template #title>
+                            <h3 class="text-lg font-medium text-gray-900">Page settings</h3>
+                        </template>
+
+                        <form class="grid grid-cols-2 gap-4" @submit.prevent="savePage">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Title</label>
+                                <input v-model="pageForm.title" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">URL slug</label>
+                                <input v-model="pageForm.slug" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                                <p v-if="pageForm.errors.slug" class="mt-1 text-sm text-red-600">{{ pageForm.errors.slug }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">SEO title (optional)</label>
+                                <input v-model="pageForm.meta_title" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Status</label>
+                                <select v-model="pageForm.status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">SEO description (optional)</label>
+                                <textarea v-model="pageForm.meta_description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                            </div>
+                            <div class="col-span-2">
+                                <button
+                                    type="submit"
+                                    :disabled="pageForm.processing"
+                                    class="rounded-md bg-dare-navy px-4 py-2 text-sm font-medium text-white hover:bg-dare-navy/90 disabled:opacity-50"
+                                >
+                                    Save page settings
+                                </button>
+                                <span v-if="pageForm.recentlySuccessful" class="ml-3 text-sm text-green-600">Saved.</span>
+                            </div>
+                        </form>
+                    </CollapsibleSection>
                 </div>
 
                 <div class="space-y-4">
@@ -119,25 +131,33 @@ function onDrop(targetId) {
                         @dragover.prevent
                         @drop="onDrop(block.id)"
                     >
-                        <div class="mb-4 flex cursor-move items-center justify-between">
-                            <h4 class="font-medium text-gray-900">
-                                <span aria-hidden="true" class="mr-2 text-gray-400">&#8942;&#8942;</span>{{ block.label }}
-                            </h4>
-                            <button type="button" class="text-sm text-red-600 hover:text-red-800" @click="removeBlock(block.id)">
-                                Remove
-                            </button>
-                        </div>
+                        <CollapsibleSection>
+                            <template #title>
+                                <h4 class="cursor-move font-medium text-gray-900">
+                                    <span aria-hidden="true" class="mr-2 text-gray-400">&#8942;&#8942;</span>{{ block.label }}
+                                </h4>
+                            </template>
+                            <template #actions>
+                                <button type="button" class="text-sm text-red-600 hover:text-red-800" @click="removeBlock(block.id)">
+                                    Remove
+                                </button>
+                            </template>
 
-                        <BlockFieldsForm :block="block" />
+                            <BlockFieldsForm :block="block" />
 
-                        <details class="mt-4 border-t pt-3">
-                            <summary class="cursor-pointer text-sm text-gray-500">Section background (advanced)</summary>
-                            <p class="mt-2 text-xs text-gray-400">
-                                Blocks sharing the same background sit together on one coloured band — this is
-                                how, e.g., the "What is TPRAF?" text and its tiles share one green section today.
-                            </p>
-                            <SectionForm :block="block" />
-                        </details>
+                            <div class="mt-4 border-t pt-3">
+                                <CollapsibleSection>
+                                    <template #title>
+                                        <span class="text-sm text-gray-500">Section background (advanced)</span>
+                                    </template>
+                                    <p class="text-xs text-gray-400">
+                                        Blocks sharing the same background sit together on one coloured band — this is
+                                        how, e.g., the "What is TPRAF?" text and its tiles share one green section today.
+                                    </p>
+                                    <SectionForm :block="block" />
+                                </CollapsibleSection>
+                            </div>
+                        </CollapsibleSection>
                     </div>
 
                     <p v-if="blocks.length === 0" class="text-sm text-gray-500">No blocks yet — add one below.</p>
@@ -150,7 +170,7 @@ function onDrop(targetId) {
                         </select>
                         <button
                             type="button"
-                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90"
                             @click="addBlock"
                         >
                             Add block

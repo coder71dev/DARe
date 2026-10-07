@@ -1,23 +1,32 @@
 <?php
 
 use App\Http\Controllers\Admin\DiagramAdminController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
+use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\SetLiveEditMode;
 use App\Support\ReservedSlugs;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware(SetLiveEditMode::class)->group(function () {
     Route::get('/', fn () => app(PageController::class)->show('home'))->name('home');
     Route::get('/diagram', fn () => app(PageController::class)->show('diagram'))->name('diagram');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+// A conventional entry point into the admin panel: signed-in admins land on
+// the dashboard, everyone else is sent to log in (and back here afterwards).
+Route::get('/admin', fn () => auth()->check()
+    ? redirect()->route('dashboard')
+    : redirect()->guest(route('login'))
+)->name('admin.home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -25,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pages', [PageAdminController::class, 'index'])->name('pages.index');
     Route::post('/pages', [PageAdminController::class, 'store'])->name('pages.store');
     Route::get('/pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
@@ -40,6 +49,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/diagrams', [DiagramAdminController::class, 'index'])->name('diagrams.index');
     Route::get('/diagrams/{view}/elements', [DiagramAdminController::class, 'edit'])->name('diagrams.edit');
     Route::patch('/elements/{element}', [DiagramAdminController::class, 'update'])->name('elements.update');
+
+    Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserAdminController::class, 'store'])->name('users.store');
+    Route::patch('/users/{user}', [UserAdminController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
+
+    Route::post('/media', [MediaController::class, 'store'])->name('media.store');
 });
 
 require __DIR__.'/auth.php';

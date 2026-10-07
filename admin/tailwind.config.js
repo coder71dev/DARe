@@ -15,6 +15,17 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            // DARe's own palette (see site/assets/css for the source values)
+            // in place of Breeze's default indigo/gray, so the admin panel
+            // reads as DARe's rather than a generic Laravel scaffold.
+            colors: {
+                dare: {
+                    navy: '#00295e',
+                    green: '#5ecf70',
+                    sky: '#0096ff',
+                    stone: '#e6e6e6',
+                },
+            },
         },
     },
 

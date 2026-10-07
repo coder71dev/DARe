@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -39,7 +40,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): SymfonyResponse
     {
         Auth::guard('web')->logout();
 
@@ -47,6 +48,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // The home page is a plain Blade view, not an Inertia one (see
+        // PageController::show), so a normal redirect() gets swallowed by
+        // Inertia's XHR-based navigation — the Blade HTML ends up rendered
+        // inside the SPA's root div instead of replacing the page. Inertia::
+        // location() forces a real browser navigation instead.
+        return Inertia::location('/');
     }
 }

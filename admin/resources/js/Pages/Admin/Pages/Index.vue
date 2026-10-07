@@ -1,10 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Pagination from '@/Components/Admin/Pagination.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps({
-    pages: Array,
+    pages: Object,
 });
 
 const showCreate = ref(false);
@@ -25,16 +27,17 @@ function createPage() {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">Pages</h2>
-                <button
-                    type="button"
-                    class="rounded-md bg-gray-800 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700"
-                    @click="showCreate = !showCreate"
-                >
-                    New page
-                </button>
-            </div>
+            <PageHeading icon="document" accent="sky" title="Pages">
+                <template #actions>
+                    <button
+                        type="button"
+                        class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
+                        @click="showCreate = !showCreate"
+                    >
+                        New page
+                    </button>
+                </template>
+            </PageHeading>
         </template>
 
         <div class="py-12">
@@ -63,7 +66,7 @@ function createPage() {
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90 disabled:opacity-50"
                         >
                             Create
                         </button>
@@ -81,7 +84,7 @@ function createPage() {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr v-for="page in pages" :key="page.id">
+                            <tr v-for="page in pages.data" :key="page.id">
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ page.title }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">/{{ page.slug }}</td>
                                 <td class="px-6 py-4 text-sm">
@@ -93,12 +96,23 @@ function createPage() {
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm space-x-4">
-                                    <a :href="page.public_url + '?edit-mode=1'" class="text-emerald-600 hover:text-emerald-900">Live Edit</a>
-                                    <Link :href="route('admin.pages.edit', page.id)" class="text-indigo-600 hover:text-indigo-900">Edit</Link>
+                                    <a :href="page.public_url" target="_blank" rel="noopener" class="text-dare-sky hover:text-dare-navy">View</a>
+                                    <a :href="page.public_url + '?edit-mode=1'" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-900">Live Edit</a>
+                                    <Link :href="route('admin.pages.edit', page.id)" class="text-dare-sky hover:text-dare-navy">Edit</Link>
                                 </td>
+                            </tr>
+                            <tr v-if="pages.data.length === 0">
+                                <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">No pages yet.</td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div v-if="pages.data.length > 0" class="flex items-center justify-between">
+                    <p class="text-sm text-gray-500">
+                        Showing {{ pages.from }}–{{ pages.to }} of {{ pages.total }}
+                    </p>
+                    <Pagination :links="pages.links" />
                 </div>
             </div>
         </div>
