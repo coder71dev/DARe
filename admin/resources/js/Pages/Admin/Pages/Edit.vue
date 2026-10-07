@@ -140,7 +140,7 @@ function onDrop(targetId) {
                             <BlockFieldsForm :block="block" />
 
                             <div class="mt-4 border-t pt-3">
-                                <CollapsibleSection :default-open="false">
+                                <CollapsibleSection>
                                     <template #title>
                                         <span class="text-sm text-gray-500">Section background (advanced)</span>
                                     </template>

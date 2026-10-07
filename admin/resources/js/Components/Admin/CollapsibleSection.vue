@@ -8,7 +8,7 @@ import { ref } from 'vue';
 const props = defineProps({
     defaultOpen: {
         type: Boolean,
-        default: true,
+        default: false,
     },
 });
 
