@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DiagramAdminController;
+use App\Http\Controllers\Admin\EmailLogController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
@@ -56,6 +57,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::delete('/users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
 
     Route::post('/media', [MediaController::class, 'store'])->name('media.store');
+
+    Route::get('/email-logs', [EmailLogController::class, 'index'])->name('email-logs.index');
+    Route::get('/email-logs/{emailLog}', [EmailLogController::class, 'show'])->name('email-logs.show');
 });
 
 require __DIR__.'/auth.php';
