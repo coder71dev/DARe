@@ -4,6 +4,7 @@
 // BlockTypes::fields() drives validation on the server. Reused as-is by the
 // Phase 3 live-edit overlay's popover/slide-panel.
 import { useForm } from '@inertiajs/vue3';
+import ImageUploadField from '@/Components/Admin/ImageUploadField.vue';
 
 const props = defineProps({
     block: Object,
@@ -38,15 +39,7 @@ function save() {
                 <input v-model="form.props[key]" type="checkbox" class="rounded border-gray-300" />
                 <span class="text-sm text-gray-600">Enabled</span>
             </label>
-            <div v-else-if="definition.type === 'image'" class="mt-1 flex items-center gap-2">
-                <input
-                    v-model="form.props[key]"
-                    type="text"
-                    placeholder="assets/img/..."
-                    class="block w-full rounded-md border-gray-300 shadow-sm"
-                />
-                <span class="shrink-0 text-xs text-gray-400">image upload comes in a later phase</span>
-            </div>
+            <ImageUploadField v-else-if="definition.type === 'image'" v-model="form.props[key]" class="mt-1" />
             <input
                 v-else
                 v-model="form.props[key]"

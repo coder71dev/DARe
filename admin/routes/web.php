@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DiagramAdminController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\UserAdminController;
@@ -45,6 +46,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
     Route::post('/users', [UserAdminController::class, 'store'])->name('users.store');
     Route::delete('/users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
+
+    Route::post('/media', [MediaController::class, 'store'])->name('media.store');
 });
 
 require __DIR__.'/auth.php';
