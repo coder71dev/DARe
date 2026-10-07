@@ -37,7 +37,7 @@ function removeUser(user) {
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Admin users</h2>
                 <button
                     type="button"
-                    class="rounded-md bg-gray-800 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700"
+                    class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
                     @click="showCreate = !showCreate"
                 >
                     New admin
@@ -70,7 +70,7 @@ function removeUser(user) {
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90 disabled:opacity-50"
                         >
                             Create & send invite
                         </button>

@@ -103,7 +103,7 @@ function onDrop(targetId) {
                                 <button
                                     type="submit"
                                     :disabled="pageForm.processing"
-                                    class="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+                                    class="rounded-md bg-dare-navy px-4 py-2 text-sm font-medium text-white hover:bg-dare-navy/90 disabled:opacity-50"
                                 >
                                     Save page settings
                                 </button>
@@ -164,7 +164,7 @@ function onDrop(targetId) {
                         </select>
                         <button
                             type="button"
-                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90"
                             @click="addBlock"
                         >
                             Add block

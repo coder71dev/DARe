@@ -29,7 +29,7 @@ function createPage() {
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Pages</h2>
                 <button
                     type="button"
-                    class="rounded-md bg-gray-800 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700"
+                    class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
                     @click="showCreate = !showCreate"
                 >
                     New page
@@ -63,7 +63,7 @@ function createPage() {
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90 disabled:opacity-50"
                         >
                             Create
                         </button>
@@ -93,8 +93,9 @@ function createPage() {
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm space-x-4">
+                                    <a :href="page.public_url" class="text-dare-sky hover:text-dare-navy">View</a>
                                     <a :href="page.public_url + '?edit-mode=1'" class="text-emerald-600 hover:text-emerald-900">Live Edit</a>
-                                    <Link :href="route('admin.pages.edit', page.id)" class="text-indigo-600 hover:text-indigo-900">Edit</Link>
+                                    <Link :href="route('admin.pages.edit', page.id)" class="text-dare-sky hover:text-dare-navy">Edit</Link>
                                 </td>
                             </tr>
                         </tbody>

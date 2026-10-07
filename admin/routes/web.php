@@ -5,21 +5,21 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\SetLiveEditMode;
 use App\Support\ReservedSlugs;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware(SetLiveEditMode::class)->group(function () {
     Route::get('/', fn () => app(PageController::class)->show('home'))->name('home');
     Route::get('/diagram', fn () => app(PageController::class)->show('diagram'))->name('diagram');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

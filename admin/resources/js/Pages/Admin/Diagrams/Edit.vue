@@ -77,7 +77,7 @@ function save(elementId) {
                             <button
                                 type="submit"
                                 :disabled="forms[element.id].processing"
-                                class="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+                                class="rounded-md bg-dare-navy px-4 py-2 text-sm font-medium text-white hover:bg-dare-navy/90 disabled:opacity-50"
                             >
                                 Save
                             </button>

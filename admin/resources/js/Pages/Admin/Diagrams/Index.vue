@@ -19,9 +19,12 @@ defineProps({ views: Array });
                     <ul class="divide-y divide-gray-200">
                         <li v-for="view in views" :key="view.key" class="flex items-center justify-between px-6 py-4">
                             <span class="font-medium text-gray-900">{{ view.title }}</span>
-                            <Link :href="route('admin.diagrams.edit', view.key)" class="text-indigo-600 hover:text-indigo-900">
-                                Edit text
-                            </Link>
+                            <span class="space-x-4 text-sm">
+                                <a :href="`${route('diagram')}#${view.key}`" class="text-emerald-600 hover:text-emerald-900">View</a>
+                                <Link :href="route('admin.diagrams.edit', view.key)" class="text-dare-sky hover:text-dare-navy">
+                                    Edit text
+                                </Link>
+                            </span>
                         </li>
                     </ul>
                 </div>
