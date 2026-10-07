@@ -20,6 +20,29 @@ function createUser() {
     });
 }
 
+const editingUserId = ref(null);
+const editForm = useForm({ name: '', email: '' });
+
+function startEdit(user) {
+    editingUserId.value = user.id;
+    editForm.clearErrors();
+    editForm.name = user.name;
+    editForm.email = user.email;
+}
+
+function cancelEdit() {
+    editingUserId.value = null;
+}
+
+function saveEdit(user) {
+    editForm.patch(route('admin.users.update', user.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            editingUserId.value = null;
+        },
+    });
+}
+
 function removeUser(user) {
     if (!confirm(`Remove ${user.name}'s admin account?`)) {
         return;
@@ -94,18 +117,57 @@ function removeUser(user) {
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
                             <tr v-for="user in users" :key="user.id">
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ user.name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ user.email }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ new Date(user.created_at).toLocaleDateString() }}</td>
-                                <td class="px-6 py-4 text-right text-sm">
-                                    <button
-                                        type="button"
-                                        class="text-red-600 hover:text-red-900"
-                                        @click="removeUser(user)"
-                                    >
-                                        Remove
-                                    </button>
-                                </td>
+                                <template v-if="editingUserId === user.id">
+                                    <td class="px-6 py-3">
+                                        <input
+                                            v-model="editForm.name"
+                                            type="text"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm"
+                                        />
+                                        <p v-if="editForm.errors.name" class="mt-1 text-xs text-red-600">{{ editForm.errors.name }}</p>
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <input
+                                            v-model="editForm.email"
+                                            type="email"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm"
+                                        />
+                                        <p v-if="editForm.errors.email" class="mt-1 text-xs text-red-600">{{ editForm.errors.email }}</p>
+                                    </td>
+                                    <td class="px-6 py-3 text-sm text-gray-500">{{ new Date(user.created_at).toLocaleDateString() }}</td>
+                                    <td class="px-6 py-3 text-right text-sm space-x-3">
+                                        <button
+                                            type="button"
+                                            :disabled="editForm.processing"
+                                            class="font-medium text-dare-sky hover:text-dare-navy disabled:opacity-50"
+                                            @click="saveEdit(user)"
+                                        >
+                                            Save
+                                        </button>
+                                        <button type="button" class="text-gray-500 hover:text-gray-700" @click="cancelEdit">Cancel</button>
+                                    </td>
+                                </template>
+                                <template v-else>
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ user.name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ user.email }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ new Date(user.created_at).toLocaleDateString() }}</td>
+                                    <td class="px-6 py-4 text-right text-sm space-x-4">
+                                        <button
+                                            type="button"
+                                            class="text-dare-sky hover:text-dare-navy"
+                                            @click="startEdit(user)"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="text-red-600 hover:text-red-900"
+                                            @click="removeUser(user)"
+                                        >
+                                            Remove
+                                        </button>
+                                    </td>
+                                </template>
                             </tr>
                         </tbody>
                     </table>

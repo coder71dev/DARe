@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAdminUserRequest;
+use App\Http\Requests\UpdateAdminUserRequest;
 use App\Models\User;
 use App\Notifications\AdminAccountCreated;
 use Illuminate\Http\RedirectResponse;
@@ -45,6 +46,13 @@ class UserAdminController extends Controller
         $user->notify(new AdminAccountCreated($temporaryPassword, $resetToken));
 
         return back()->with('status', "Admin account created for {$user->email} — an invite email has been sent.");
+    }
+
+    public function update(UpdateAdminUserRequest $request, User $user): RedirectResponse
+    {
+        $user->update($request->validated());
+
+        return back()->with('status', "{$user->name}'s details were updated.");
     }
 
     public function destroy(User $user): RedirectResponse

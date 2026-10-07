@@ -123,4 +123,52 @@ class UserAdminControllerTest extends TestCase
         $response->assertRedirect(route('admin.users.index'));
         $this->assertDatabaseMissing('users', ['id' => $other->id]);
     }
+
+    public function test_admin_can_update_another_admins_name_and_email(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $other = User::factory()->admin()->create(['name' => 'Old Name', 'email' => 'old@example.com']);
+
+        $response = $this->actingAs($admin)->patch(route('admin.users.update', $other), [
+            'name' => 'New Name',
+            'email' => 'new@example.com',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('users', [
+            'id' => $other->id,
+            'name' => 'New Name',
+            'email' => 'new@example.com',
+        ]);
+    }
+
+    public function test_updating_a_user_with_an_email_already_taken_fails(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $taken = User::factory()->admin()->create(['email' => 'taken@example.com']);
+        $other = User::factory()->admin()->create(['email' => 'other@example.com']);
+
+        $response = $this->actingAs($admin)->patch(route('admin.users.update', $other), [
+            'name' => $other->name,
+            'email' => 'taken@example.com',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+        $this->assertDatabaseHas('users', ['id' => $other->id, 'email' => 'other@example.com']);
+        $this->assertDatabaseHas('users', ['id' => $taken->id, 'email' => 'taken@example.com']);
+    }
+
+    public function test_updating_a_user_keeping_their_own_email_succeeds(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $other = User::factory()->admin()->create(['name' => 'Old Name', 'email' => 'same@example.com']);
+
+        $response = $this->actingAs($admin)->patch(route('admin.users.update', $other), [
+            'name' => 'New Name',
+            'email' => 'same@example.com',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('users', ['id' => $other->id, 'name' => 'New Name', 'email' => 'same@example.com']);
+    }
 }
