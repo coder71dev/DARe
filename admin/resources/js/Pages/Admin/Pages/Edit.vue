@@ -2,7 +2,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BlockFieldsForm from '@/Components/Admin/BlockFieldsForm.vue';
 import CollapsibleSection from '@/Components/Admin/CollapsibleSection.vue';
+import ConfirmDialog from '@/Components/Admin/ConfirmDialog.vue';
 import PageHeading from '@/Components/Admin/PageHeading.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SectionForm from '@/Components/Admin/SectionForm.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -31,19 +33,47 @@ function addBlock() {
     router.post(route('admin.blocks.store', props.page.id), { block_type: newBlockType.value });
 }
 
-function removeBlock(blockId) {
-    if (confirm('Remove this block from the page?')) {
-        router.delete(route('admin.blocks.destroy', blockId));
-    }
+const confirmingBlockId = ref(null);
+const removingBlock = ref(false);
+
+function confirmRemoveBlock(blockId) {
+    confirmingBlockId.value = blockId;
+}
+
+function cancelRemoveBlock() {
+    confirmingBlockId.value = null;
+}
+
+function removeBlock() {
+    removingBlock.value = true;
+
+    router.delete(route('admin.blocks.destroy', confirmingBlockId.value), {
+        onFinish: () => {
+            removingBlock.value = false;
+            confirmingBlockId.value = null;
+        },
+    });
 }
 
 const draggingId = ref(null);
+const dragOverId = ref(null);
 
 function onDragStart(blockId) {
     draggingId.value = blockId;
 }
 
+function onDragEnter(blockId) {
+    dragOverId.value = blockId;
+}
+
+function onDragEnd() {
+    draggingId.value = null;
+    dragOverId.value = null;
+}
+
 function onDrop(targetId) {
+    dragOverId.value = null;
+
     if (draggingId.value === null || draggingId.value === targetId) {
         return;
     }
@@ -106,14 +136,9 @@ function onDrop(targetId) {
                                 <textarea v-model="pageForm.meta_description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                             </div>
                             <div class="col-span-2">
-                                <button
-                                    type="submit"
-                                    :disabled="pageForm.processing"
-                                    class="rounded-md bg-dare-navy px-4 py-2 text-sm font-medium text-white hover:bg-dare-navy/90 disabled:opacity-50"
-                                >
+                                <PrimaryButton type="submit" :disabled="pageForm.processing" :class="{ 'opacity-50': pageForm.processing }">
                                     Save page settings
-                                </button>
-                                <span v-if="pageForm.recentlySuccessful" class="ml-3 text-sm text-green-600">Saved.</span>
+                                </PrimaryButton>
                             </div>
                         </form>
                     </CollapsibleSection>
@@ -125,20 +150,26 @@ function onDrop(targetId) {
                     <div
                         v-for="block in blocks"
                         :key="block.id"
-                        class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg"
+                        class="overflow-hidden rounded-lg bg-white p-6 shadow-sm ring-2 transition"
+                        :class="dragOverId === block.id && draggingId !== block.id ? 'ring-dare-sky' : 'ring-transparent'"
                         draggable="true"
                         @dragstart="onDragStart(block.id)"
+                        @dragenter="onDragEnter(block.id)"
                         @dragover.prevent
+                        @dragend="onDragEnd"
                         @drop="onDrop(block.id)"
                     >
                         <CollapsibleSection>
                             <template #title>
-                                <h4 class="cursor-move font-medium text-gray-900">
-                                    <span aria-hidden="true" class="mr-2 text-gray-400">&#8942;&#8942;</span>{{ block.label }}
+                                <h4 class="flex items-center font-medium text-gray-900">
+                                    <svg aria-hidden="true" class="mr-2 h-4 w-4 shrink-0 cursor-move text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M7 4a1 1 0 11-2 0 1 1 0 012 0zM7 10a1 1 0 11-2 0 1 1 0 012 0zM7 16a1 1 0 11-2 0 1 1 0 012 0zM15 4a1 1 0 11-2 0 1 1 0 012 0zM15 10a1 1 0 11-2 0 1 1 0 012 0zM15 16a1 1 0 11-2 0 1 1 0 012 0z" />
+                                    </svg>
+                                    {{ block.label }}
                                 </h4>
                             </template>
                             <template #actions>
-                                <button type="button" class="text-sm text-red-600 hover:text-red-800" @click="removeBlock(block.id)">
+                                <button type="button" class="text-sm text-red-600 hover:text-red-800" @click="confirmRemoveBlock(block.id)">
                                     Remove
                                 </button>
                             </template>
@@ -168,16 +199,23 @@ function onDrop(targetId) {
                                 {{ option.label }}
                             </option>
                         </select>
-                        <button
-                            type="button"
-                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90"
-                            @click="addBlock"
-                        >
+                        <PrimaryButton type="button" @click="addBlock">
                             Add block
-                        </button>
+                        </PrimaryButton>
                     </div>
                 </div>
             </div>
         </div>
+
+        <ConfirmDialog
+            :show="confirmingBlockId !== null"
+            title="Remove this block?"
+            confirm-label="Remove"
+            :processing="removingBlock"
+            @confirm="removeBlock"
+            @cancel="cancelRemoveBlock"
+        >
+            This removes the block and its content from the page. This can't be undone.
+        </ConfirmDialog>
     </AuthenticatedLayout>
 </template>

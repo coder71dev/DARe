@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Admin/Pagination.vue';
 import PageHeading from '@/Components/Admin/PageHeading.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -29,13 +30,9 @@ function createPage() {
         <template #header>
             <PageHeading icon="document" accent="sky" title="Pages">
                 <template #actions>
-                    <button
-                        type="button"
-                        class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
-                        @click="showCreate = !showCreate"
-                    >
+                    <PrimaryButton type="button" @click="showCreate = !showCreate">
                         New page
-                    </button>
+                    </PrimaryButton>
                 </template>
             </PageHeading>
         </template>
@@ -63,13 +60,9 @@ function createPage() {
                             />
                             <p v-if="form.errors.slug" class="mt-1 text-sm text-red-600">{{ form.errors.slug }}</p>
                         </div>
-                        <button
-                            type="submit"
-                            :disabled="form.processing"
-                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90 disabled:opacity-50"
-                        >
+                        <PrimaryButton type="submit" :disabled="form.processing" :class="{ 'opacity-50': form.processing }">
                             Create
-                        </button>
+                        </PrimaryButton>
                     </form>
                 </div>
 
@@ -84,20 +77,20 @@ function createPage() {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr v-for="page in pages.data" :key="page.id">
+                            <tr v-for="page in pages.data" :key="page.id" class="transition hover:bg-gray-50">
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ page.title }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">/{{ page.slug }}</td>
                                 <td class="px-6 py-4 text-sm">
                                     <span
                                         class="rounded-full px-2 py-1 text-xs font-medium"
-                                        :class="page.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
+                                        :class="page.status === 'published' ? 'bg-dare-green/15 text-green-800' : 'bg-gray-100 text-gray-600'"
                                     >
                                         {{ page.status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm space-x-4">
                                     <a :href="page.public_url" target="_blank" rel="noopener" class="text-dare-sky hover:text-dare-navy">View</a>
-                                    <a :href="page.public_url + '?edit-mode=1'" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-900">Live Edit</a>
+                                    <a :href="page.public_url + '?edit-mode=1'" target="_blank" rel="noopener" class="text-dare-green hover:text-green-800">Live Edit</a>
                                     <Link :href="route('admin.pages.edit', page.id)" class="text-dare-sky hover:text-dare-navy">Edit</Link>
                                 </td>
                             </tr>

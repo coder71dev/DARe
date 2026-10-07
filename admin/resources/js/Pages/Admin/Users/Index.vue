@@ -1,7 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import ConfirmDialog from '@/Components/Admin/ConfirmDialog.vue';
 import Pagination from '@/Components/Admin/Pagination.vue';
 import PageHeading from '@/Components/Admin/PageHeading.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -44,12 +46,24 @@ function saveEdit(user) {
     });
 }
 
-function removeUser(user) {
-    if (!confirm(`Remove ${user.name}'s admin account?`)) {
-        return;
-    }
+const confirmingRemoval = ref(null);
+const removeForm = useForm({});
 
-    useForm({}).delete(route('admin.users.destroy', user.id));
+function confirmRemoveUser(user) {
+    confirmingRemoval.value = user;
+}
+
+function cancelRemoveUser() {
+    confirmingRemoval.value = null;
+}
+
+function removeUser() {
+    removeForm.delete(route('admin.users.destroy', confirmingRemoval.value.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            confirmingRemoval.value = null;
+        },
+    });
 }
 </script>
 
@@ -60,13 +74,9 @@ function removeUser(user) {
         <template #header>
             <PageHeading icon="users" accent="navy" title="Admin users">
                 <template #actions>
-                    <button
-                        type="button"
-                        class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
-                        @click="showCreate = !showCreate"
-                    >
+                    <PrimaryButton type="button" @click="showCreate = !showCreate">
                         New admin
-                    </button>
+                    </PrimaryButton>
                 </template>
             </PageHeading>
         </template>
@@ -93,13 +103,9 @@ function removeUser(user) {
                             />
                             <p v-if="form.errors.email" class="mt-1 text-sm text-red-600">{{ form.errors.email }}</p>
                         </div>
-                        <button
-                            type="submit"
-                            :disabled="form.processing"
-                            class="rounded-md bg-dare-sky px-4 py-2 text-sm font-medium text-white hover:bg-dare-sky/90 disabled:opacity-50"
-                        >
+                        <PrimaryButton type="submit" :disabled="form.processing" :class="{ 'opacity-50': form.processing }">
                             Create & send invite
-                        </button>
+                        </PrimaryButton>
                     </form>
                     <p class="mt-3 text-sm text-gray-500">
                         A temporary password and a link to set their own password will be emailed to them.
@@ -117,7 +123,7 @@ function removeUser(user) {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr v-for="user in users.data" :key="user.id">
+                            <tr v-for="user in users.data" :key="user.id" class="transition hover:bg-gray-50">
                                 <template v-if="editingUserId === user.id">
                                     <td class="px-6 py-3">
                                         <input
@@ -163,7 +169,7 @@ function removeUser(user) {
                                         <button
                                             type="button"
                                             class="text-red-600 hover:text-red-900"
-                                            @click="removeUser(user)"
+                                            @click="confirmRemoveUser(user)"
                                         >
                                             Remove
                                         </button>
@@ -185,5 +191,16 @@ function removeUser(user) {
                 </div>
             </div>
         </div>
+
+        <ConfirmDialog
+            :show="confirmingRemoval !== null"
+            title="Remove admin account?"
+            confirm-label="Remove"
+            :processing="removeForm.processing"
+            @confirm="removeUser"
+            @cancel="cancelRemoveUser"
+        >
+            This removes <strong v-if="confirmingRemoval">{{ confirmingRemoval.name }}</strong>'s access to the admin panel. They can be invited again later if needed.
+        </ConfirmDialog>
     </AuthenticatedLayout>
 </template>

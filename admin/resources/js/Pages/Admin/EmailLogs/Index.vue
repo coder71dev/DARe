@@ -38,7 +38,7 @@ function formatDate(value) {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr v-for="emailLog in emailLogs.data" :key="emailLog.id">
+                            <tr v-for="emailLog in emailLogs.data" :key="emailLog.id" class="transition hover:bg-gray-50">
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ emailLog.to }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ emailLog.subject }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ formatDate(emailLog.created_at) }}</td>
