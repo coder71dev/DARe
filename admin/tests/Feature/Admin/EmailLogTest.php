@@ -62,6 +62,41 @@ class EmailLogTest extends TestCase
         );
     }
 
+    public function test_the_temporary_password_is_extracted_and_redacted_from_the_body(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $log = EmailLog::factory()->create([
+            // Mirrors the real mail template: the password is HTML-escaped
+            // in the stored body (a literal "&" became "&amp;"), so this
+            // also checks that the real password comes back decoded.
+            'body' => '<p>Your temporary password is: a&amp;b&lt;c</p><p>Other text.</p>',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.email-logs.show', $log));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/EmailLogs/Show')
+            ->where('temporaryPassword', 'a&b<c')
+            ->where('emailLog.body', fn (string $body) => ! str_contains($body, 'a&amp;b&lt;c')
+                && str_contains($body, 'Other text.')
+            )
+        );
+    }
+
+    public function test_emails_without_a_temporary_password_have_no_masked_field(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $log = EmailLog::factory()->create(['body' => '<p>Just a normal email.</p>']);
+
+        $response = $this->actingAs($admin)->get(route('admin.email-logs.show', $log));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/EmailLogs/Show')
+            ->where('temporaryPassword', null)
+            ->where('emailLog.body', '<p>Just a normal email.</p>')
+        );
+    }
+
     public function test_non_admin_cannot_view_email_logs(): void
     {
         $user = User::factory()->create(['is_admin' => false]);
