@@ -1,11 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Pagination from '@/Components/Admin/Pagination.vue';
 import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps({
-    pages: Array,
+    pages: Object,
 });
 
 const showCreate = ref(false);
@@ -83,7 +84,7 @@ function createPage() {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr v-for="page in pages" :key="page.id">
+                            <tr v-for="page in pages.data" :key="page.id">
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ page.title }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">/{{ page.slug }}</td>
                                 <td class="px-6 py-4 text-sm">
@@ -100,8 +101,18 @@ function createPage() {
                                     <Link :href="route('admin.pages.edit', page.id)" class="text-dare-sky hover:text-dare-navy">Edit</Link>
                                 </td>
                             </tr>
+                            <tr v-if="pages.data.length === 0">
+                                <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">No pages yet.</td>
+                            </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div v-if="pages.data.length > 0" class="flex items-center justify-between">
+                    <p class="text-sm text-gray-500">
+                        Showing {{ pages.from }}–{{ pages.to }} of {{ pages.total }}
+                    </p>
+                    <Pagination :links="pages.links" />
                 </div>
             </div>
         </div>

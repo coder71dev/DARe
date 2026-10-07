@@ -15,8 +15,10 @@ class PageAdminController extends Controller
 {
     public function index(): Response
     {
-        $pages = Page::orderBy('title')->get(['id', 'slug', 'title', 'status'])
-            ->map(fn (Page $page) => [...$page->toArray(), 'public_url' => $page->publicUrl()]);
+        $pages = Page::orderBy('title')
+            ->paginate(15, ['id', 'slug', 'title', 'status'])
+            ->withQueryString()
+            ->through(fn (Page $page) => [...$page->toArray(), 'public_url' => $page->publicUrl()]);
 
         return Inertia::render('Admin/Pages/Index', [
             'pages' => $pages,

@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Page;
 use App\Models\User;
 use App\Support\LiveEdit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase
@@ -61,5 +63,35 @@ class AdminAccessTest extends TestCase
         $this->actingAs($admin)->get('/?edit-mode=1');
 
         $this->assertTrue(LiveEdit::enabled());
+    }
+
+    public function test_pages_list_is_paginated(): void
+    {
+        $admin = User::factory()->admin()->create();
+        Page::factory()->count(20)->create();
+
+        $response = $this->actingAs($admin)->get('/admin/pages');
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/Pages/Index')
+            ->has('pages.data', 15)
+            ->where('pages.total', 20)
+            ->where('pages.last_page', 2)
+        );
+    }
+
+    public function test_admin_users_list_is_paginated(): void
+    {
+        $admin = User::factory()->admin()->create();
+        User::factory()->admin()->count(20)->create();
+
+        $response = $this->actingAs($admin)->get('/admin/users');
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/Users/Index')
+            ->has('users.data', 15)
+            ->where('users.total', 21)
+            ->where('users.last_page', 2)
+        );
     }
 }

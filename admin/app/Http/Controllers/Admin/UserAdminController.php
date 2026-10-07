@@ -19,7 +19,9 @@ class UserAdminController extends Controller
 {
     public function index(): Response
     {
-        $users = User::orderBy('name')->get(['id', 'name', 'email', 'is_admin', 'created_at']);
+        $users = User::orderBy('name')
+            ->paginate(15, ['id', 'name', 'email', 'is_admin', 'created_at'])
+            ->withQueryString();
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,

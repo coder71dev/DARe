@@ -1,11 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Pagination from '@/Components/Admin/Pagination.vue';
 import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps({
-    users: Array,
+    users: Object,
 });
 
 const showCreate = ref(false);
@@ -116,7 +117,7 @@ function removeUser(user) {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr v-for="user in users" :key="user.id">
+                            <tr v-for="user in users.data" :key="user.id">
                                 <template v-if="editingUserId === user.id">
                                     <td class="px-6 py-3">
                                         <input
@@ -169,8 +170,18 @@ function removeUser(user) {
                                     </td>
                                 </template>
                             </tr>
+                            <tr v-if="users.data.length === 0">
+                                <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">No admin users yet.</td>
+                            </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div v-if="users.data.length > 0" class="flex items-center justify-between">
+                    <p class="text-sm text-gray-500">
+                        Showing {{ users.from }}–{{ users.to }} of {{ users.total }}
+                    </p>
+                    <Pagination :links="users.links" />
                 </div>
             </div>
         </div>
