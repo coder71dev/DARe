@@ -62,13 +62,10 @@ class EmailLogTest extends TestCase
         );
     }
 
-    public function test_the_temporary_password_is_extracted_and_redacted_from_the_body(): void
+    public function test_the_temporary_password_is_masked_inline_with_a_reveal_toggle(): void
     {
         $admin = User::factory()->admin()->create();
         $log = EmailLog::factory()->create([
-            // Mirrors the real mail template: the password is HTML-escaped
-            // in the stored body (a literal "&" became "&amp;"), so this
-            // also checks that the real password comes back decoded.
             'body' => '<p>Your temporary password is: a&amp;b&lt;c</p><p>Other text.</p>',
         ]);
 
@@ -76,14 +73,20 @@ class EmailLogTest extends TestCase
 
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Admin/EmailLogs/Show')
-            ->where('temporaryPassword', 'a&b<c')
-            ->where('emailLog.body', fn (string $body) => ! str_contains($body, 'a&amp;b&lt;c')
-                && str_contains($body, 'Other text.')
-            )
+            ->where('emailLog.body', function (string $body) {
+                // The label stays, but it's no longer immediately followed
+                // by the raw password — a masked/plain toggle pair sits
+                // there instead, hidden (plain) by default.
+                return ! str_contains($body, 'Your temporary password is: a&amp;b&lt;c</p>')
+                    && str_contains($body, 'a&amp;b&lt;c') // still present, inside the hidden "plain" span
+                    && str_contains($body, 'display:none')
+                    && str_contains($body, '<svg')
+                    && str_contains($body, 'Other text.');
+            })
         );
     }
 
-    public function test_emails_without_a_temporary_password_have_no_masked_field(): void
+    public function test_emails_without_a_temporary_password_are_left_unchanged(): void
     {
         $admin = User::factory()->admin()->create();
         $log = EmailLog::factory()->create(['body' => '<p>Just a normal email.</p>']);
@@ -92,7 +95,6 @@ class EmailLogTest extends TestCase
 
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Admin/EmailLogs/Show')
-            ->where('temporaryPassword', null)
             ->where('emailLog.body', '<p>Just a normal email.</p>')
         );
     }

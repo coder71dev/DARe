@@ -23,17 +23,14 @@ class EmailLogController extends Controller
 
     public function show(EmailLog $emailLog): Response
     {
-        [$body, $temporaryPassword] = EmailBodyRedactor::redactTemporaryPassword($emailLog->body);
-
         return Inertia::render('Admin/EmailLogs/Show', [
             'emailLog' => [
                 'id' => $emailLog->id,
                 'to' => $emailLog->to,
                 'subject' => $emailLog->subject,
                 'created_at' => $emailLog->created_at,
-                'body' => $body,
+                'body' => EmailBodyRedactor::maskTemporaryPassword($emailLog->body),
             ],
-            'temporaryPassword' => $temporaryPassword,
         ]);
     }
 }
