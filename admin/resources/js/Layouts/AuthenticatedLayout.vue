@@ -23,9 +23,7 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
+                                    <ApplicationLogo class="block h-9 w-auto" />
                                 </Link>
                             </div>
 
@@ -50,6 +48,13 @@ const showingNavigationDropdown = ref(false);
                                     :active="route().current('admin.diagrams.*')"
                                 >
                                     Diagrams
+                                </NavLink>
+                                <NavLink
+                                    v-if="$page.props.auth.user.is_admin"
+                                    :href="route('admin.users.index')"
+                                    :active="route().current('admin.users.*')"
+                                >
+                                    Admin users
                                 </NavLink>
                             </div>
                         </div>
@@ -169,6 +174,13 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('admin.diagrams.*')"
                         >
                             Diagrams
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.is_admin"
+                            :href="route('admin.users.index')"
+                            :active="route().current('admin.users.*')"
+                        >
+                            Admin users
                         </ResponsiveNavLink>
                     </div>
 

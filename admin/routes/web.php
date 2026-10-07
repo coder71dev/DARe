@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DiagramAdminController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
+use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\SetLiveEditMode;
@@ -25,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pages', [PageAdminController::class, 'index'])->name('pages.index');
     Route::post('/pages', [PageAdminController::class, 'store'])->name('pages.store');
     Route::get('/pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
@@ -40,6 +41,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/diagrams', [DiagramAdminController::class, 'index'])->name('diagrams.index');
     Route::get('/diagrams/{view}/elements', [DiagramAdminController::class, 'edit'])->name('diagrams.edit');
     Route::patch('/elements/{element}', [DiagramAdminController::class, 'update'])->name('elements.update');
+
+    Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserAdminController::class, 'store'])->name('users.store');
+    Route::delete('/users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
 });
 
 require __DIR__.'/auth.php';
