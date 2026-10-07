@@ -51,4 +51,21 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_logout_forces_a_full_browser_reload_for_inertia_clients(): void
+    {
+        // The "Log Out" link is an Inertia visit, but the page it lands on
+        // (the public home page) isn't an Inertia response — without
+        // Inertia::location(), Inertia's client would try to render that
+        // page's raw HTML inside the SPA shell instead of navigating there.
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->withHeaders(['X-Inertia' => 'true'])
+            ->post('/logout');
+
+        $this->assertGuest();
+        $response->assertStatus(409);
+        $response->assertHeader('X-Inertia-Location', '/');
+    }
 }

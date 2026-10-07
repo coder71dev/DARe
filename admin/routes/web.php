@@ -21,6 +21,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// A conventional entry point into the admin panel: signed-in admins land on
+// the dashboard, everyone else is sent to log in (and back here afterwards).
+Route::get('/admin', fn () => auth()->check()
+    ? redirect()->route('dashboard')
+    : redirect()->guest(route('login'))
+)->name('admin.home');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
