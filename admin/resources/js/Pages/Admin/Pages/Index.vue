@@ -93,8 +93,8 @@ function createPage() {
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm space-x-4">
-                                    <a :href="page.public_url" class="text-dare-sky hover:text-dare-navy">View</a>
-                                    <a :href="page.public_url + '?edit-mode=1'" class="text-emerald-600 hover:text-emerald-900">Live Edit</a>
+                                    <a :href="page.public_url" target="_blank" rel="noopener" class="text-dare-sky hover:text-dare-navy">View</a>
+                                    <a :href="page.public_url + '?edit-mode=1'" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-900">Live Edit</a>
                                     <Link :href="route('admin.pages.edit', page.id)" class="text-dare-sky hover:text-dare-navy">Edit</Link>
                                 </td>
                             </tr>

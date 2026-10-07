@@ -118,6 +118,8 @@ const accentClasses = {
                         </Link>
                         <a
                             href="/"
+                            target="_blank"
+                            rel="noopener"
                             class="group flex items-start gap-4 overflow-hidden rounded-lg border border-transparent bg-white p-5 shadow-sm transition hover:border-emerald-400/40 hover:shadow-md"
                         >
                             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
