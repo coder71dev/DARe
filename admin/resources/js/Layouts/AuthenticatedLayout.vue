@@ -56,6 +56,13 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Admin users
                                 </NavLink>
+                                <NavLink
+                                    v-if="$page.props.auth.user.is_admin"
+                                    :href="route('admin.email-logs.index')"
+                                    :active="route().current('admin.email-logs.*')"
+                                >
+                                    Email logs
+                                </NavLink>
                             </div>
                         </div>
 
@@ -194,6 +201,13 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('admin.users.*')"
                         >
                             Admin users
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.is_admin"
+                            :href="route('admin.email-logs.index')"
+                            :active="route().current('admin.email-logs.*')"
+                        >
+                            Email logs
                         </ResponsiveNavLink>
                         <a
                             href="/"
