@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({ views: Array });
@@ -10,7 +11,7 @@ defineProps({ views: Array });
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Diagrams</h2>
+            <PageHeading icon="chart" accent="green" title="Diagrams" />
         </template>
 
         <div class="py-12">

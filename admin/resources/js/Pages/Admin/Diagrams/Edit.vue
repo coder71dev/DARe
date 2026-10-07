@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CollapsibleSection from '@/Components/Admin/CollapsibleSection.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -29,7 +30,12 @@ function save(elementId) {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Edit diagram text: {{ view.title }}</h2>
+            <PageHeading
+                icon="pencil"
+                accent="green"
+                :title="`Edit diagram: ${view.title}`"
+                :back="{ href: route('admin.diagrams.index'), label: 'Diagrams' }"
+            />
         </template>
 
         <div class="py-12">

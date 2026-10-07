@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
 defineProps({
@@ -27,9 +28,7 @@ const accentClasses = {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Welcome back, {{ page.props.auth.user.name }}
-            </h2>
+            <PageHeading icon="home" accent="navy" :title="`Welcome back, ${page.props.auth.user.name}`" />
         </template>
 
         <div class="py-12">

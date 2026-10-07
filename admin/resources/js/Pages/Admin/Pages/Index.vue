@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -25,16 +26,17 @@ function createPage() {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">Pages</h2>
-                <button
-                    type="button"
-                    class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
-                    @click="showCreate = !showCreate"
-                >
-                    New page
-                </button>
-            </div>
+            <PageHeading icon="document" accent="sky" title="Pages">
+                <template #actions>
+                    <button
+                        type="button"
+                        class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
+                        @click="showCreate = !showCreate"
+                    >
+                        New page
+                    </button>
+                </template>
+            </PageHeading>
         </template>
 
         <div class="py-12">

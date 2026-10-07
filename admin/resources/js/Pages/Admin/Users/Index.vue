@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -33,16 +34,17 @@ function removeUser(user) {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">Admin users</h2>
-                <button
-                    type="button"
-                    class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
-                    @click="showCreate = !showCreate"
-                >
-                    New admin
-                </button>
-            </div>
+            <PageHeading icon="users" accent="navy" title="Admin users">
+                <template #actions>
+                    <button
+                        type="button"
+                        class="rounded-md bg-dare-navy px-3 py-2 text-sm font-medium text-white hover:bg-dare-navy/90"
+                        @click="showCreate = !showCreate"
+                    >
+                        New admin
+                    </button>
+                </template>
+            </PageHeading>
         </template>
 
         <div class="py-12">

@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BlockFieldsForm from '@/Components/Admin/BlockFieldsForm.vue';
 import CollapsibleSection from '@/Components/Admin/CollapsibleSection.vue';
+import PageHeading from '@/Components/Admin/PageHeading.vue';
 import SectionForm from '@/Components/Admin/SectionForm.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -63,7 +64,12 @@ function onDrop(targetId) {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Edit page: {{ page.title }}</h2>
+            <PageHeading
+                icon="pencil"
+                accent="sky"
+                :title="`Edit page: ${page.title}`"
+                :back="{ href: route('admin.pages.index'), label: 'Pages' }"
+            />
         </template>
 
         <div class="py-12">
