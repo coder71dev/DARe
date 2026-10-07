@@ -34,6 +34,75 @@ class UserAdminControllerTest extends TestCase
         Notification::assertSentTo($newAdmin, AdminAccountCreated::class);
     }
 
+    public function test_invite_email_contains_a_working_temporary_password_and_reset_link(): void
+    {
+        // Notification::fake() stops the "send" but still gives us the real
+        // notification instance, so this renders the actual mail a new
+        // admin would receive and drives both paths through it offers them
+        // (log in with the temp password, or follow the reset link) exactly
+        // as a recipient would — not by reaching into the controller's
+        // internal state.
+        Notification::fake();
+
+        $admin = User::factory()->admin()->create();
+
+        $this->actingAs($admin)->post(route('admin.users.store'), [
+            'name' => 'New Admin',
+            'email' => 'new-admin@example.com',
+        ]);
+
+        $newAdmin = User::where('email', 'new-admin@example.com')->first();
+
+        $temporaryPassword = null;
+        $resetUrl = null;
+
+        Notification::assertSentTo($newAdmin, AdminAccountCreated::class, function ($notification) use ($newAdmin, &$temporaryPassword, &$resetUrl) {
+            $mail = $notification->toMail($newAdmin);
+
+            $this->assertStringContainsString('admin account', $mail->subject);
+            $this->assertSame('Set your password', $mail->actionText);
+
+            $passwordLine = collect($mail->introLines)
+                ->first(fn ($line) => str_contains($line, 'Your temporary password is: '));
+
+            $this->assertNotNull($passwordLine, 'Mail is missing the temporary password line.');
+
+            $temporaryPassword = trim(str_replace('Your temporary password is: ', '', $passwordLine));
+            $resetUrl = $mail->actionUrl;
+
+            return true;
+        });
+
+        // The temporary password actually logs the new admin in.
+        $this->post('/logout');
+
+        $this->post('/login', [
+            'email' => $newAdmin->email,
+            'password' => $temporaryPassword,
+        ]);
+
+        $this->assertAuthenticatedAs($newAdmin);
+        $this->post('/logout');
+
+        // The reset link actually lets them set their own password.
+        $response = $this->post('/reset-password', [
+            'token' => basename(parse_url($resetUrl, PHP_URL_PATH)),
+            'email' => $newAdmin->email,
+            'password' => 'a-new-password',
+            'password_confirmation' => 'a-new-password',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('login'));
+
+        $this->post('/login', [
+            'email' => $newAdmin->email,
+            'password' => 'a-new-password',
+        ]);
+
+        $this->assertAuthenticatedAs($newAdmin);
+    }
+
     public function test_admin_cannot_remove_their_own_account(): void
     {
         $admin = User::factory()->admin()->create();
