@@ -47,6 +47,19 @@
   color: #fff;
 }
 
+/* A block can carry its own full-cover "visit this" link sitting on top of
+   its other content (e.g. a resource card's optional link_href — see
+   .resource-card-link in style.css), which otherwise swallows every click
+   within it, including ones meant for an editable text/image field
+   underneath. Such an overlay link has no text or child elements of its own
+   (just an aria-label), unlike a real inline link such as the hero's CTA
+   button — :empty picks out exactly that pattern without needing to name
+   every block's own CSS class. Only loaded in live-edit mode to begin with,
+   so this never touches how the link behaves for an ordinary visitor. */
+a:empty[href] {
+  pointer-events: none;
+}
+
 [data-live-edit] {
   border-radius: var(--le-radius);
   transition: box-shadow 150ms ease, background-color 150ms ease;
