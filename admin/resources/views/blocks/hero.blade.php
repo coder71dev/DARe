@@ -10,4 +10,4 @@
     </div>
   </div>
 </section>
-<div class="hero-photo" role="img" aria-label="Aerial view of a motorway junction running through green countryside" style="background-image:url('{{ asset($photo) }}')"></div>
+<div class="hero-photo" role="img" aria-label="Aerial view of a motorway junction running through green countryside" style="background-image:url('{{ asset($photo) }}')" {!! \App\Support\LiveEdit::imageAttrs($block, 'photo') !!}></div>

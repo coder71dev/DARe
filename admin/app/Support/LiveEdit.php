@@ -71,6 +71,28 @@ class LiveEdit
         return $attrs;
     }
 
+    /**
+     * HTML attributes marking an "image" field's rendered element (an <img>,
+     * or a background-image div like the hero photo) as live-replaceable —
+     * click it in live-edit mode to upload a new file, mirroring the admin
+     * form's ImageUploadField. Reuses the same data-live-edit="block:ID:field"
+     * attribute as attrs() (so it picks up the same hover/chip/status CSS and
+     * JS element matching for free) plus a boolean marker live-edit.js uses
+     * to open a file picker instead of a text field on click.
+     */
+    public static function imageAttrs(PageBlock $block, string $field): string
+    {
+        if (! self::enabled()) {
+            return '';
+        }
+
+        $attrs = sprintf('data-live-edit="block:%d:%s"', $block->id, e($field));
+        $attrs .= ' data-live-edit-image';
+        $attrs .= ' data-live-edit-label="'.e(self::label($block, $field)).'"';
+
+        return $attrs;
+    }
+
     /** The field's admin-form label (BlockTypes), trimmed of its parenthetical hint for the compact chip. */
     private static function label(PageBlock $block, string $field): string
     {
