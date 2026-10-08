@@ -42,6 +42,8 @@ class SiteFooterLiveEditTest extends TestCase
         $response->assertOk();
         $response->assertSee('data-live-edit="block:'.$footerBlock->id.':heading_contact"', false);
         $response->assertSee('data-live-edit="block:'.$footerBlock->id.':copyright_text"', false);
+        $response->assertSee('data-live-edit="block:'.$footerBlock->id.':header_logo"', false);
+        $response->assertSee('data-live-edit="block:'.$footerBlock->id.':footer_logo"', false);
         $response->assertSee('data-live-edit-image', false);
     }
 

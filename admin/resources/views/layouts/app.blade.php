@@ -22,9 +22,10 @@
       <a href="?edit-mode=0">Exit</a>
     </div>
   @endif
+  @php($fp = $footerBlock?->props ?? [])
   <header class="site-header">
     <a class="brand" href="{{ route('home') }}" aria-label="DARe TPRAF — home">
-      <img class="logo" src="{{ asset('assets/icons/logo-header.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />
+      <img class="logo" src="{{ asset($fp['header_logo'] ?? 'assets/icons/logo-header.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'header_logo') !!} />
     </a>
     <div class="header-tools">
       <form class="header-search" id="header-search" role="search" action="https://dare.ac.uk/" method="get" target="_blank">
@@ -44,11 +45,10 @@
 
   @yield('content')
 
-  @php($fp = $footerBlock?->props ?? [])
   <footer class="site-footer">
     <div class="footer-main">
       <div class="container footer-grid">
-        <a class="footer-logo-link" href="{{ route('home') }}" aria-label="DARe TPRAF — home"><img class="footer-logo" src="{{ asset('assets/icons/logo-footer.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" /></a>
+        <a class="footer-logo-link" href="{{ route('home') }}" aria-label="DARe TPRAF — home"><img class="footer-logo" src="{{ asset($fp['footer_logo'] ?? 'assets/icons/logo-footer.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'footer_logo') !!} /></a>
 
         <div class="footer-contacts">
           <div class="footer-col">

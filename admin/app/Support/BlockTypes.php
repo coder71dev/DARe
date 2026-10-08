@@ -127,17 +127,21 @@ class BlockTypes
             ],
             // Not a real page block — lives on the hidden system page
             // created by the add_site_footer_block migration, as the one
-            // place the site footer's editable text/images are stored, so
-            // the public footer can reuse the exact same live-edit, image-
-            // upload, and admin-form machinery as ordinary page content
-            // instead of a bespoke mechanism. 'internal' keeps it out of the
-            // "add block" picker and off the public store() endpoint — see
-            // BlockTypes::options() and PageBlockController::store().
+            // place the site header & footer's editable text/images are
+            // stored, so the public layout can reuse the exact same live-
+            // edit, image-upload, and admin-form machinery as ordinary page
+            // content instead of a bespoke mechanism. 'internal' keeps it
+            // out of the "add block" picker and off the public store()
+            // endpoint — see BlockTypes::options() and
+            // PageBlockController::store(). Despite the key name (kept to
+            // avoid a rename/migration churn once content already existed
+            // under it), this now also covers the header/footer logos.
             'site_footer' => [
-                'label' => 'Site footer',
+                'label' => 'Site header & footer',
                 'view' => 'blocks.missing',
                 'internal' => true,
                 'fields' => [
+                    'header_logo' => ['type' => 'image', 'label' => 'Header logo'],
                     'heading_contact' => ['type' => 'text', 'label' => '"Keep in touch" heading'],
                     'mailing_list_label' => ['type' => 'text', 'label' => 'Mailing list link text'],
                     'heading_email' => ['type' => 'text', 'label' => '"Contact us" heading'],
@@ -149,6 +153,7 @@ class BlockTypes
                     'heading_partners' => ['type' => 'text', 'label' => '"Partners" heading'],
                     'partners_image' => ['type' => 'image', 'label' => 'Partners logos image'],
                     'copyright_text' => ['type' => 'textarea', 'label' => 'Copyright line'],
+                    'footer_logo' => ['type' => 'image', 'label' => 'Footer logo'],
                 ],
             ],
 
