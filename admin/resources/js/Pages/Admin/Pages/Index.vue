@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Admin/Pagination.vue';
 import PageHeading from '@/Components/Admin/PageHeading.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps({
@@ -20,6 +20,29 @@ function createPage() {
             showCreate.value = false;
         },
     });
+}
+
+const togglingNavId = ref(null);
+
+function toggleNav(page) {
+    if (!page.nav_toggleable || togglingNavId.value === page.id) {
+        return;
+    }
+
+    togglingNavId.value = page.id;
+
+    router.patch(
+        route('admin.pages.update-nav', page.id),
+        { show_in_nav: !page.show_in_nav },
+        {
+            preserveScroll: true,
+            preserveState: true,
+            only: ['pages', 'flash'],
+            onFinish: () => {
+                togglingNavId.value = null;
+            },
+        },
+    );
 }
 </script>
 
@@ -73,6 +96,7 @@ function createPage() {
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Title</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Slug</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Show in nav</th>
                                 <th class="px-6 py-3"></th>
                             </tr>
                         </thead>
@@ -88,6 +112,30 @@ function createPage() {
                                         {{ page.status }}
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 text-sm">
+                                    <button
+                                        type="button"
+                                        role="switch"
+                                        :aria-checked="page.show_in_nav"
+                                        :disabled="!page.nav_toggleable || togglingNavId === page.id"
+                                        :title="
+                                            page.nav_toggleable
+                                                ? page.show_in_nav
+                                                    ? 'Shown in the header nav — click to remove'
+                                                    : 'Not shown in the header nav — click to add'
+                                                : 'This page already has its own permanent spot in the nav'
+                                        "
+                                        class="group relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-40"
+                                        :class="page.show_in_nav ? 'bg-dare-green' : 'bg-gray-200'"
+                                        @click="toggleNav(page)"
+                                    >
+                                        <span class="sr-only">Show "{{ page.title }}" in the header nav</span>
+                                        <span
+                                            class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                            :class="page.show_in_nav ? 'translate-x-5' : 'translate-x-0'"
+                                        />
+                                    </button>
+                                </td>
                                 <td class="px-6 py-4 text-right text-sm space-x-4">
                                     <a :href="page.public_url" target="_blank" rel="noopener" class="text-dare-sky hover:text-dare-navy">View</a>
                                     <a :href="page.public_url + '?edit-mode=1'" target="_blank" rel="noopener" class="text-dare-green hover:text-green-800">Live Edit</a>
@@ -95,7 +143,7 @@ function createPage() {
                                 </td>
                             </tr>
                             <tr v-if="pages.data.length === 0">
-                                <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">No pages yet.</td>
+                                <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500">No pages yet.</td>
                             </tr>
                         </tbody>
                     </table>

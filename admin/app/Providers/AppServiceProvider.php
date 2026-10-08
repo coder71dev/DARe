@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Page;
 use App\Services\TprafContentAssembler;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\View;
@@ -33,6 +34,16 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'tprafContent' => $assembler->assembleContent(),
                 'tprafDspImp' => $assembler->assembleDspImp(),
+                // Admin-toggled pages shown in the header nav, between the
+                // permanent Home link and the Explore TPRAF button — see
+                // Page::NON_TOGGLEABLE_NAV_SLUGS and the "Show in nav" toggle
+                // on the admin Pages list.
+                'navPages' => Page::query()
+                    ->where('status', 'published')
+                    ->where('show_in_nav', true)
+                    ->whereNotIn('slug', Page::NON_TOGGLEABLE_NAV_SLUGS)
+                    ->orderBy('nav_order')
+                    ->get(['slug', 'title']),
             ]);
         });
     }
