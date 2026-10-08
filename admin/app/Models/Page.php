@@ -18,7 +18,7 @@ class Page extends Model
      * into the admin-managed nav list too would just duplicate it under a
      * second, plain-styled link.
      */
-    public const NON_TOGGLEABLE_NAV_SLUGS = ['home', 'diagram'];
+    public const NON_TOGGLEABLE_NAV_SLUGS = ['home', 'diagram', 'system-footer'];
 
     protected $fillable = ['slug', 'title', 'meta_title', 'meta_description', 'status', 'show_in_nav', 'nav_order'];
 

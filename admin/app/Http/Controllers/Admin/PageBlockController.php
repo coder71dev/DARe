@@ -19,7 +19,7 @@ class PageBlockController extends Controller
     public function store(Request $request, Page $page): RedirectResponse
     {
         $validated = $request->validate([
-            'block_type' => ['required', 'string', Rule::in(array_keys(BlockTypes::all()))],
+            'block_type' => ['required', 'string', Rule::in(BlockTypes::addableKeys())],
         ]);
 
         $nextPosition = (int) $page->blocks()->max('position') + 1;

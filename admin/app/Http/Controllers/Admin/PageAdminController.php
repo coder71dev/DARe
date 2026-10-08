@@ -16,7 +16,8 @@ class PageAdminController extends Controller
 {
     public function index(): Response
     {
-        $pages = Page::orderBy('title')
+        $pages = Page::where('slug', '!=', 'system-footer')
+            ->orderBy('title')
             ->paginate(15, ['id', 'slug', 'title', 'status', 'show_in_nav', 'nav_order'])
             ->withQueryString()
             ->through(fn (Page $page) => [

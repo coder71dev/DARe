@@ -14,6 +14,7 @@ class ReservedSlugs
         'admin', 'api', 'login', 'register', 'logout',
         'dashboard', 'profile', 'storage', 'build',
         'forgot-password', 'reset-password', 'confirm-password', 'verify-email',
+        'system-footer',
     ];
 
     public static function routeExclusionPattern(): string

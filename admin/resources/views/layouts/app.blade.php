@@ -44,6 +44,7 @@
 
   @yield('content')
 
+  @php($fp = $footerBlock?->props ?? [])
   <footer class="site-footer">
     <div class="footer-main">
       <div class="container footer-grid">
@@ -51,15 +52,15 @@
 
         <div class="footer-contacts">
           <div class="footer-col">
-            <h2 class="footer-heading">Keep in Touch</h2>
-            <p><a href="https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list" target="_blank" rel="noopener">Sign up to our mailing list</a></p>
+            <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_contact') !!}>{{ $fp['heading_contact'] ?? 'Keep in Touch' }}</h2>
+            <p><a href="https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::attrs($footerBlock, 'mailing_list_label') !!}>{{ $fp['mailing_list_label'] ?? 'Sign up to our mailing list' }}</span></a></p>
           </div>
           <div class="footer-col">
-            <h2 class="footer-heading">Contact Us</h2>
-            <p><a href="mailto:darehub@newcastle.ac.uk">darehub@newcastle.ac.uk</a></p>
+            <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_email') !!}>{{ $fp['heading_email'] ?? 'Contact Us' }}</h2>
+            <p><a href="mailto:{{ $fp['contact_email'] ?? 'darehub@newcastle.ac.uk' }}"><span {!! \App\Support\LiveEdit::attrs($footerBlock, 'contact_email') !!}>{{ $fp['contact_email'] ?? 'darehub@newcastle.ac.uk' }}</span></a></p>
           </div>
           <div class="footer-col footer-social">
-            <h2 class="footer-heading">Follow Us</h2>
+            <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_social') !!}>{{ $fp['heading_social'] ?? 'Follow Us' }}</h2>
             <ul>
               <li><a href="https://www.linkedin.com/company/dare-hub/" target="_blank" rel="noopener">LinkedIn</a></li>
               <li><a href="https://www.youtube.com/channel/UC3SeTcZlJQdFaYH5gdXmw1Q" target="_blank" rel="noopener">Youtube</a></li>
@@ -68,18 +69,18 @@
         </div>
 
         <div class="footer-address">
-          <p>DARe Hub<br />Stephenson Building<br />Newcastle University<br />NE1 7RU<br />United Kingdom</p>
+          <p {!! \App\Support\LiveEdit::attrs($footerBlock, 'address', multiline: true, format: 'br') !!}>{!! nl2br(e($fp['address'] ?? "DARe Hub\nStephenson Building\nNewcastle University\nNE1 7RU\nUnited Kingdom")) !!}</p>
           <p>Find us on <a href="https://maps.app.goo.gl/P6UAs6S34K7V2CSP9" target="_blank" rel="noopener">Google</a></p>
         </div>
 
         <div class="footer-logos">
-          <h2 class="footer-heading">Funders</h2>
+          <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_funders') !!}>{{ $fp['heading_funders'] ?? 'Funders' }}</h2>
           <a href="https://dare.ac.uk/about-us/our-funders/" target="_blank" rel="noopener" aria-label="DARe Hub funders">
-            <img class="footer-funders" src="{{ asset('assets/img/footer-funders.png') }}" alt="Funders: Department for Transport, UK Research and Innovation, Engineering and Physical Sciences Research Council" width="1000" height="116" loading="lazy" />
+            <img class="footer-funders" src="{{ asset($fp['funders_image'] ?? 'assets/img/footer-funders.png') }}" alt="Funders: Department for Transport, UK Research and Innovation, Engineering and Physical Sciences Research Council" loading="lazy" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'funders_image') !!} />
           </a>
-          <h2 class="footer-heading footer-heading-partners">Partners</h2>
+          <h2 class="footer-heading footer-heading-partners" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_partners') !!}>{{ $fp['heading_partners'] ?? 'Partners' }}</h2>
           <a href="https://dare.ac.uk/about-us/our-partners/" target="_blank" rel="noopener" aria-label="DARe Hub partners">
-            <img class="footer-partners" src="{{ asset('assets/img/footer-partners.png') }}" alt="Partners: Newcastle University, University of Cambridge, University of Glasgow, Heriot-Watt University, Anglia Ruskin University" width="1400" height="104" loading="lazy" />
+            <img class="footer-partners" src="{{ asset($fp['partners_image'] ?? 'assets/img/footer-partners.png') }}" alt="Partners: Newcastle University, University of Cambridge, University of Glasgow, Heriot-Watt University, Anglia Ruskin University" loading="lazy" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'partners_image') !!} />
           </a>
         </div>
       </div>
@@ -87,7 +88,7 @@
 
     <div class="footer-signoff">
       <div class="container">
-        <p class="footer-copyright">&copy; DARe Consortium. TPRAF, DSP, IMP and associated content are original DARe research outputs. Academic publications are in preparation. Please acknowledge and cite DARe when using or referencing this resource.</p>
+        <p class="footer-copyright" {!! \App\Support\LiveEdit::attrs($footerBlock, 'copyright_text', multiline: true) !!}>{{ $fp['copyright_text'] ?? '© DARe Consortium. TPRAF, DSP, IMP and associated content are original DARe research outputs. Academic publications are in preparation. Please acknowledge and cite DARe when using or referencing this resource.' }}</p>
         <ul>
           <li><a href="https://dare.ac.uk/cookie-policy/" target="_blank" rel="noopener">Cookie Policy</a></li>
           <li><a href="https://dare.ac.uk/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a></li>

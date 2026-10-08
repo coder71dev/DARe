@@ -125,6 +125,33 @@ class BlockTypes
                     'button_href' => ['type' => 'text', 'label' => 'Button link'],
                 ],
             ],
+            // Not a real page block — lives on the hidden system page
+            // created by the add_site_footer_block migration, as the one
+            // place the site footer's editable text/images are stored, so
+            // the public footer can reuse the exact same live-edit, image-
+            // upload, and admin-form machinery as ordinary page content
+            // instead of a bespoke mechanism. 'internal' keeps it out of the
+            // "add block" picker and off the public store() endpoint — see
+            // BlockTypes::options() and PageBlockController::store().
+            'site_footer' => [
+                'label' => 'Site footer',
+                'view' => 'blocks.missing',
+                'internal' => true,
+                'fields' => [
+                    'heading_contact' => ['type' => 'text', 'label' => '"Keep in touch" heading'],
+                    'mailing_list_label' => ['type' => 'text', 'label' => 'Mailing list link text'],
+                    'heading_email' => ['type' => 'text', 'label' => '"Contact us" heading'],
+                    'contact_email' => ['type' => 'text', 'label' => 'Contact email (also used as the mailto: link)'],
+                    'heading_social' => ['type' => 'text', 'label' => '"Follow us" heading'],
+                    'address' => ['type' => 'textarea', 'label' => 'Address (one line each)'],
+                    'heading_funders' => ['type' => 'text', 'label' => '"Funders" heading'],
+                    'funders_image' => ['type' => 'image', 'label' => 'Funders logos image'],
+                    'heading_partners' => ['type' => 'text', 'label' => '"Partners" heading'],
+                    'partners_image' => ['type' => 'image', 'label' => 'Partners logos image'],
+                    'copyright_text' => ['type' => 'textarea', 'label' => 'Copyright line'],
+                ],
+            ],
+
             'diagram_embed' => [
                 'label' => 'TPRAF diagram',
                 'view' => 'blocks.diagram-embed',
@@ -182,12 +209,19 @@ class BlockTypes
         return self::all()[$type]['wrap'] ?? true;
     }
 
-    /** @return array<int, array{key: string, label: string}> Options for the admin's "add block" picker. */
+    /** @return array<int, array{key: string, label: string}> Options for the admin's "add block" picker — internal types excluded (see 'site_footer'). */
     public static function options(): array
     {
         return collect(self::all())
+            ->reject(fn (array $def) => $def['internal'] ?? false)
             ->map(fn (array $def, string $key) => ['key' => $key, 'label' => $def['label']])
             ->values()
             ->all();
+    }
+
+    /** @return array<int, string> Type keys a block may be created as via the admin's own "add block" flow. */
+    public static function addableKeys(): array
+    {
+        return collect(self::options())->pluck('key')->all();
     }
 }

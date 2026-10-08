@@ -47,9 +47,14 @@ class LiveEdit
      * field is assumed to render as a single element holding the whole
      * value verbatim.
      */
-    public static function attrs(PageBlock $block, string $field, bool $multiline = false, string $format = 'plain', bool $paragraphs = false): string
+    public static function attrs(?PageBlock $block, string $field, bool $multiline = false, string $format = 'plain', bool $paragraphs = false): string
     {
-        if (! self::enabled()) {
+        // Nullable so a caller resolving its block from a well-known slug
+        // (e.g. the footer's system page — see AppServiceProvider) can pass
+        // it straight through without a separate null check at every call
+        // site; if that record ever goes missing, the page still renders
+        // (minus the edit affordance) instead of a site-wide fatal error.
+        if (! $block || ! self::enabled()) {
             return '';
         }
 
@@ -80,9 +85,9 @@ class LiveEdit
      * JS element matching for free) plus a boolean marker live-edit.js uses
      * to open a file picker instead of a text field on click.
      */
-    public static function imageAttrs(PageBlock $block, string $field): string
+    public static function imageAttrs(?PageBlock $block, string $field): string
     {
-        if (! self::enabled()) {
+        if (! $block || ! self::enabled()) {
             return '';
         }
 
