@@ -4,7 +4,8 @@
     @php($iconDims = \App\Support\IconMetrics::dimensions($props['icon']))
     <img class="tile-icon" src="{{ asset($props['icon']) }}" alt=""
       @if($iconDims) width="{{ $iconDims['width'] }}" height="{{ $iconDims['height'] }}" @endif
-      style="{{ \App\Support\IconMetrics::style($props['icon']) }}" />
+      style="{{ \App\Support\IconMetrics::style($props['icon']) }}"
+      {!! \App\Support\LiveEdit::imageAttrs($block, 'icon') !!} />
   @endif
   <span class="tile-label" {!! \App\Support\LiveEdit::attrs($block, 'label') !!}>{{ $props['label'] ?? '' }}</span>
 </li>

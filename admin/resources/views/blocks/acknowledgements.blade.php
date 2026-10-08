@@ -1,6 +1,6 @@
 <div class="ack reveal">
   @if(! empty($props['icon']))
-    <img class="ack-icon" src="{{ asset($props['icon']) }}" alt="" width="142" height="104" />
+    <img class="ack-icon" src="{{ asset($props['icon']) }}" alt="" width="142" height="104" {!! \App\Support\LiveEdit::imageAttrs($block, 'icon') !!} />
   @endif
   <div class="ack-text">
     @foreach(\App\Support\Markup::paragraphs($props['body'] ?? null) as $paragraph)

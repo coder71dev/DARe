@@ -37,6 +37,29 @@ class MediaUploadTest extends TestCase
         Storage::disk('public')->assertExists($media->disk_path);
     }
 
+    public function test_admin_can_upload_an_svg_icon(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 70"><path d="M0 0h66v70H0z"/></svg>';
+
+        $response = $this->actingAs($admin)->postJson(route('admin.media.store'), [
+            'file' => UploadedFile::fake()->createWithContent('icon.svg', $svg),
+        ]);
+
+        $response->assertOk();
+
+        $media = Media::find($response->json('id'));
+
+        $this->assertNotNull($media);
+        $this->assertSame(66, $media->width);
+        $this->assertSame(70, $media->height);
+
+        Storage::disk('public')->assertExists($media->disk_path);
+    }
+
     public function test_non_image_upload_is_rejected(): void
     {
         Storage::fake('public');

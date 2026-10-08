@@ -15,6 +15,7 @@
     edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
     x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
   };
 
   function svg(name) {
@@ -121,6 +122,7 @@
       '<span class="live-edit-chip-icon">' + svg("edit") + '</span><span class="live-edit-chip-label"></span>';
     document.body.appendChild(chip);
     const chipLabel = chip.querySelector(".live-edit-chip-label");
+    const chipIcon = chip.querySelector(".live-edit-chip-icon");
 
     const toolbar = document.createElement("div");
     toolbar.className = "live-edit-toolbar";
@@ -160,6 +162,7 @@
       hoverTarget = el;
       el.classList.add("live-edit-hover");
       chipLabel.textContent = shortLabel(el.getAttribute("data-live-edit-label") || "Edit");
+      chipIcon.innerHTML = svg(el.hasAttribute("data-live-edit-image") ? "image" : "edit");
       chip.classList.add("is-visible");
       positionChip(el);
     }
@@ -201,7 +204,11 @@
       // navigation, <summary> toggle) for this click.
       e.preventDefault();
       e.stopPropagation();
-      startEdit(el);
+      if (el.hasAttribute("data-live-edit-image")) {
+        startImageEdit(el);
+      } else {
+        startEdit(el);
+      }
     });
 
     chip.addEventListener("mouseenter", function () {
@@ -333,6 +340,80 @@
         // genuine click-away, so it's safe to treat as "done, save it".
         finishEdit();
       });
+    }
+
+    /**
+     * "Image" fields (data-live-edit-image) have no raw text to edit in
+     * place — click opens the OS file picker, same as the admin form's own
+     * image upload button, then uploads to the existing /admin/media
+     * endpoint and PATCHes the block with the returned path. Updates the
+     * element itself (an <img>'s src, or a background-image div like the
+     * hero photo) once saved, so there's no page reload either.
+     */
+    function startImageEdit(target) {
+      if (activeField) return;
+
+      const [, recordId, field] = target.getAttribute("data-live-edit").split(":");
+
+      const picker = document.createElement("input");
+      picker.type = "file";
+      picker.accept = "image/*";
+      picker.style.display = "none";
+      document.body.appendChild(picker);
+
+      picker.addEventListener("change", function () {
+        const file = picker.files && picker.files[0];
+        picker.remove();
+        if (!file) return;
+
+        showStatus(pageRect(target), "saving", "Uploading…");
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/admin/media", {
+          method: "POST",
+          headers: {
+            "X-CSRF-TOKEN": csrfToken(),
+            Accept: "application/json",
+          },
+          body: formData,
+        })
+          .then(function (res) {
+            if (!res.ok) return res.json().then((data) => Promise.reject(new Error(data?.errors?.file?.[0] ?? "Upload failed")));
+            return res.json();
+          })
+          .then(function (uploaded) {
+            showStatus(pageRect(target), "saving", "Saving…");
+            return fetch("/admin/blocks/" + recordId, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-CSRF-TOKEN": csrfToken(),
+                "X-Requested-With": "XMLHttpRequest",
+              },
+              body: JSON.stringify({ props: { [field]: uploaded.path } }),
+            }).then(function (res) {
+              if (!res.ok) throw new Error("Save failed (" + res.status + ")");
+              return uploaded.path;
+            });
+          })
+          .then(function (path) {
+            const url = "/" + path;
+            if (target.tagName === "IMG") {
+              target.src = url;
+            } else {
+              target.style.backgroundImage = "url('" + url + "')";
+            }
+            showStatus(pageRect(target), "saved", "Saved", 1200);
+          })
+          .catch(function (err) {
+            showStatus(pageRect(target), "error", err.message || "Couldn't save — try again");
+          });
+      });
+
+      picker.click();
     }
 
     // cleanupField/cancelEdit/finishEdit all take the field's state as an
@@ -471,7 +552,12 @@
     chip.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      if (hoverTarget) startEdit(hoverTarget);
+      if (!hoverTarget) return;
+      if (hoverTarget.hasAttribute("data-live-edit-image")) {
+        startImageEdit(hoverTarget);
+      } else {
+        startEdit(hoverTarget);
+      }
     });
 
     toolbar.querySelector(".live-edit-save").addEventListener("mousedown", function (e) {

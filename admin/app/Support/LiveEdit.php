@@ -47,9 +47,14 @@ class LiveEdit
      * field is assumed to render as a single element holding the whole
      * value verbatim.
      */
-    public static function attrs(PageBlock $block, string $field, bool $multiline = false, string $format = 'plain', bool $paragraphs = false): string
+    public static function attrs(?PageBlock $block, string $field, bool $multiline = false, string $format = 'plain', bool $paragraphs = false): string
     {
-        if (! self::enabled()) {
+        // Nullable so a caller resolving its block from a well-known slug
+        // (e.g. the footer's system page — see AppServiceProvider) can pass
+        // it straight through without a separate null check at every call
+        // site; if that record ever goes missing, the page still renders
+        // (minus the edit affordance) instead of a site-wide fatal error.
+        if (! $block || ! self::enabled()) {
             return '';
         }
 
@@ -67,6 +72,28 @@ class LiveEdit
         if ($paragraphs) {
             $attrs .= ' data-live-edit-paragraphs';
         }
+
+        return $attrs;
+    }
+
+    /**
+     * HTML attributes marking an "image" field's rendered element (an <img>,
+     * or a background-image div like the hero photo) as live-replaceable —
+     * click it in live-edit mode to upload a new file, mirroring the admin
+     * form's ImageUploadField. Reuses the same data-live-edit="block:ID:field"
+     * attribute as attrs() (so it picks up the same hover/chip/status CSS and
+     * JS element matching for free) plus a boolean marker live-edit.js uses
+     * to open a file picker instead of a text field on click.
+     */
+    public static function imageAttrs(?PageBlock $block, string $field): string
+    {
+        if (! $block || ! self::enabled()) {
+            return '';
+        }
+
+        $attrs = sprintf('data-live-edit="block:%d:%s"', $block->id, e($field));
+        $attrs .= ' data-live-edit-image';
+        $attrs .= ' data-live-edit-label="'.e(self::label($block, $field)).'"';
 
         return $attrs;
     }

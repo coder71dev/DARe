@@ -84,7 +84,7 @@ function onDrop(targetId) {
     order.splice(fromIndex, 1);
     order.splice(toIndex, 0, draggingId.value);
 
-    router.post(route('admin.blocks.reorder', props.page.id), { order }, { preserveScroll: true });
+    router.post(route('admin.blocks.reorder', props.page.id), { order }, { preserveScroll: true, only: ['blocks', 'flash'] });
     draggingId.value = null;
 }
 </script>

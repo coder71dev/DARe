@@ -22,9 +22,10 @@
       <a href="?edit-mode=0">Exit</a>
     </div>
   @endif
+  @php($fp = $footerBlock?->props ?? [])
   <header class="site-header">
     <a class="brand" href="{{ route('home') }}" aria-label="DARe TPRAF — home">
-      <img class="logo" src="{{ asset('assets/icons/logo-header.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" />
+      <img class="logo" src="{{ asset($fp['header_logo'] ?? 'assets/icons/logo-header.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'header_logo') !!} />
     </a>
     <div class="header-tools">
       <form class="header-search" id="header-search" role="search" action="https://dare.ac.uk/" method="get" target="_blank">
@@ -35,6 +36,9 @@
     </div>
     <nav class="header-nav" aria-label="Primary">
       <a class="header-home" href="{{ route('home') }}">Home</a>
+      @foreach($navPages as $navPage)
+        <a href="{{ $navPage->publicUrl() }}">{{ $navPage->title }}</a>
+      @endforeach
       <a class="header-cta" href="{{ route('diagram') }}#extended">Explore TPRAF <svg class="btn-sm-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path transform="translate(6.04 6.04) scale(.72)" d="M10.8617 6.86863C10.8049 6.38 10.8118 5.86162 10.8091 5.35811C10.8065 4.86735 10.8665 4.34844 10.9154 3.87096C10.9297 3.72809 10.8479 3.59424 10.713 3.54485L0.684501 0.019231C0.506046 -0.0460975 0.308472 0.0611898 0.269701 0.247615C0.16454 0.754841 0.0758437 1.26791 0.00308098 1.78629C-0.0176325 1.93235 0.0678773 2.0731 0.205967 2.12408L8.64219 5.06546C8.76488 5.11061 8.84614 5.22639 8.8472 5.35705C8.84773 5.48718 8.76806 5.60402 8.64644 5.65023L0.260672 8.70846C0.123113 8.76104 0.0397284 8.90391 0.0625663 9.04944C0.144358 9.56623 0.241552 10.0772 0.35521 10.5828C0.396637 10.7682 0.595274 10.8723 0.772666 10.8043L10.6631 7.19793C10.7969 7.14641 10.8771 7.01098 10.8607 6.86863H10.8617Z" fill="currentColor"/></svg></a>
     </nav>
   </header>
@@ -44,19 +48,19 @@
   <footer class="site-footer">
     <div class="footer-main">
       <div class="container footer-grid">
-        <a class="footer-logo-link" href="{{ route('home') }}" aria-label="DARe TPRAF — home"><img class="footer-logo" src="{{ asset('assets/icons/logo-footer.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" /></a>
+        <a class="footer-logo-link" href="{{ route('home') }}" aria-label="DARe TPRAF — home"><img class="footer-logo" src="{{ asset($fp['footer_logo'] ?? 'assets/icons/logo-footer.svg') }}" alt="DARe — Decarbonised, Adaptable, Resilient Transport Infrastructures Hub" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'footer_logo') !!} /></a>
 
         <div class="footer-contacts">
           <div class="footer-col">
-            <h2 class="footer-heading">Keep in Touch</h2>
-            <p><a href="https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list" target="_blank" rel="noopener">Sign up to our mailing list</a></p>
+            <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_contact') !!}>{{ $fp['heading_contact'] ?? 'Keep in Touch' }}</h2>
+            <p><a href="https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::attrs($footerBlock, 'mailing_list_label') !!}>{{ $fp['mailing_list_label'] ?? 'Sign up to our mailing list' }}</span></a></p>
           </div>
           <div class="footer-col">
-            <h2 class="footer-heading">Contact Us</h2>
-            <p><a href="mailto:darehub@newcastle.ac.uk">darehub@newcastle.ac.uk</a></p>
+            <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_email') !!}>{{ $fp['heading_email'] ?? 'Contact Us' }}</h2>
+            <p><a href="mailto:{{ $fp['contact_email'] ?? 'darehub@newcastle.ac.uk' }}"><span {!! \App\Support\LiveEdit::attrs($footerBlock, 'contact_email') !!}>{{ $fp['contact_email'] ?? 'darehub@newcastle.ac.uk' }}</span></a></p>
           </div>
           <div class="footer-col footer-social">
-            <h2 class="footer-heading">Follow Us</h2>
+            <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_social') !!}>{{ $fp['heading_social'] ?? 'Follow Us' }}</h2>
             <ul>
               <li><a href="https://www.linkedin.com/company/dare-hub/" target="_blank" rel="noopener">LinkedIn</a></li>
               <li><a href="https://www.youtube.com/channel/UC3SeTcZlJQdFaYH5gdXmw1Q" target="_blank" rel="noopener">Youtube</a></li>
@@ -65,18 +69,18 @@
         </div>
 
         <div class="footer-address">
-          <p>DARe Hub<br />Stephenson Building<br />Newcastle University<br />NE1 7RU<br />United Kingdom</p>
+          <p {!! \App\Support\LiveEdit::attrs($footerBlock, 'address', multiline: true, format: 'br') !!}>{!! nl2br(e($fp['address'] ?? "DARe Hub\nStephenson Building\nNewcastle University\nNE1 7RU\nUnited Kingdom")) !!}</p>
           <p>Find us on <a href="https://maps.app.goo.gl/P6UAs6S34K7V2CSP9" target="_blank" rel="noopener">Google</a></p>
         </div>
 
         <div class="footer-logos">
-          <h2 class="footer-heading">Funders</h2>
+          <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_funders') !!}>{{ $fp['heading_funders'] ?? 'Funders' }}</h2>
           <a href="https://dare.ac.uk/about-us/our-funders/" target="_blank" rel="noopener" aria-label="DARe Hub funders">
-            <img class="footer-funders" src="{{ asset('assets/img/footer-funders.png') }}" alt="Funders: Department for Transport, UK Research and Innovation, Engineering and Physical Sciences Research Council" width="1000" height="116" loading="lazy" />
+            <img class="footer-funders" src="{{ asset($fp['funders_image'] ?? 'assets/img/footer-funders.png') }}" alt="Funders: Department for Transport, UK Research and Innovation, Engineering and Physical Sciences Research Council" loading="lazy" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'funders_image') !!} />
           </a>
-          <h2 class="footer-heading footer-heading-partners">Partners</h2>
+          <h2 class="footer-heading footer-heading-partners" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_partners') !!}>{{ $fp['heading_partners'] ?? 'Partners' }}</h2>
           <a href="https://dare.ac.uk/about-us/our-partners/" target="_blank" rel="noopener" aria-label="DARe Hub partners">
-            <img class="footer-partners" src="{{ asset('assets/img/footer-partners.png') }}" alt="Partners: Newcastle University, University of Cambridge, University of Glasgow, Heriot-Watt University, Anglia Ruskin University" width="1400" height="104" loading="lazy" />
+            <img class="footer-partners" src="{{ asset($fp['partners_image'] ?? 'assets/img/footer-partners.png') }}" alt="Partners: Newcastle University, University of Cambridge, University of Glasgow, Heriot-Watt University, Anglia Ruskin University" loading="lazy" {!! \App\Support\LiveEdit::imageAttrs($footerBlock, 'partners_image') !!} />
           </a>
         </div>
       </div>
@@ -84,7 +88,7 @@
 
     <div class="footer-signoff">
       <div class="container">
-        <p class="footer-copyright">&copy; DARe Consortium. TPRAF, DSP, IMP and associated content are original DARe research outputs. Academic publications are in preparation. Please acknowledge and cite DARe when using or referencing this resource.</p>
+        <p class="footer-copyright" {!! \App\Support\LiveEdit::attrs($footerBlock, 'copyright_text', multiline: true) !!}>{{ $fp['copyright_text'] ?? '© DARe Consortium. TPRAF, DSP, IMP and associated content are original DARe research outputs. Academic publications are in preparation. Please acknowledge and cite DARe when using or referencing this resource.' }}</p>
         <ul>
           <li><a href="https://dare.ac.uk/cookie-policy/" target="_blank" rel="noopener">Cookie Policy</a></li>
           <li><a href="https://dare.ac.uk/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a></li>

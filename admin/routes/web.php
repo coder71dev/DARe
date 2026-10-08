@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/pages', [PageAdminController::class, 'store'])->name('pages.store');
     Route::get('/pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
     Route::patch('/pages/{page}', [PageAdminController::class, 'update'])->name('pages.update');
+    Route::patch('/pages/{page}/nav', [PageAdminController::class, 'updateNavVisibility'])->name('pages.update-nav');
     Route::delete('/pages/{page}', [PageAdminController::class, 'destroy'])->name('pages.destroy');
 
     Route::post('/pages/{page}/blocks', [PageBlockController::class, 'store'])->name('blocks.store');

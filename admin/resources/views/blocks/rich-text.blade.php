@@ -7,7 +7,7 @@
   <div class="what-intro">
     @if(! empty($props['icon']))
       <div class="what-figure reveal">
-        <img src="{{ asset($props['icon']) }}" alt="" width="1482" height="1482" />
+        <img src="{{ asset($props['icon']) }}" alt="" width="1482" height="1482" {!! \App\Support\LiveEdit::imageAttrs($block, 'icon') !!} />
       </div>
     @endif
     <div class="what-copy reveal">
