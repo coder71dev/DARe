@@ -257,7 +257,7 @@
     }
 
     function positionToolbar(af) {
-      const rect = pageRect(af.field);
+      const rect = pageRect(af.hrefField_ || af.field);
       const toolbarRect = toolbar.getBoundingClientRect();
       const width = toolbarRect.width || 58;
       toolbar.style.top = rect.bottom + 6 + "px";
@@ -310,7 +310,45 @@
       field_.focus();
       field_.select();
 
-      activeField = { field: field_, group, format, multiline, paragraphs, kind, recordId, fieldName: field, target, rawText };
+      // A link field (data-live-edit-href) edits its destination alongside
+      // its visible label — the href is otherwise invisible content with
+      // nothing on the page to click. Reads the current value straight off
+      // the nearest <a> rather than from a Blade-rendered data attribute, so
+      // there's no separate value to keep in sync with it.
+      const hrefField = target.getAttribute("data-live-edit-href");
+      const linkEl = hrefField ? target.closest("a") : null;
+      const hrefRawValue = linkEl ? linkEl.getAttribute("href") || "" : null;
+      let hrefField_ = null;
+
+      if (linkEl) {
+        const fieldRect = pageRect(field_);
+        hrefField_ = document.createElement("input");
+        hrefField_.type = "text";
+        hrefField_.className = "live-edit-field live-edit-href-field";
+        hrefField_.placeholder = "Link URL";
+        hrefField_.value = hrefRawValue;
+        hrefField_.style.top = fieldRect.top + fieldRect.height + 6 + "px";
+        hrefField_.style.left = rect.left + "px";
+        hrefField_.style.width = Math.max(rect.width, 220) + "px";
+        document.body.appendChild(hrefField_);
+      }
+
+      activeField = {
+        field: field_,
+        group,
+        format,
+        multiline,
+        paragraphs,
+        kind,
+        recordId,
+        fieldName: field,
+        target,
+        rawText,
+        hrefField,
+        hrefField_,
+        hrefRawValue,
+        linkEl,
+      };
       positionToolbar(activeField);
       toolbar.classList.add("is-visible");
 
@@ -334,12 +372,32 @@
         }
       });
 
-      field_.addEventListener("blur", function () {
+      field_.addEventListener("blur", function (e) {
         // Toolbar buttons preventDefault() on mousedown so clicking them
-        // never blurs the field in the first place — this only fires for a
-        // genuine click-away, so it's safe to treat as "done, save it".
+        // never blurs the field in the first place. Moving focus to the
+        // href field below isn't "done" either — only finish if focus isn't
+        // headed there.
+        if (activeField && activeField.hrefField_ && e.relatedTarget === activeField.hrefField_) return;
         finishEdit();
       });
+
+      if (hrefField_) {
+        hrefField_.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            e.stopPropagation();
+            cancelEdit();
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            finishEdit();
+          }
+        });
+
+        hrefField_.addEventListener("blur", function (e) {
+          if (activeField && e.relatedTarget === activeField.field) return;
+          finishEdit();
+        });
+      }
     }
 
     /**
@@ -429,6 +487,7 @@
     function cleanupField(af) {
       af.target.classList.remove("live-edit-editing");
       if (af.field.isConnected) af.field.remove();
+      if (af.hrefField_ && af.hrefField_.isConnected) af.hrefField_.remove();
       toolbar.classList.remove("is-visible");
     }
 
@@ -491,7 +550,7 @@
     // "element" (a TprafElement field, the diagram's box/popup text — see
     // app.js's openModal()), and "view" (a TprafView's own title/subtitle/
     // status — see app.js's renderDiagram()).
-    function saveRequest(af, newValue) {
+    function saveRequest(af, newValue, newHref) {
       if (af.kind === "element") {
         return fetch("/admin/elements/" + af.recordId, {
           method: "PATCH",
@@ -518,6 +577,9 @@
         });
       }
 
+      const props = { [af.fieldName]: newValue };
+      if (af.hrefField) props[af.hrefField] = newHref;
+
       return fetch("/admin/blocks/" + af.recordId, {
         method: "PATCH",
         headers: {
@@ -526,7 +588,7 @@
           "X-CSRF-TOKEN": csrfToken(),
           "X-Requested-With": "XMLHttpRequest",
         },
-        body: JSON.stringify({ props: { [af.fieldName]: newValue } }),
+        body: JSON.stringify({ props: props }),
       });
     }
 
@@ -535,8 +597,10 @@
       const af = activeField;
       const { field, rawText } = af;
       const newValue = field.value;
+      const newHref = af.hrefField_ ? af.hrefField_.value : null;
+      const hrefChanged = af.hrefField_ && newHref !== af.hrefRawValue;
 
-      if (newValue === rawText) {
+      if (newValue === rawText && !hrefChanged) {
         cancelEdit();
         return;
       }
@@ -545,17 +609,20 @@
       showStatus(pageRect(field), "saving", "Saving…");
       toolbar.classList.remove("is-visible");
       field.disabled = true;
+      if (af.hrefField_) af.hrefField_.disabled = true;
 
-      saveRequest(af, newValue)
+      saveRequest(af, newValue, newHref)
         .then(function (res) {
           if (!res.ok) throw new Error("Save failed (" + res.status + ")");
           const statusRect = pageRect(field);
           const newNodes = applyGroupUpdate(af, newValue);
+          if (af.linkEl && hrefChanged) af.linkEl.setAttribute("href", newHref);
           cleanupField(af);
           showStatus(newNodes[0] ? pageRect(newNodes[0]) : statusRect, "saved", "Saved", 1200);
         })
         .catch(function () {
           field.disabled = false;
+          if (af.hrefField_) af.hrefField_.disabled = false;
           showStatus(pageRect(field), "error", "Couldn't save — try again");
           toolbar.classList.add("is-visible");
           activeField = af; // save failed — the field is still live, let Cancel/retry work

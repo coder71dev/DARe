@@ -146,6 +146,14 @@ a:empty[href] {
   box-shadow: 0 0 0 2px var(--le-sky), 0 10px 28px rgba(0, 20, 50, 0.16);
 }
 
+/* The second field a link's live-edit adds below its label field (see
+   data-live-edit-href) — a plain URL input, so it reads as a distinct,
+   smaller "destination" field rather than a second copy of the label. */
+.live-edit-href-field {
+  font: 13px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: #52607a;
+}
+
 /* The small Save / Cancel toolbar attached to a field in edit mode. */
 .live-edit-toolbar {
   position: absolute;
