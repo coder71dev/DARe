@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/diagrams', [DiagramAdminController::class, 'index'])->name('diagrams.index');
     Route::get('/diagrams/{view}/elements', [DiagramAdminController::class, 'edit'])->name('diagrams.edit');
     Route::patch('/elements/{element}', [DiagramAdminController::class, 'update'])->name('elements.update');
+    Route::patch('/diagram-views/{view}', [DiagramAdminController::class, 'updateView'])->name('diagram-views.update');
 
     Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
     Route::post('/users', [UserAdminController::class, 'store'])->name('users.store');

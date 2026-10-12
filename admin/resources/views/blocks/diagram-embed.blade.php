@@ -1,6 +1,7 @@
 @php
   $mode = $props['mode'] ?? 'single';
   $tabbed = $mode === 'tabbed';
+  $dc = $diagramChromeBlock->props ?? [];
 @endphp
 @if($tabbed)
   {{-- A large chunk of style.css's diagram layout (toolbar grid position,
@@ -10,7 +11,7 @@
   <section class="hero diagram-hero" aria-labelledby="diagram-title">
     <div class="container diagram-hero-inner">
       <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="{{ route('home') }}">Home</a> <span aria-hidden="true">&gt;</span> <span aria-current="page">Explore TPRAF</span>
+        <a href="{{ route('home') }}">Home</a> <span aria-hidden="true">&gt;</span> <span aria-current="page" {!! \App\Support\LiveEdit::attrs($diagramChromeBlock ?? null, 'breadcrumb_current') !!}>{{ $dc['breadcrumb_current'] ?? 'Explore TPRAF' }}</span>
       </nav>
       <div class="diagram-hero-title">
         <p class="hero-label" id="diagram-subtitle"></p>
@@ -33,15 +34,15 @@
   @if($tabbed)
     <div class="level-select" id="level-select">
       <button type="button" class="level-current" id="level-current" aria-expanded="false" aria-controls="diagram-toolbar">
-        <span class="level-current-label" id="level-current-label">Level 1 - Simple</span>
+        <span class="level-current-label" id="level-current-label">{{ $dc['tab_label_simple'] ?? 'Level 1 - Simple' }}</span>
         <svg class="level-current-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="diagram-toolbar" id="diagram-toolbar" role="tablist" aria-label="Diagram level">
-        <button class="level-tab" data-view="simple" aria-selected="true">Level 1 - Simple</button>
-        <button class="level-tab" data-view="extended">Level 1 - Extended</button>
-        <button class="level-tab" data-view="dsp">Level 2 - DSP</button>
-        <button class="level-tab" data-view="imp">Level 2 - IMP</button>
-        <button class="level-tab" data-view="level3">Level 3 - Example</button>
+        <button class="level-tab" data-view="simple" aria-selected="true"><span {!! \App\Support\LiveEdit::attrs($diagramChromeBlock ?? null, 'tab_label_simple') !!}>{{ $dc['tab_label_simple'] ?? 'Level 1 - Simple' }}</span></button>
+        <button class="level-tab" data-view="extended"><span {!! \App\Support\LiveEdit::attrs($diagramChromeBlock ?? null, 'tab_label_extended') !!}>{{ $dc['tab_label_extended'] ?? 'Level 1 - Extended' }}</span></button>
+        <button class="level-tab" data-view="dsp"><span {!! \App\Support\LiveEdit::attrs($diagramChromeBlock ?? null, 'tab_label_dsp') !!}>{{ $dc['tab_label_dsp'] ?? 'Level 2 - DSP' }}</span></button>
+        <button class="level-tab" data-view="imp"><span {!! \App\Support\LiveEdit::attrs($diagramChromeBlock ?? null, 'tab_label_imp') !!}>{{ $dc['tab_label_imp'] ?? 'Level 2 - IMP' }}</span></button>
+        <button class="level-tab" data-view="level3"><span {!! \App\Support\LiveEdit::attrs($diagramChromeBlock ?? null, 'tab_label_level3') !!}>{{ $dc['tab_label_level3'] ?? 'Level 3 - Example' }}</span></button>
       </div>
     </div>
   @else

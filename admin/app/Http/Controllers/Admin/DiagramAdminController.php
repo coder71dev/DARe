@@ -51,4 +51,24 @@ class DiagramAdminController extends Controller
 
         return back()->with('status', 'Saved.');
     }
+
+    /**
+     * A TprafView's own title/subtitle/status (the diagram-wide heading,
+     * subheading, and Level 3's walkthrough line — see
+     * TprafContentAssembler) — unlike the box/label content update() above,
+     * only ever reached from the public diagram's live-edit overlay, so a
+     * plain JSON response is enough.
+     */
+    public function updateView(Request $request, TprafView $view): JsonResponse
+    {
+        $validated = $request->validate([
+            'title' => ['sometimes', 'string', 'max:255'],
+            'subtitle' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'status' => ['sometimes', 'nullable', 'string', 'max:1000'],
+        ]);
+
+        $view->update($validated);
+
+        return response()->json(['status' => 'Saved.']);
+    }
 }

@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 // The footer's editable text/images — see BlockTypes
                 // 'site_footer' and the create_site_footer_system_block
                 // migration that creates this block.
-                'footerBlock' => Page::where('slug', 'system-footer')->first()?->blocks->first(),
+                'footerBlock' => Page::systemBlock('site_footer'),
             ]);
         });
     }

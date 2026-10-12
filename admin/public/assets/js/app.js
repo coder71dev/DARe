@@ -60,16 +60,19 @@
 
   // Admin-only, inert for every regular visitor: when window.LIVE_EDIT_MODE
   // is set (see App\Support\LiveEdit — the page only defines it true for a
-  // signed-in admin who's turned live-edit on), tags the popup's title/body
-  // with the data-live-edit attributes public/assets/js/live-edit.js looks
-  // for, so they're click-to-edit right there in the popup. item.dbId is the
-  // underlying TprafElement's id (see TprafContentAssembler).
-  function wireLiveEdit(el, dbId, field, label, multiline) {
+  // signed-in admin who's turned live-edit on), tags an element with the
+  // data-live-edit attributes public/assets/js/live-edit.js looks for, so
+  // it's click-to-edit right there on the page. `kind` is "element" for a
+  // TprafElement's own field (box/label popup text — dbId is its id, see
+  // TprafContentAssembler), or "view" for a TprafView's own field (title/
+  // subtitle/status — dbId is the view's key, since that's what {view} binds
+  // by — see DiagramAdminController@updateView).
+  function wireLiveEdit(el, kind, dbId, field, label, multiline) {
     if (!window.LIVE_EDIT_MODE || !dbId) {
       delete el.dataset.liveEdit;
       return;
     }
-    el.dataset.liveEdit = "element:" + dbId + ":" + field;
+    el.dataset.liveEdit = kind + ":" + dbId + ":" + field;
     el.dataset.liveEditLabel = label;
     if (multiline) el.setAttribute("data-live-edit-multiline", "");
     else el.removeAttribute("data-live-edit-multiline");
@@ -85,8 +88,8 @@
     // "Transport\nScenarios", for a box's two-line wrap on the canvas) —
     // a single-line <input> silently strips any newline assigned to its
     // value, which would corrupt that layout the moment someone edited it.
-    wireLiveEdit(modalTitle, item.dbId, "label", "Label", true);
-    wireLiveEdit(modalText, item.dbId, "text", "Popup text", true);
+    wireLiveEdit(modalTitle, "element", item.dbId, "label", "Label", true);
+    wireLiveEdit(modalText, "element", item.dbId, "text", "Popup text", true);
     modalPlaceholderNote.hidden = !item.isPlaceholder;
     if (item.handbookUrl !== undefined) {
       modalHandbookLink.hidden = false;
@@ -755,6 +758,8 @@
     if (!data) {
       titleEl.textContent = "Coming soon";
       subtitleEl.textContent = "This level isn't built yet — check back after the next milestone.";
+      delete titleEl.dataset.liveEdit;
+      delete subtitleEl.dataset.liveEdit;
       svgLayer.innerHTML = "";
       stage.querySelectorAll(".diagram-box, .diagram-label").forEach((n) => n.remove());
       guideEl.hidden = true;
@@ -765,12 +770,16 @@
     titleEl.textContent = data.title;
     subtitleEl.textContent = data.subtitle;
     subtitleEl.title = data.subtitle;
+    wireLiveEdit(titleEl, "view", viewKey, "title", "Diagram title", false);
+    wireLiveEdit(subtitleEl, "view", viewKey, "subtitle", "Diagram subtitle", false);
     // Lets CSS adapt page furniture to a specific view's geometry — the zoom
     // widget docks bottom-left on IMP, whose bottom-right corner is occupied
     // by a box from the source slide (see style.css).
     stageWrap.parentElement.dataset.view = viewKey;
     guideEl.hidden = false;
     guideBody.innerHTML = buildGuideBody(data);
+    const statusEl = guideBody.querySelector(".diagram-guide-status");
+    if (statusEl) wireLiveEdit(statusEl, "view", viewKey, "status", "Walkthrough status text", true);
 
     currentMaxX = computeMaxX(data);
     currentScale = data.scale || 1;
@@ -2251,6 +2260,11 @@
 
   document.querySelectorAll(".level-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
+      // In live-edit mode the tab's own text is click-to-edit (see the
+      // data-live-edit span live-edit.js wires up inside it) — switching
+      // views on the same click would fight that, since this handler runs
+      // before the click ever bubbles up to live-edit.js's document listener.
+      if (window.LIVE_EDIT_MODE) return;
       if (tab.disabled) return;
       selectView(tab.dataset.view);
       location.hash = tab.dataset.view;

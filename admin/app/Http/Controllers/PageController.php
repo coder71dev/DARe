@@ -15,6 +15,11 @@ class PageController extends Controller
         return view('page', [
             'page' => $page,
             'renderUnits' => PageRenderer::groupBlocks($page->blocks),
+            // Passed here (rather than the layouts.app composer, like
+            // navPages/footerBlock) because it's needed inside the page's own
+            // content — blocks.diagram-embed and partials.diagram-guide —
+            // not just the layout's own header/footer markup.
+            'diagramChromeBlock' => Page::systemBlock('diagram_chrome'),
         ]);
     }
 }
