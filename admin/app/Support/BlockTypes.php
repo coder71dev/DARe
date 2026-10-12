@@ -184,6 +184,9 @@ class BlockTypes
                     'tab_label_dsp' => ['type' => 'text', 'label' => 'Tab label: Level 2 - DSP'],
                     'tab_label_imp' => ['type' => 'text', 'label' => 'Tab label: Level 2 - IMP'],
                     'tab_label_level3' => ['type' => 'text', 'label' => 'Tab label: Level 3 - Example'],
+                    'guide_body_intro' => ['type' => 'text', 'label' => 'Guide body: opening instruction'],
+                    'guide_body_outro' => ['type' => 'text', 'label' => 'Guide body: closing instruction (drag/zoom)'],
+                    'handbook_link_text' => ['type' => 'text', 'label' => '"Take me to the Handbook" link text'],
                 ],
             ],
 

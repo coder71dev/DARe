@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TprafDspImp;
 use App\Models\TprafElement;
 use App\Models\TprafView;
 use Illuminate\Http\JsonResponse;
@@ -68,6 +69,23 @@ class DiagramAdminController extends Controller
         ]);
 
         $view->update($validated);
+
+        return response()->json(['status' => 'Saved.']);
+    }
+
+    /**
+     * The DSP/IMP explainer sheet's title and body text (TprafDspImp —
+     * no prior admin path at all, live-edit or otherwise). Same JSON-only
+     * shape as updateView(): only ever reached from the public page.
+     */
+    public function updateDspImp(Request $request, TprafDspImp $dspImp): JsonResponse
+    {
+        $validated = $request->validate([
+            'title' => ['sometimes', 'string', 'max:255'],
+            'text' => ['sometimes', 'string', 'max:5000'],
+        ]);
+
+        $dspImp->update($validated);
 
         return response()->json(['status' => 'Saved.']);
     }

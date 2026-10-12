@@ -106,6 +106,11 @@
       const TPRAF_CONTENT = @json($tprafContent);
       const TPRAF_DSP_IMP = @json($tprafDspImp);
       window.LIVE_EDIT_MODE = @json(\App\Support\LiveEdit::enabled());
+      // The diagram page's own chrome text (guide heading/body, tab labels,
+      // handbook link text — see BlockTypes 'diagram_chrome') — app.js reads
+      // this for the bits it renders itself (buildGuideBody's hint
+      // paragraph), the same way it already reads TPRAF_CONTENT.
+      window.DIAGRAM_CHROME = @json(['id' => $diagramChromeBlock->id ?? null, 'props' => $diagramChromeBlock->props ?? []]);
     </script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
   @endif

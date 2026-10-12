@@ -11,7 +11,11 @@
     <p class="lesson-credit" id="lesson-credit" hidden></p>
     <span class="placeholder-note" id="lesson-placeholder-note" hidden>Awaiting final text from DARe</span>
     <div class="lesson-extra" id="lesson-extra"></div>
-    <a class="modal-handbook-link lesson-handbook" id="lesson-handbook" href="https://dare-private.netlify.app" target="_blank" rel="noopener" hidden>Take me to the Handbook &rarr;</a>
+    {{-- Same stored text as partials.modal's handbook link — only that one
+         carries the live-edit attrs (two elements sharing one data-live-edit
+         group would have their text concatenated, not treated as duplicates
+         of one value); editing it there updates this one too on next load. --}}
+    <a class="modal-handbook-link lesson-handbook" id="lesson-handbook" href="https://dare-private.netlify.app" target="_blank" rel="noopener" hidden>{{ $diagramChromeBlock->props['handbook_link_text'] ?? 'Take me to the Handbook →' }}</a>
   </div>
   <div class="lesson-nav">
     <button type="button" class="lesson-btn lesson-btn-back" id="lesson-back">&larr; Back</button>

@@ -545,11 +545,13 @@
       return newNodes;
     }
 
-    // Three kinds, each saving to a different endpoint: "block" (a PageBlock
+    // Four kinds, each saving to a different endpoint: "block" (a PageBlock
     // field — ordinary page content, the footer, the diagram chrome text),
     // "element" (a TprafElement field, the diagram's box/popup text — see
-    // app.js's openModal()), and "view" (a TprafView's own title/subtitle/
-    // status — see app.js's renderDiagram()).
+    // app.js's openModal()), "view" (a TprafView's own title/subtitle/
+    // status — see app.js's renderDiagram()), and "dspimp" (a TprafDspImp's
+    // title/text, the DSP/IMP explainer sheet — see app.js's
+    // setProcessPanel()).
     function saveRequest(af, newValue, newHref) {
       if (af.kind === "element") {
         return fetch("/admin/elements/" + af.recordId, {
@@ -566,6 +568,19 @@
 
       if (af.kind === "view") {
         return fetch("/admin/diagram-views/" + af.recordId, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "X-CSRF-TOKEN": csrfToken(),
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          body: JSON.stringify({ [af.fieldName]: newValue }),
+        });
+      }
+
+      if (af.kind === "dspimp") {
+        return fetch("/admin/diagram-process/" + af.recordId, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

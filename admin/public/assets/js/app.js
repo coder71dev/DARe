@@ -64,18 +64,24 @@
   // data-live-edit attributes public/assets/js/live-edit.js looks for, so
   // it's click-to-edit right there on the page. `kind` is "element" for a
   // TprafElement's own field (box/label popup text — dbId is its id, see
-  // TprafContentAssembler), or "view" for a TprafView's own field (title/
+  // TprafContentAssembler), "view" for a TprafView's own field (title/
   // subtitle/status — dbId is the view's key, since that's what {view} binds
-  // by — see DiagramAdminController@updateView).
-  function wireLiveEdit(el, kind, dbId, field, label, multiline) {
+  // by — see DiagramAdminController@updateView), or "block" for a PageBlock
+  // field (the diagram chrome text — dbId is the block's id). `paragraphs`
+  // marks one of several elements sharing one field's value, blank-line-
+  // joined — the DSP/IMP panel's peek/"read more" split (see setProcessPanel).
+  function wireLiveEdit(el, kind, dbId, field, label, multiline, paragraphs) {
     if (!window.LIVE_EDIT_MODE || !dbId) {
       delete el.dataset.liveEdit;
+      el.removeAttribute("data-live-edit-paragraphs");
       return;
     }
     el.dataset.liveEdit = kind + ":" + dbId + ":" + field;
     el.dataset.liveEditLabel = label;
     if (multiline) el.setAttribute("data-live-edit-multiline", "");
     else el.removeAttribute("data-live-edit-multiline");
+    if (paragraphs) el.setAttribute("data-live-edit-paragraphs", "");
+    else el.removeAttribute("data-live-edit-paragraphs");
   }
 
   function openModal(item) {
@@ -601,14 +607,22 @@
       ? " Or press <strong>Play walkthrough</strong> to watch the steps light up."
       : "";
 
-    // A lesson view is read with the step card, not by opening popups.
+    // A lesson view is read with the step card, not by opening popups — that
+    // variant's wording stays fixed (it names the actual tour mechanic), but
+    // the default intro is admin-editable text (see DIAGRAM_CHROME); the
+    // dynamic bits after it (DSP/IMP toggle, walkthrough, tour hints) stay
+    // computed, since they only make sense when the button they describe
+    // actually exists on this specific view.
+    const dc = (typeof DIAGRAM_CHROME !== "undefined" && DIAGRAM_CHROME) || { id: null, props: {} };
+    const introText = dc.props.guide_body_intro || "Click any box or label to see its full detail.";
+    const outroText = dc.props.guide_body_outro || "Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.";
     const guidedHint = " Or press <strong>Take a tour</strong> for a step-by-step explanation.";
     const hint = data.lesson && data.lesson.clickStartsTour
       ? "Press <strong>Take a tour</strong> to have each step explained in turn, or click any box to have just that one explained."
-      : "Click any box or label to see its full detail." + toggleHint + tourHint + guidedHint;
+      : `<span id="guide-hint-intro">${escapeHtml(introText)}</span>` + toggleHint + tourHint + guidedHint;
 
     return `
-      <p class="diagram-guide-hint">${hint} Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.</p>
+      <p class="diagram-guide-hint">${hint} <span id="guide-hint-outro">${escapeHtml(outroText)}</span></p>
       <ul class="diagram-guide-legend">${legendHtml}${dotHtml}${lineHtml}</ul>
       ${statusHtml}
     `;
@@ -665,17 +679,24 @@
     const info = (typeof TPRAF_DSP_IMP !== "undefined" && TPRAF_DSP_IMP[key]) || null;
     if (info) {
       processPanelTitle.textContent = info.title;
+      wireLiveEdit(processPanelTitle, "dspimp", key, "title", "Panel title", false);
       // The sheet shows the first paragraph as a peek and the rest on "Read
       // more"; without the extra elements (the home page's copy) it is all
-      // one block, as before.
+      // one block, as before. Either way, both pieces are really one stored
+      // field (text) — wiring them with the same data-live-edit group (see
+      // data-live-edit-paragraphs) lets editing either one edit the whole
+      // thing, Save re-splitting it the same way this render just did.
       const paragraphs = info.text.split("\n\n");
       if (processPanelMore && processPanelToggle) {
         processPanelText.textContent = paragraphs[0];
         processPanelMore.textContent = paragraphs.slice(1).join("\n\n");
         processPanelToggle.hidden = paragraphs.length < 2;
         setProcessSheetExpanded(false);
+        wireLiveEdit(processPanelText, "dspimp", key, "text", "Panel text", true, true);
+        wireLiveEdit(processPanelMore, "dspimp", key, "text", "Panel text", true, true);
       } else {
         processPanelText.textContent = info.text;
+        wireLiveEdit(processPanelText, "dspimp", key, "text", "Panel text", true, false);
       }
       processPanel.dataset.process = key;
       if (processPanelExplore) {
@@ -780,6 +801,11 @@
     guideBody.innerHTML = buildGuideBody(data);
     const statusEl = guideBody.querySelector(".diagram-guide-status");
     if (statusEl) wireLiveEdit(statusEl, "view", viewKey, "status", "Walkthrough status text", true);
+    const chromeId = typeof DIAGRAM_CHROME !== "undefined" ? DIAGRAM_CHROME.id : null;
+    const introEl = guideBody.querySelector("#guide-hint-intro");
+    if (introEl) wireLiveEdit(introEl, "block", chromeId, "guide_body_intro", "Guide intro text", false);
+    const outroEl = guideBody.querySelector("#guide-hint-outro");
+    if (outroEl) wireLiveEdit(outroEl, "block", chromeId, "guide_body_outro", "Guide closing text", false);
 
     currentMaxX = computeMaxX(data);
     currentScale = data.scale || 1;
