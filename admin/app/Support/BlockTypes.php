@@ -154,6 +154,39 @@ class BlockTypes
                     'partners_image' => ['type' => 'image', 'label' => 'Partners logos image'],
                     'copyright_text' => ['type' => 'textarea', 'label' => 'Copyright line'],
                     'footer_logo' => ['type' => 'image', 'label' => 'Footer logo'],
+                    'maps_label' => ['type' => 'text', 'label' => '"Find us on ___" link text'],
+                    'maps_url' => ['type' => 'url', 'label' => '"Find us on ___" link destination'],
+                    'linkedin_label' => ['type' => 'text', 'label' => 'LinkedIn link text'],
+                    'linkedin_url' => ['type' => 'url', 'label' => 'LinkedIn link destination'],
+                    'youtube_label' => ['type' => 'text', 'label' => 'Youtube link text'],
+                    'youtube_url' => ['type' => 'url', 'label' => 'Youtube link destination'],
+                    'mailing_list_url' => ['type' => 'url', 'label' => 'Mailing list link destination'],
+                    'cookie_policy_label' => ['type' => 'text', 'label' => 'Cookie Policy link text'],
+                    'cookie_policy_url' => ['type' => 'url', 'label' => 'Cookie Policy link destination'],
+                    'privacy_policy_label' => ['type' => 'text', 'label' => 'Privacy Policy link text'],
+                    'privacy_policy_url' => ['type' => 'url', 'label' => 'Privacy Policy link destination'],
+                ],
+            ],
+
+            // Same internal/hidden-system-page treatment as 'site_footer' —
+            // the diagram page's chrome text that isn't a per-box/per-view
+            // TprafElement: the guide toggle heading, the breadcrumb's
+            // current-page label, and the 5 level-tab button labels.
+            'diagram_chrome' => [
+                'label' => 'Diagram page chrome',
+                'view' => 'blocks.missing',
+                'internal' => true,
+                'fields' => [
+                    'guide_heading' => ['type' => 'text', 'label' => '"How to explore this diagram?" heading'],
+                    'breadcrumb_current' => ['type' => 'text', 'label' => 'Breadcrumb current-page label'],
+                    'tab_label_simple' => ['type' => 'text', 'label' => 'Tab label: Level 1 - Simple'],
+                    'tab_label_extended' => ['type' => 'text', 'label' => 'Tab label: Level 1 - Extended'],
+                    'tab_label_dsp' => ['type' => 'text', 'label' => 'Tab label: Level 2 - DSP'],
+                    'tab_label_imp' => ['type' => 'text', 'label' => 'Tab label: Level 2 - IMP'],
+                    'tab_label_level3' => ['type' => 'text', 'label' => 'Tab label: Level 3 - Example'],
+                    'guide_body_intro' => ['type' => 'text', 'label' => 'Guide body: opening instruction'],
+                    'guide_body_outro' => ['type' => 'text', 'label' => 'Guide body: closing instruction (drag/zoom)'],
+                    'handbook_link_text' => ['type' => 'text', 'label' => '"Take me to the Handbook" link text'],
                 ],
             ],
 

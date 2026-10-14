@@ -98,6 +98,29 @@ class LiveEdit
         return $attrs;
     }
 
+    /**
+     * HTML attributes marking a link's visible text as live-editable AND
+     * carrying a second, hidden-by-default editor for the link's own href —
+     * the footer's "Find us on Google" / social / legal links, where the
+     * destination is just as much "content" as the label but isn't visible
+     * text to click the way a label is. Adds data-live-edit-href (the prop
+     * key the destination is stored under) on top of the same attrs() a
+     * plain text field gets; live-edit.js reads the <a>'s current href
+     * straight off the DOM (via closest('a')) rather than needing it passed
+     * through here, so there's nothing to keep in sync if the Blade side
+     * renders a stale href.
+     */
+    public static function linkAttrs(?PageBlock $block, string $labelField, string $hrefField): string
+    {
+        $attrs = self::attrs($block, $labelField);
+
+        if ($attrs === '') {
+            return '';
+        }
+
+        return $attrs.' data-live-edit-href="'.e($hrefField).'"';
+    }
+
     /** The field's admin-form label (BlockTypes), trimmed of its parenthetical hint for the compact chip. */
     private static function label(PageBlock $block, string $field): string
     {

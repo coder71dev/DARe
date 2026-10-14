@@ -104,4 +104,71 @@ class SiteFooterLiveEditTest extends TestCase
 
         $response->assertSessionHasErrors('block_type');
     }
+
+    public function test_admin_in_live_edit_mode_sees_the_footer_link_edit_markers(): void
+    {
+        $this->makeHomePage();
+        $admin = User::factory()->admin()->create();
+        $footerBlock = Page::systemBlock('site_footer');
+
+        $response = $this->actingAs($admin)
+            ->withSession(['live_edit_mode' => true])
+            ->get('/');
+
+        $response->assertOk();
+        foreach (['maps_label', 'linkedin_label', 'youtube_label', 'mailing_list_label', 'cookie_policy_label', 'privacy_policy_label'] as $labelField) {
+            $response->assertSee('data-live-edit="block:'.$footerBlock->id.':'.$labelField.'"', false);
+        }
+        $response->assertSee('data-live-edit-href="maps_url"', false);
+        $response->assertSee('data-live-edit-href="linkedin_url"', false);
+        $response->assertSee('data-live-edit-href="youtube_url"', false);
+        $response->assertSee('data-live-edit-href="mailing_list_url"', false);
+        $response->assertSee('data-live-edit-href="cookie_policy_url"', false);
+        $response->assertSee('data-live-edit-href="privacy_policy_url"', false);
+    }
+
+    public function test_visitor_does_not_see_the_footer_link_edit_markers(): void
+    {
+        $this->makeHomePage();
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertDontSee('data-live-edit-href', false);
+    }
+
+    public function test_the_footer_links_point_to_their_stored_destinations(): void
+    {
+        $this->makeHomePage();
+        $footerBlock = Page::systemBlock('site_footer');
+        $footerBlock->update(['props' => [
+            ...$footerBlock->props,
+            'linkedin_label' => 'Our LinkedIn',
+            'linkedin_url' => 'https://example.test/custom-linkedin',
+        ]]);
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('href="https://example.test/custom-linkedin"', false);
+        $response->assertSee('Our LinkedIn');
+    }
+
+    public function test_editing_a_footer_link_label_and_destination_together_saves_both(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $footerBlock = Page::systemBlock('site_footer');
+
+        $response = $this->actingAs($admin)->patchJson(route('admin.blocks.update', $footerBlock), [
+            'props' => [
+                'maps_label' => 'Find us here',
+                'maps_url' => 'https://example.test/map',
+            ],
+        ]);
+
+        $response->assertOk();
+        $footerBlock->refresh();
+        $this->assertSame('Find us here', $footerBlock->props['maps_label']);
+        $this->assertSame('https://example.test/map', $footerBlock->props['maps_url']);
+    }
 }

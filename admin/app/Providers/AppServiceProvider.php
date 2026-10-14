@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Page;
 use App\Services\TprafContentAssembler;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS if accessed via Cloudflare Tunnel
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            URL::forceScheme('https');
+        }
+
         Vite::prefetch(concurrency: 3);
 
         // Every public page extends layouts.app, which prints TPRAF_CONTENT /
@@ -47,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 // The footer's editable text/images — see BlockTypes
                 // 'site_footer' and the create_site_footer_system_block
                 // migration that creates this block.
-                'footerBlock' => Page::where('slug', 'system-footer')->first()?->blocks->first(),
+                'footerBlock' => Page::systemBlock('site_footer'),
             ]);
         });
     }

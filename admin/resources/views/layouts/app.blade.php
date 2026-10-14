@@ -53,7 +53,7 @@
         <div class="footer-contacts">
           <div class="footer-col">
             <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_contact') !!}>{{ $fp['heading_contact'] ?? 'Keep in Touch' }}</h2>
-            <p><a href="https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::attrs($footerBlock, 'mailing_list_label') !!}>{{ $fp['mailing_list_label'] ?? 'Sign up to our mailing list' }}</span></a></p>
+            <p><a href="{{ $fp['mailing_list_url'] ?? 'https://mailchi.mp/7fc1a1abba83/dare-hub-mailing-list' }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::linkAttrs($footerBlock, 'mailing_list_label', 'mailing_list_url') !!}>{{ $fp['mailing_list_label'] ?? 'Sign up to our mailing list' }}</span></a></p>
           </div>
           <div class="footer-col">
             <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_email') !!}>{{ $fp['heading_email'] ?? 'Contact Us' }}</h2>
@@ -62,15 +62,15 @@
           <div class="footer-col footer-social">
             <h2 class="footer-heading" {!! \App\Support\LiveEdit::attrs($footerBlock, 'heading_social') !!}>{{ $fp['heading_social'] ?? 'Follow Us' }}</h2>
             <ul>
-              <li><a href="https://www.linkedin.com/company/dare-hub/" target="_blank" rel="noopener">LinkedIn</a></li>
-              <li><a href="https://www.youtube.com/channel/UC3SeTcZlJQdFaYH5gdXmw1Q" target="_blank" rel="noopener">Youtube</a></li>
+              <li><a href="{{ $fp['linkedin_url'] ?? 'https://www.linkedin.com/company/dare-hub/' }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::linkAttrs($footerBlock, 'linkedin_label', 'linkedin_url') !!}>{{ $fp['linkedin_label'] ?? 'LinkedIn' }}</span></a></li>
+              <li><a href="{{ $fp['youtube_url'] ?? 'https://www.youtube.com/channel/UC3SeTcZlJQdFaYH5gdXmw1Q' }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::linkAttrs($footerBlock, 'youtube_label', 'youtube_url') !!}>{{ $fp['youtube_label'] ?? 'Youtube' }}</span></a></li>
             </ul>
           </div>
         </div>
 
         <div class="footer-address">
           <p {!! \App\Support\LiveEdit::attrs($footerBlock, 'address', multiline: true, format: 'br') !!}>{!! nl2br(e($fp['address'] ?? "DARe Hub\nStephenson Building\nNewcastle University\nNE1 7RU\nUnited Kingdom")) !!}</p>
-          <p>Find us on <a href="https://maps.app.goo.gl/P6UAs6S34K7V2CSP9" target="_blank" rel="noopener">Google</a></p>
+          <p>Find us on <a href="{{ $fp['maps_url'] ?? 'https://maps.app.goo.gl/P6UAs6S34K7V2CSP9' }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::linkAttrs($footerBlock, 'maps_label', 'maps_url') !!}>{{ $fp['maps_label'] ?? 'Google' }}</span></a></p>
         </div>
 
         <div class="footer-logos">
@@ -90,8 +90,8 @@
       <div class="container">
         <p class="footer-copyright" {!! \App\Support\LiveEdit::attrs($footerBlock, 'copyright_text', multiline: true) !!}>{{ $fp['copyright_text'] ?? '© DARe Consortium. TPRAF, DSP, IMP and associated content are original DARe research outputs. Academic publications are in preparation. Please acknowledge and cite DARe when using or referencing this resource.' }}</p>
         <ul>
-          <li><a href="https://dare.ac.uk/cookie-policy/" target="_blank" rel="noopener">Cookie Policy</a></li>
-          <li><a href="https://dare.ac.uk/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a></li>
+          <li><a href="{{ $fp['cookie_policy_url'] ?? 'https://dare.ac.uk/cookie-policy/' }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::linkAttrs($footerBlock, 'cookie_policy_label', 'cookie_policy_url') !!}>{{ $fp['cookie_policy_label'] ?? 'Cookie Policy' }}</span></a></li>
+          <li><a href="{{ $fp['privacy_policy_url'] ?? 'https://dare.ac.uk/privacy-policy/' }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::linkAttrs($footerBlock, 'privacy_policy_label', 'privacy_policy_url') !!}>{{ $fp['privacy_policy_label'] ?? 'Privacy Policy' }}</span></a></li>
         </ul>
       </div>
     </div>
@@ -106,6 +106,11 @@
       const TPRAF_CONTENT = @json($tprafContent);
       const TPRAF_DSP_IMP = @json($tprafDspImp);
       window.LIVE_EDIT_MODE = @json(\App\Support\LiveEdit::enabled());
+      // The diagram page's own chrome text (guide heading/body, tab labels,
+      // handbook link text — see BlockTypes 'diagram_chrome') — app.js reads
+      // this for the bits it renders itself (buildGuideBody's hint
+      // paragraph), the same way it already reads TPRAF_CONTENT.
+      window.DIAGRAM_CHROME = @json(['id' => $diagramChromeBlock->id ?? null, 'props' => $diagramChromeBlock->props ?? []]);
     </script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
   @endif

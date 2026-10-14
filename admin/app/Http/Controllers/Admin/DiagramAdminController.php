@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TprafDspImp;
 use App\Models\TprafElement;
 use App\Models\TprafView;
 use Illuminate\Http\JsonResponse;
@@ -50,5 +51,42 @@ class DiagramAdminController extends Controller
         }
 
         return back()->with('status', 'Saved.');
+    }
+
+    /**
+     * A TprafView's own title/subtitle/status (the diagram-wide heading,
+     * subheading, and Level 3's walkthrough line — see
+     * TprafContentAssembler) — unlike the box/label content update() above,
+     * only ever reached from the public diagram's live-edit overlay, so a
+     * plain JSON response is enough.
+     */
+    public function updateView(Request $request, TprafView $view): JsonResponse
+    {
+        $validated = $request->validate([
+            'title' => ['sometimes', 'string', 'max:255'],
+            'subtitle' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'status' => ['sometimes', 'nullable', 'string', 'max:1000'],
+        ]);
+
+        $view->update($validated);
+
+        return response()->json(['status' => 'Saved.']);
+    }
+
+    /**
+     * The DSP/IMP explainer sheet's title and body text (TprafDspImp —
+     * no prior admin path at all, live-edit or otherwise). Same JSON-only
+     * shape as updateView(): only ever reached from the public page.
+     */
+    public function updateDspImp(Request $request, TprafDspImp $dspImp): JsonResponse
+    {
+        $validated = $request->validate([
+            'title' => ['sometimes', 'string', 'max:255'],
+            'text' => ['sometimes', 'string', 'max:5000'],
+        ]);
+
+        $dspImp->update($validated);
+
+        return response()->json(['status' => 'Saved.']);
     }
 }

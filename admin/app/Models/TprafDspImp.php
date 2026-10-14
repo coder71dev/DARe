@@ -9,4 +9,9 @@ class TprafDspImp extends Model
     protected $table = 'tpraf_dsp_imp';
 
     protected $fillable = ['key', 'title', 'text'];
+
+    public function getRouteKeyName(): string
+    {
+        return 'key';
+    }
 }
