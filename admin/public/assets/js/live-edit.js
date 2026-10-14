@@ -277,6 +277,7 @@
       const multiline = target.hasAttribute("data-live-edit-multiline");
       const format = target.getAttribute("data-live-edit-format") || "plain";
       const paragraphs = target.hasAttribute("data-live-edit-paragraphs");
+      const fixedParagraphs = target.hasAttribute("data-live-edit-fixed-paragraphs");
       const groupKey = target.getAttribute("data-live-edit");
       const group = Array.from(document.querySelectorAll('[data-live-edit="' + CSS.escape(groupKey) + '"]'));
       const rawText = groupRawText(group, format);
@@ -339,6 +340,7 @@
         format,
         multiline,
         paragraphs,
+        fixedParagraphs,
         kind,
         recordId,
         fieldName: field,
@@ -515,7 +517,7 @@
      * those genuinely are replaced, cloned from the first one as a template.
      */
     function applyGroupUpdate(af, newValue) {
-      const { group, format, paragraphs } = af;
+      const { group, format, paragraphs, fixedParagraphs } = af;
 
       if (!paragraphs) {
         const el = group[0];
@@ -523,6 +525,22 @@
         el.classList.remove("live-edit-hover", "live-edit-editing");
         el.innerHTML = renderFieldHtml(newValue, format);
         return [el];
+      }
+
+      // Some paragraph groups are fixed parts of a larger control rather
+      // than a free list. Replacing their nodes breaks controls that keep a
+      // reference to them, such as the process sheet's "Read more" button.
+      // Keep the nodes and put the first paragraph in the peek and all later
+      // paragraphs in the expandable part.
+      if (fixedParagraphs) {
+        const values = splitParagraphs(newValue);
+        group.forEach(function (el, index) {
+          const text = index === 0 ? (values[0] || "") : values.slice(index).join("\n\n");
+          el.style.display = "";
+          el.classList.remove("live-edit-hover", "live-edit-editing");
+          el.innerHTML = renderFieldHtml(text, format);
+        });
+        return group;
       }
 
       const template = group[0];
@@ -631,6 +649,11 @@
           if (!res.ok) throw new Error("Save failed (" + res.status + ")");
           const statusRect = pageRect(field);
           const newNodes = applyGroupUpdate(af, newValue);
+          // The process sheet can be opened again before a reload. Keep its
+          // in-memory source in sync so reopening it retains the saved text.
+          if (af.kind === "dspimp" && typeof TPRAF_DSP_IMP !== "undefined" && TPRAF_DSP_IMP[af.recordId]) {
+            TPRAF_DSP_IMP[af.recordId][af.fieldName] = newValue;
+          }
           if (af.linkEl && hrefChanged) af.linkEl.setAttribute("href", newHref);
           cleanupField(af);
           showStatus(newNodes[0] ? pageRect(newNodes[0]) : statusRect, "saved", "Saved", 1200);

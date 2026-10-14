@@ -70,10 +70,11 @@
   // field (the diagram chrome text — dbId is the block's id). `paragraphs`
   // marks one of several elements sharing one field's value, blank-line-
   // joined — the DSP/IMP panel's peek/"read more" split (see setProcessPanel).
-  function wireLiveEdit(el, kind, dbId, field, label, multiline, paragraphs) {
+  function wireLiveEdit(el, kind, dbId, field, label, multiline, paragraphs, fixedParagraphs) {
     if (!window.LIVE_EDIT_MODE || !dbId) {
       delete el.dataset.liveEdit;
       el.removeAttribute("data-live-edit-paragraphs");
+      el.removeAttribute("data-live-edit-fixed-paragraphs");
       return;
     }
     el.dataset.liveEdit = kind + ":" + dbId + ":" + field;
@@ -82,6 +83,8 @@
     else el.removeAttribute("data-live-edit-multiline");
     if (paragraphs) el.setAttribute("data-live-edit-paragraphs", "");
     else el.removeAttribute("data-live-edit-paragraphs");
+    if (fixedParagraphs) el.setAttribute("data-live-edit-fixed-paragraphs", "");
+    else el.removeAttribute("data-live-edit-fixed-paragraphs");
   }
 
   function openModal(item) {
@@ -692,8 +695,10 @@
         processPanelMore.textContent = paragraphs.slice(1).join("\n\n");
         processPanelToggle.hidden = paragraphs.length < 2;
         setProcessSheetExpanded(false);
-        wireLiveEdit(processPanelText, "dspimp", key, "text", "Panel text", true, true);
-        wireLiveEdit(processPanelMore, "dspimp", key, "text", "Panel text", true, true);
+        // These two fixed nodes are also used by the sheet's "Read more"
+        // control. Keep them in place when their shared text is saved.
+        wireLiveEdit(processPanelText, "dspimp", key, "text", "Panel text", true, true, true);
+        wireLiveEdit(processPanelMore, "dspimp", key, "text", "Panel text", true, true, true);
       } else {
         processPanelText.textContent = info.text;
         wireLiveEdit(processPanelText, "dspimp", key, "text", "Panel text", true, false);
@@ -2285,12 +2290,12 @@
   }
 
   document.querySelectorAll(".level-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
+    tab.addEventListener("click", (event) => {
       // In live-edit mode the tab's own text is click-to-edit (see the
       // data-live-edit span live-edit.js wires up inside it) — switching
       // views on the same click would fight that, since this handler runs
       // before the click ever bubbles up to live-edit.js's document listener.
-      if (window.LIVE_EDIT_MODE) return;
+      if (window.LIVE_EDIT_MODE && event.target.closest("[data-live-edit]")) return;
       if (tab.disabled) return;
       selectView(tab.dataset.view);
       location.hash = tab.dataset.view;
