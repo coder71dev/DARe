@@ -116,7 +116,7 @@ const accentClasses = {
                             </svg>
                         </Link>
                         <a
-                            href="/"
+                            :href="route('home')"
                             target="_blank"
                             rel="noopener"
                             class="group flex items-start gap-4 overflow-hidden rounded-lg border border-transparent bg-white p-5 shadow-sm transition hover:border-dare-green/40 hover:shadow-md"

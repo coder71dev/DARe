@@ -22,12 +22,17 @@ class TprafContentAssembler
     /** @return array<string, array<string, mixed>> */
     public function assembleContent(): array
     {
-        $views = TprafView::with(['elements', 'lesson'])->get()->keyBy('key');
+        // A hidden view is left out entirely, so a pasted #key link to it
+        // falls back to the default view instead of rendering it.
+        $views = TprafView::with(['elements', 'lesson'])
+            ->where('is_hidden', false)
+            ->get()
+            ->keyBy('key');
 
         $assembled = [];
 
         foreach ($views as $key => $view) {
-            $assembled[$key] = $this->assembleView($view);
+            $assembled[$key] = $this->assembleView($view, $views->keys()->all());
         }
 
         return $assembled;
@@ -43,7 +48,8 @@ class TprafContentAssembler
             ->all();
     }
 
-    private function assembleView(TprafView $view): array
+    /** @param  list<string>  $visibleKeys */
+    private function assembleView(TprafView $view, array $visibleKeys): array
     {
         // Dev-maintained geometry (containers/arrows/elbowPaths/feedbackPaths/
         // curvedPaths/tour/legend) is kept verbatim from import — it's never
@@ -60,7 +66,7 @@ class TprafContentAssembler
             $data['scale'] = $view->scale;
         }
 
-        if ($view->next_view_key !== null) {
+        if ($view->next_view_key !== null && in_array($view->next_view_key, $visibleKeys, true)) {
             $data['next'] = ['key' => $view->next_view_key, 'label' => $view->next_view_label];
         }
 

@@ -51,7 +51,7 @@ class TprafSeedPages extends Command
 
         $blocks = [
             ['hero', [
-                'title' => "DARe’s Transport Performance & Risk Analysis Framework",
+                'title' => 'DARe’s Transport Performance & Risk Analysis Framework',
                 'tagline' => 'Supporting the transition to a decarbonised transport system that is resilient and adaptive to a changing climate.',
                 'cta_label' => 'What is TPRAF?',
                 'cta_href' => '#what-is-tpraf',
@@ -62,7 +62,7 @@ class TprafSeedPages extends Command
                 'pill' => 'Overview',
                 'heading' => 'What is TPRAF?',
                 'icon' => 'assets/icons/framework-navy.svg',
-                'body' => "DARe’s Transport Performance & Risk Analysis Framework (TPRAF) is a flexible, validated framework that helps transport decision-makers assess climate risks, resilience, adaptation, and decarbonisation while maintaining system-wide transport performance.",
+                'body' => 'DARe’s Transport Performance & Risk Analysis Framework (TPRAF) is a flexible, validated framework that helps transport decision-makers assess climate risks, resilience, adaptation, and decarbonisation while maintaining system-wide transport performance.',
                 'lead' => 'It can be used by a wide range of transport decision-makers, including:',
             ], $whatIsTpraf],
             ['audience_tile', ['number' => '01', 'icon' => 'assets/icons/audience-1.svg', 'label' => 'National infrastructure owners'], $whatIsTpraf],
@@ -92,8 +92,8 @@ class TprafSeedPages extends Command
             ['resource_card', [
                 'icon' => 'assets/icons/handbook.svg',
                 'title' => "DARe\nHandbook",
-                'body' => "Guidance on operationalizing the framework’s components in practice.",
-                'link_href' => 'https://dare-private.netlify.app',
+                'body' => 'Guidance on operationalizing the framework’s components in practice.',
+                'link_href' => 'https://handbook.dare.ac.uk',
                 'link_label' => 'DARe Handbook',
             ], $about],
             ['resource_card', [
@@ -117,7 +117,7 @@ class TprafSeedPages extends Command
             ['info_bar', [
                 'icon' => 'assets/icons/bar-website.svg',
                 'label' => 'DARe Website',
-                'body' => "The DARe Hub’s main site, at dare.ac.uk.",
+                'body' => 'The DARe Hub’s main site, at dare.ac.uk.',
                 'link_href' => 'https://dare.ac.uk',
                 'link_label' => 'Visit dare.ac.uk',
             ], $further],
@@ -131,7 +131,7 @@ class TprafSeedPages extends Command
             ['info_bar', [
                 'icon' => 'assets/icons/bar-email.svg',
                 'label' => 'Email us',
-                'body' => "Questions about TPRAF or the DARe Hub’s work.",
+                'body' => 'Questions about TPRAF or the DARe Hub’s work.',
                 'link_href' => 'mailto:darehub@newcastle.ac.uk',
                 'link_label' => 'darehub@newcastle.ac.uk',
             ], $further],

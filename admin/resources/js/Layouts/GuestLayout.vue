@@ -8,7 +8,7 @@ import { Link } from '@inertiajs/vue3';
         class="flex min-h-screen flex-col items-center bg-dare-navy bg-[radial-gradient(circle_at_top,_rgba(94,207,112,0.18),_transparent_55%)] pt-6 sm:justify-center sm:pt-0"
     >
         <div>
-            <Link href="/">
+            <Link :href="route('home')">
                 <ApplicationLogo class="h-16 w-auto" />
             </Link>
         </div>
