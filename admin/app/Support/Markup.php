@@ -21,6 +21,26 @@ class Markup
     }
 
     /**
+     * Resolves an admin-entered link for an href. A site-relative path
+     * ("/diagram#extended") is made absolute against the app's own root, so
+     * it still works when the site is served from a sub-folder such as
+     * www.dare.ac.uk/tpraf. Full URLs, "#anchors", mailto: and the like are
+     * returned unchanged.
+     */
+    public static function href(?string $link): string
+    {
+        if ($link === null || $link === '') {
+            return '#';
+        }
+
+        if (str_starts_with($link, '/') && ! str_starts_with($link, '//')) {
+            return rtrim(url('/'), '/').$link;
+        }
+
+        return $link;
+    }
+
+    /**
      * Renders a paragraph's light inline emphasis (**bold**, *italic*) as
      * HTML. Always call on already-escaped text (e.g. `Markup::inline(e($p))`)
      * — this only ever inserts <strong>/<em> tags around the given text, it

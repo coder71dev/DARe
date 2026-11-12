@@ -1413,6 +1413,30 @@ a { color: var(--color-sky); }
   color: var(--color-water);
 }
 
+/* DSP: steps that aren't DSP Modules take their own column's colour (the
+   matching .diagram-heading.variant-c1..c6 title-bar hex), so only the white
+   module boxes stand out. Navy text on every one, for contrast on the paler
+   shades. Client feedback, Nov 2026. */
+.diagram-box.variant-col-c1,
+.diagram-box.variant-col-c2,
+.diagram-box.variant-col-c3,
+.diagram-box.variant-col-c4,
+.diagram-box.variant-col-c5,
+.diagram-box.variant-col-c6,
+.diagram-box.variant-leaf-pale {
+  border-width: 0;
+  color: var(--color-water);
+}
+.diagram-box.variant-col-c1 { background: #60c8f0; }
+.diagram-box.variant-col-c2 { background: #f0a860; }
+.diagram-box.variant-col-c3 { background: #f08878; }
+.diagram-box.variant-col-c4 { background: #b0e0a0; }
+.diagram-box.variant-col-c5 { background: #f8e0b0; }
+.diagram-box.variant-col-c6 { background: #88b0c0; }
+/* The funding/procurement/governance cases under DSP's cross-cutting (green)
+   Risk Assessment box sit outside every column — a pale tint of its green. */
+.diagram-box.variant-leaf-pale { background: #d3f3d9; }
+
 /* IMP box colours — the source component map's own per-domain palette
    (level_2_slide_12.png), reproduced exactly rather than re-tinted into
    brand colours, so the diagram reads as the slide does. Plain white (the
@@ -1601,6 +1625,18 @@ a { color: var(--color-sky); }
    .diagram-guide-swatch.swatch-tool in the legend rules above. */
 .diagram-heading.variant-key-tool { background: #156082; color: var(--color-white); }
 .diagram-heading.variant-key-io { background: var(--color-white); color: #333333; border: 1px solid #156082; }
+
+/* DSP's on-diagram key: one swatch, drawn like the white DSP Module boxes. */
+.diagram-heading.variant-key-dsp-module {
+  border-radius: 6px;
+  padding: 0.15em 0.3em;
+  font-size: calc(var(--fs, 0.8rem) * 0.95);
+  font-weight: 600;
+  line-height: 1.12;
+  background: var(--color-white);
+  color: var(--color-water);
+  border: 1.5px solid var(--color-water);
+}
 .diagram-heading.variant-key-social { background: #f2f2f2; }
 .diagram-heading.variant-key-threshold { background: #f2cfee; }
 .diagram-heading.variant-key-climate { background: #d9f2d0; }
@@ -4114,10 +4150,9 @@ html.menu-open { overflow: hidden; }
 
 .diagram-viewport[data-view="dsp"] .diagram-box { font-weight: 600; }
 
-/* The Criteria X, Y, Z box sits over the foot of this strip, so its label
-   (which reads upward from the bottom) starts above it instead of under it. */
+/* The criteria boxes now sit beside this strip rather than over its foot,
+   so its label is centred along it again. */
 .diagram-box[data-box-id="dsp-multi-criteria-cost-benefit"] {
-  padding-top: 3.2em;
   font-size: calc(var(--fs, 12px) * 0.8);
   white-space: nowrap;
 }

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // The DARe Handbook the diagram's "Take me to the Handbook" links open —
+    // each box stores only a path, appended to this.
+    'tpraf' => [
+        'handbook_url' => env('TPRAF_HANDBOOK_URL', 'https://handbook.dare.ac.uk'),
+    ],
+
 ];

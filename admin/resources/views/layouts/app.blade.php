@@ -106,6 +106,7 @@
       const TPRAF_CONTENT = @json($tprafContent);
       const TPRAF_DSP_IMP = @json($tprafDspImp);
       window.LIVE_EDIT_MODE = @json(\App\Support\LiveEdit::enabled());
+      window.HANDBOOK_BASE_URL = @json(rtrim(config('services.tpraf.handbook_url'), '/'));
       // The diagram page's own chrome text (guide heading/body, tab labels,
       // handbook link text — see BlockTypes 'diagram_chrome') — app.js reads
       // this for the bits it renders itself (buildGuideBody's hint
@@ -115,6 +116,10 @@
     <script src="{{ asset('assets/js/app.js') }}"></script>
   @endif
   @if(\App\Support\LiveEdit::enabled())
+    {{-- live-edit.js saves through the admin routes; this is the app's own
+         root, so those calls still land when it runs from a sub-folder
+         (www.dare.ac.uk/tpraf). --}}
+    <script>window.APP_BASE_URL = @json(rtrim(url('/'), '/'));</script>
     <script src="{{ asset('assets/js/live-edit.js') }}"></script>
   @endif
 </body>
