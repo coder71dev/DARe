@@ -40,6 +40,11 @@ class TprafView extends Model
         return $this->hasOne(TprafLesson::class, 'view_id');
     }
 
+    public function caseStudies(): HasMany
+    {
+        return $this->hasMany(TprafCaseStudy::class, 'view_id')->orderBy('position')->orderBy('id');
+    }
+
     public function getRouteKeyName(): string
     {
         return 'key';

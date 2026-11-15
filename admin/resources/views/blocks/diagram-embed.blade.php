@@ -85,6 +85,13 @@
         <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
         <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
       </div>
+      {{-- A view with case studies (Level 1 Extended) offers those in this
+           same strip instead of the walkthrough and guided tour — app.js
+           fills in one button per published case study. --}}
+      <div class="case-study-picker" id="case-study-picker" hidden>
+        <span class="case-study-picker-label" id="case-study-picker-label">Case studies</span>
+        <div class="case-study-buttons" id="case-study-buttons" role="group" aria-labelledby="case-study-picker-label"></div>
+      </div>
     </div>
 
     <div class="diagram-tour lesson-launch" id="lesson-launch" hidden>

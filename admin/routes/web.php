@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CaseStudyAdminController;
 use App\Http\Controllers\Admin\DiagramAdminController;
 use App\Http\Controllers\Admin\EmailLogController;
 use App\Http\Controllers\Admin\MediaController;
@@ -53,6 +54,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::patch('/elements/{element}', [DiagramAdminController::class, 'update'])->name('elements.update');
     Route::patch('/diagram-views/{view}', [DiagramAdminController::class, 'updateView'])->name('diagram-views.update');
     Route::patch('/diagram-process/{dspImp}', [DiagramAdminController::class, 'updateDspImp'])->name('diagram-process.update');
+
+    Route::get('/case-studies', [CaseStudyAdminController::class, 'index'])->name('case-studies.index');
+    Route::post('/case-studies', [CaseStudyAdminController::class, 'store'])->name('case-studies.store');
+    Route::get('/case-studies/{caseStudy}', [CaseStudyAdminController::class, 'edit'])->name('case-studies.edit');
+    Route::put('/case-studies/{caseStudy}', [CaseStudyAdminController::class, 'update'])->name('case-studies.update');
+    Route::delete('/case-studies/{caseStudy}', [CaseStudyAdminController::class, 'destroy'])->name('case-studies.destroy');
 
     Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
     Route::post('/users', [UserAdminController::class, 'store'])->name('users.store');

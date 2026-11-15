@@ -4544,3 +4544,112 @@ html.menu-open { overflow: hidden; }
 @media (max-width: 640px) {
   .diagram-page .site-header .header-nav .header-home { display: inline; }
 }
+
+/* ---------- Case-study walkthroughs (Level 1 Extended) ----------
+   A view with case studies shows one button per case study in the walkthrough
+   strip, in place of "Take a tour" and "Play walkthrough" (app.js adds
+   .has-case-studies to the strip). A case study plays through the guided
+   tour's card and spotlight; each step can light several boxes at once. */
+.diagram-tour.has-case-studies > :not(.case-study-picker) { display: none !important; }
+
+.case-study-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-width: 0;
+}
+
+.case-study-picker[hidden] { display: none; }
+
+.case-study-picker-label {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--color-water);
+}
+
+.case-study-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.case-study-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: none;
+  background: var(--color-water);
+  color: var(--color-white);
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+}
+
+.case-study-btn:hover { filter: brightness(1.15); }
+.case-study-btn.is-current { background: var(--color-leaf); color: var(--color-water); }
+
+.case-study-btn:focus-visible {
+  outline: 3px solid var(--color-sky);
+  outline-offset: 2px;
+}
+
+/* The same play triangle as the walkthrough button. */
+.case-study-btn-icon {
+  width: 0;
+  height: 0;
+  border-left: 8px solid currentColor;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+/* While a case study plays, only the boxes of the current step stand out. */
+.diagram-stage.is-lesson.is-case-study.tour-running .diagram-box { opacity: 0.35; }
+.diagram-stage.is-lesson.is-case-study.tour-running .diagram-box.tour-focus { opacity: 1; }
+
+@media (min-width: 901px) {
+  .diagram-page .landing-diagram .case-study-picker-label { font-size: clamp(1rem, 1.25vw, 24px); }
+  .diagram-page .landing-diagram .case-study-btn {
+    height: clamp(2.75rem, 3.02vw, 58px);
+    padding: 0 clamp(0.9rem, 1.2vw, 23px);
+    border-radius: clamp(8px, 0.52vw, 10px);
+    font-size: clamp(1rem, 1.25vw, 24px);
+  }
+}
+
+/* Phone: the case-study buttons get a row of their own above the diagram
+   card (instead of the round icon strip inside it), so all of them are in
+   view without swiping. */
+@media (max-width: 760px) {
+  .diagram-page .landing-diagram.has-case-studies > .diagram-tour {
+    grid-row: 3;
+    justify-self: stretch;
+    align-self: auto;
+    z-index: auto;
+    width: auto;
+    margin: 0.6rem 0 0;
+    padding: 0.6rem;
+    background: var(--color-white);
+    border-radius: 12px;
+  }
+  .diagram-page .landing-diagram.has-case-studies .diagram-viewport,
+  .diagram-page .landing-diagram.has-case-studies .scroll-hint { grid-row: 4; }
+  .diagram-page .landing-diagram.has-case-studies .diagram-guide { grid-row: 5; }
+  .diagram-page .landing-diagram.has-case-studies .view-next { grid-row: 6; }
+  .diagram-page .case-study-picker { width: 100%; gap: 0.45rem; }
+  .diagram-page .case-study-picker-label { flex: 1 0 100%; font-size: 0.8rem; }
+  .diagram-page .case-study-buttons { flex: 1 1 100%; gap: 0.4rem; }
+  .diagram-page .case-study-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    font-size: 0.8rem;
+  }
+}
