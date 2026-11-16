@@ -1793,6 +1793,9 @@
     caseStudyPicker.hidden = !show;
     // The play buttons pulse gently until this visitor has started one.
     caseStudyPicker.classList.toggle("is-unplayed", !caseStudyPlayed());
+    // The cards are laid out by how many there are (see style.css), so a
+    // fourth never ends up alone on a row.
+    caseStudyButtons.dataset.count = String(caseStudies.length);
     caseStudyButtons.textContent = "";
     caseStudies.forEach((caseStudy) => {
       const button = document.createElement("button");

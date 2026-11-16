@@ -4614,10 +4614,26 @@ html.menu-open { overflow: hidden; }
   color: var(--color-water-muted);
 }
 
+/* Laid out by how many cards there are (app.js sets data-count), so rows
+   always come out even: 2 or 3 side by side, 4 as one row on a wide screen
+   or two rows of two, and one per line on a phone. Never a card on its own. */
 .case-study-buttons {
+  --cols: 3;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   gap: clamp(0.5rem, 0.8vw, 16px);
+}
+
+.case-study-buttons[data-count="1"] { --cols: 1; max-width: 26rem; }
+.case-study-buttons[data-count="2"] { --cols: 2; }
+.case-study-buttons[data-count="4"] { --cols: 2; }
+
+@media (min-width: 1200px) {
+  .case-study-buttons[data-count="4"] { --cols: 4; }
+}
+
+@media (max-width: 760px) {
+  .case-study-buttons[data-count] { --cols: 1; max-width: none; }
 }
 
 .case-study-btn {
