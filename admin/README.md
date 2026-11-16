@@ -1,58 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# DARe TPRAF — website and admin panel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The interactive TPRAF (Transport Performance and Risk Analysis Framework)
+site for the DARe Hub: a home page and a diagram page with four levels
+(Level 1 Simple and Extended, Level 2 DSP and IMP), plus an admin panel so
+DARe can edit the content themselves.
 
-## About Laravel
+- **Review site:** https://tpraf.coder71.com
+- **Final home (planned):** https://www.dare.ac.uk/tpraf, on DARe's SiteGround hosting
+- **Handbook it links to:** https://handbook.dare.ac.uk
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## How it is built
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Part | What it is |
+|---|---|
+| Public pages | Blade templates (`resources/views`) plus plain JS/CSS in `public/assets` (`app.js` draws the diagrams and runs the tours) |
+| Admin panel | Laravel 13 + Inertia + Vue (`resources/js/Pages/Admin`) |
+| Database | SQLite (`database/database.sqlite`) |
+| Diagram content | Tables `tpraf_views`, `tpraf_elements`, `tpraf_lessons`, `tpraf_case_studies`, turned into the page's `TPRAF_CONTENT` by `app/Services/TprafContentAssembler.php` |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Content fixes for the client are made as **data migrations** (see
+`database/migrations/2026_11_*`), so they ship with a deploy and only
+change what the admin hasn't already edited.
 
-## Learning Laravel
+## What admins can do
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Pages:** edit page blocks, header menu, images (Admin → Pages).
+- **Diagrams:** edit box labels, popup text and handbook links (Admin → Diagrams).
+- **Case studies:** add, edit, reorder, publish and delete the case-study
+  walkthroughs on Level 1 Extended; each step picks the boxes it lights up
+  (Admin → Case studies).
+- **Live Edit:** click text and pictures on the public pages to edit them in
+  place — including the case-study cards (name, intro, step heading, text,
+  caption, pictures). Boxes and steps themselves are changed in the admin.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Diagram features worth knowing
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- A level can be hidden without deleting it (`tpraf_views.is_hidden`) — Level 3 – Example is hidden this way.
+- Level 1 Extended shows **case studies** instead of "Take a tour" / "Play walkthrough". Only published case studies with at least one step appear.
+- Every box can link to a handbook page or section (`handbook_url`, e.g. `/dsp/technical-processes/outcome-assessment#...`), joined onto `TPRAF_HANDBOOK_URL`.
+- Script and style links carry a version stamp, so browsers and Cloudflare pick up changes straight away.
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Running it locally
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer setup        # install, .env, key, migrate, build
+php artisan serve     # or: composer run dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Tests: `php artisan test --compact` (`ExampleTest` is a known old failure — it
+hits the home page without its seeded content).
 
-## Contributing
+## Settings (`.env`)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Setting | Notes |
+|---|---|
+| `APP_URL` | The full public address, including a sub-folder if there is one (e.g. `https://www.dare.ac.uk/tpraf`). Links and pictures are built from it. |
+| `TPRAF_HANDBOOK_URL` | Handbook address the box links join onto. Default `https://handbook.dare.ac.uk`. |
+| `DB_CONNECTION=sqlite`, `SESSION_DRIVER=database` | The web server user must be able to **write** both the database file and its folder. |
 
-## Code of Conduct
+## Deploying
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The review site (tpraf.coder71.com) runs on aaPanel/nginx behind Cloudflare.
 
-## Security Vulnerabilities
+1. **Prefer file-only zips.** Once DARe edits content on the live site, a zip
+   containing `database/database.sqlite` would overwrite their changes. Ship
+   only the changed files; if a database change is needed, ship the migration
+   and run `php artisan migrate --force` on the server.
+2. Unzip over the site folder, then give files back to the web server user
+   and clear Laravel's caches:
+   ```bash
+   chown -R www:www app public resources routes database storage bootstrap/cache
+   php artisan optimize:clear
+   ```
+   Skipping the `chown` gives "attempt to write a readonly database".
+3. Uploaded images are served by an nginx alias rather than `storage:link`
+   (the host blocks `symlink`): `location ^~ /storage/ { alias <site>/storage/app/public/; }`.
+4. Admin front-end changes need `npm run build` first; `public/build` is not in git.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Moving to www.dare.ac.uk/tpraf (SiteGround)
 
-## License
+Planned once DARe approves the review site. Their main site (WordPress) is on
+the same hosting, so this is done once, at the end:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Check the PHP version (8.4) and the extensions Laravel needs.
+- Keep the app outside `public_html`; expose only its `public/` folder as `/tpraf`.
+- Add `.htaccess` rules so WordPress doesn't catch `/tpraf` addresses.
+- Set `APP_URL=https://www.dare.ac.uk/tpraf`, then migrate and check file permissions.
+- The code already supports a sub-folder (site links, pictures, admin saves).

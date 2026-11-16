@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\TprafCaseStudy;
 use App\Models\TprafDspImp;
 use App\Models\TprafElement;
 use App\Models\TprafView;
+use App\Support\Markup;
 use Illuminate\Support\Collection;
 
 /**
@@ -24,7 +26,7 @@ class TprafContentAssembler
     {
         // A hidden view is left out entirely, so a pasted #key link to it
         // falls back to the default view instead of rendering it.
-        $views = TprafView::with(['elements', 'lesson'])
+        $views = TprafView::with(['elements', 'lesson', 'caseStudies' => fn ($query) => $query->published()])
             ->where('is_hidden', false)
             ->get()
             ->keyBy('key');
@@ -102,7 +104,60 @@ class TprafContentAssembler
             ];
         }
 
+        $caseStudies = $view->caseStudies
+            ->map(fn (TprafCaseStudy $caseStudy) => $this->assembleCaseStudy($caseStudy))
+            ->filter(fn (array $caseStudy) => $caseStudy['steps'] !== [])
+            ->values()
+            ->all();
+
+        if ($caseStudies !== []) {
+            $data['caseStudies'] = $caseStudies;
+        }
+
         return $data;
+    }
+
+    /**
+     * One case-study walkthrough, in the shape app.js's guided tour reads:
+     * each step names the boxes it lights up and carries its own pictures,
+     * whose paths are resolved here so they work under a sub-folder too.
+     *
+     * @return array{id: int, title: string, intro: ?string, steps: list<array<string, mixed>>}
+     */
+    private function assembleCaseStudy(TprafCaseStudy $caseStudy): array
+    {
+        $steps = collect($caseStudy->steps ?? [])
+            ->filter(fn (array $step) => ($step['boxes'] ?? []) !== [] || filled($step['title'] ?? null))
+            ->map(function (array $step, int $index) {
+                $images = collect($step['images'] ?? [])
+                    ->filter(fn (array $image) => filled($image['src'] ?? null))
+                    ->map(fn (array $image, int $imageIndex) => [
+                        'index' => $imageIndex,
+                        'src' => Markup::asset($image['src']),
+                        'alt' => (string) ($image['alt'] ?? ''),
+                    ])
+                    ->values()
+                    ->all();
+
+                return [
+                    // Where the step is stored, so live editing saves back to
+                    // the right one even if an empty step was skipped.
+                    'index' => $index,
+                    'title' => (string) ($step['title'] ?? ''),
+                    'text' => (string) ($step['text'] ?? ''),
+                    'boxes' => array_values(array_filter($step['boxes'] ?? [])),
+                    'figure' => $images === [] ? null : ['images' => $images, 'caption' => (string) ($step['caption'] ?? '')],
+                ];
+            })
+            ->values()
+            ->all();
+
+        return [
+            'id' => $caseStudy->id,
+            'title' => $caseStudy->title,
+            'intro' => $caseStudy->intro_text,
+            'steps' => $steps,
+        ];
     }
 
     /** @param  Collection<int, TprafElement>  $elements */

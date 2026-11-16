@@ -619,9 +619,12 @@
     const introText = dc.props.guide_body_intro || "Click any box or label to see its full detail.";
     const outroText = dc.props.guide_body_outro || "Drag (or swipe on mobile) to pan around, and use the zoom controls to fit the whole diagram on screen.";
     const guidedHint = " Or press <strong>Take a tour</strong> for a step-by-step explanation.";
+    // A view with case studies offers those instead of the walkthrough and tour.
+    const caseStudyHint = " Or pick a <strong>case study</strong> to see how TPRAF was used in a real project, step by step.";
+    const hasCaseStudies = !!(data.caseStudies && data.caseStudies.length);
     const hint = data.lesson && data.lesson.clickStartsTour
       ? "Press <strong>Take a tour</strong> to have each step explained in turn, or click any box to have just that one explained."
-      : `<span id="guide-hint-intro">${escapeHtml(introText)}</span>` + toggleHint + tourHint + guidedHint;
+      : `<span id="guide-hint-intro">${escapeHtml(introText)}</span>` + toggleHint + (hasCaseStudies ? caseStudyHint : tourHint + guidedHint);
 
     return `
       <p class="diagram-guide-hint">${hint} <span id="guide-hint-outro">${escapeHtml(outroText)}</span></p>
@@ -839,6 +842,7 @@
     buildAnchorRegions(data);
     if (tourBar) tourBar.hidden = !(data.tour && data.tour.length);
     setCaption(tourIdleCaption(), false); // this view's own step count
+    setupCaseStudyPicker(data);
 
     applyCropToStage(data);
     refreshZoom();
@@ -1386,7 +1390,7 @@
   }
 
   function clearTourMarks() {
-    stage.classList.remove("tour-running", "tour-complete");
+    stage.classList.remove("tour-running", "tour-complete", "is-case-study");
     stage.querySelectorAll(".diagram-box.tour-focus, .diagram-box.tour-visited").forEach((el) => {
       el.classList.remove("tour-focus", "tour-visited");
     });
@@ -1585,17 +1589,42 @@
     return lessonState.lesson;
   }
 
-  function lessonStepIndexOfBox(id) {
-    const lesson = lessonState.active ? currentLesson() : null;
-    return lesson ? lesson.steps.findIndex((step) => step.box === id) : -1;
+  // A guided-tour step lights one box (`box`); a case-study step can light
+  // several at once (`boxes`).
+  function stepBoxIds(step) {
+    return step.boxes && step.boxes.length ? step.boxes : [step.box];
   }
 
-  function tourTargetEl() {
+  function isCaseStudy(lesson) {
+    return !!lesson && lesson.kind === "case-study";
+  }
+
+  function lessonStepIndexOfBox(id) {
+    const lesson = lessonState.active ? currentLesson() : null;
+    if (!lesson) return -1;
+    // A box the current step already lights keeps the tour where it is.
+    const current = lesson.steps[lessonState.index];
+    if (lessonState.running && current && stepBoxIds(current).includes(id)) return lessonState.index;
+    return lesson.steps.findIndex((step) => stepBoxIds(step).includes(id));
+  }
+
+  // The area the spotlight rings: the current step's box, or the smallest
+  // rectangle around all of its boxes. Null for the welcome / closing cards.
+  function tourTargetRect() {
     const lesson = currentLesson();
     if (!lesson) return null;
     const index = lessonState.index;
     if (index < 0 || index >= lesson.steps.length) return null;
-    return tourBoxEl(lesson.steps[index].box);
+    const rects = stepBoxIds(lesson.steps[index])
+      .map((id) => tourBoxEl(id))
+      .filter(Boolean)
+      .map((el) => el.getBoundingClientRect());
+    if (!rects.length) return null;
+    const left = Math.min(...rects.map((r) => r.left));
+    const top = Math.min(...rects.map((r) => r.top));
+    const right = Math.max(...rects.map((r) => r.right));
+    const bottom = Math.max(...rects.map((r) => r.bottom));
+    return { left: left, top: top, right: right, bottom: bottom, width: right - left, height: bottom - top };
   }
 
   // The section title the diagram draws over the group a box sits in (for
@@ -1685,18 +1714,36 @@
   }
 
   function setupLesson(data) {
-    const lesson = data.lesson || buildAutoLesson(data);
+    // A view with case studies (Level 1 Extended) offers those instead of its
+    // own guided tour — see setupCaseStudyPicker().
+    // (Only where the page has the picker for them — the home page's diagram
+    // card doesn't, so it keeps its tour.)
+    const hasCaseStudies = !!caseStudyPicker && !!(data.caseStudies && data.caseStudies.length);
+    const lesson = hasCaseStudies ? null : data.lesson || buildAutoLesson(data);
+    const barShown = !!tourBar && !tourBar.hidden;
+    if (lessonStartInline) lessonStartInline.hidden = !(lesson && barShown);
+    if (lessonLaunch) lessonLaunch.hidden = !(lesson && !barShown);
+    installLesson(data, lesson);
+    if (!lesson || !lessonCard) return;
+
+    setStartLabels(tourSeen() ? "Take a tour again" : "Take a tour");
+
+    window.clearTimeout(autoStartTimer);
+    offerPending = false;
+    if (shouldOfferTour()) {
+      offerPending = true;
+      autoStartTimer = window.setTimeout(offerTour, AUTO_START_DELAY);
+    }
+  }
+
+  // Makes `lesson` the tour the card plays, and builds its progress bar.
+  function installLesson(data, lesson) {
     lessonState.lesson = lesson;
     lessonState.active = !!lesson;
     lessonState.running = false;
     lessonState.index = -1;
     lessonState.total = lesson ? lesson.steps.length : 0;
-    const barShown = !!tourBar && !tourBar.hidden;
-    if (lessonStartInline) lessonStartInline.hidden = !(lesson && barShown);
-    if (lessonLaunch) lessonLaunch.hidden = !(lesson && !barShown);
     if (!lesson || !lessonCard) return;
-
-    setStartLabels(tourSeen() ? "Take a tour again" : "Take a tour");
 
     // Progress: one clickable segment per step, or a single smooth bar on a long
     // tour (35 segments would be too small to see or press).
@@ -1712,19 +1759,179 @@
         const seg = document.createElement("button");
         seg.type = "button";
         seg.className = "lesson-progress-seg";
-        seg.setAttribute("aria-label", "Go to step " + (k + 1) + ": " + labelForBox(data, step.box));
+        seg.setAttribute("aria-label", "Go to step " + (k + 1) + ": " + stepTitle(data, step));
         seg.addEventListener("click", () => lessonGoTo(k, k === lessonState.index + 1));
         lessonProgress.appendChild(seg);
       });
     }
+  }
 
-    window.clearTimeout(autoStartTimer);
-    offerPending = false;
-    if (shouldOfferTour()) {
-      offerPending = true;
-      autoStartTimer = window.setTimeout(offerTour, AUTO_START_DELAY);
+  function stepTitle(data, step) {
+    return step.title || stepBoxIds(step).map((id) => labelForBox(data, id)).join(", ");
+  }
+
+  /* ==========================================================================
+     Case-study walkthroughs (Level 1 Extended).
+     Each published case study gets a button in the walkthrough strip, in place
+     of "Take a tour" and "Play walkthrough". Pressing one plays it through the
+     same card and spotlight as the guided tour, except that a step can light
+     several boxes at once and nothing is joined up into a route.
+     ========================================================================== */
+  const caseStudyPicker = document.getElementById("case-study-picker");
+  const caseStudyButtons = document.getElementById("case-study-buttons");
+
+  function setupCaseStudyPicker(data) {
+    const caseStudies = (data && data.caseStudies) || [];
+    const show = !!caseStudyPicker && caseStudies.length > 0;
+    if (tourBar) {
+      tourBar.classList.toggle("has-case-studies", show);
+      if (show) tourBar.hidden = false;
+    }
+    const landing = stage.closest(".landing-diagram");
+    if (landing) landing.classList.toggle("has-case-studies", show);
+    if (!caseStudyPicker) return;
+    caseStudyPicker.hidden = !show;
+    // The play buttons pulse gently until this visitor has started one.
+    caseStudyPicker.classList.toggle("is-unplayed", !caseStudyPlayed());
+    // The cards are laid out by how many there are (see style.css), so a
+    // fourth never ends up alone on a row.
+    caseStudyButtons.dataset.count = String(caseStudies.length);
+    caseStudyButtons.textContent = "";
+    caseStudies.forEach((caseStudy) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "case-study-btn";
+      button.dataset.caseStudy = String(caseStudy.id);
+      const steps = caseStudy.steps.length;
+      button.setAttribute("aria-label", "Start the " + caseStudy.title + " case study walkthrough, " + steps + " steps");
+      // A card that reads as "press to play": a play button, the name, how
+      // long it is, and an explicit "Start walkthrough".
+      const play = document.createElement("span");
+      play.className = "case-study-btn-play";
+      play.setAttribute("aria-hidden", "true");
+      const body = document.createElement("span");
+      body.className = "case-study-btn-body";
+      const label = document.createElement("span");
+      label.className = "case-study-btn-title";
+      label.textContent = caseStudy.title;
+      wireLiveEdit(label, "casestudy", caseStudy.id, "title", "Case study name", false);
+      const meta = document.createElement("span");
+      meta.className = "case-study-btn-meta";
+      const count = document.createElement("span");
+      count.textContent = steps + " steps";
+      const start = document.createElement("span");
+      start.className = "case-study-btn-start";
+      start.textContent = "Start walkthrough";
+      meta.append(count, " · ", start);
+      meta.setAttribute("aria-hidden", "true");
+      body.append(label, meta);
+      const arrow = document.createElement("span");
+      arrow.className = "case-study-btn-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      button.append(play, body, arrow);
+      button.addEventListener("click", (event) => {
+        // In live-edit mode the name itself is click-to-edit (like the level tabs).
+        if (window.LIVE_EDIT_MODE && event.target.closest("[data-live-edit]")) return;
+        startCaseStudy(caseStudy.id);
+      });
+      caseStudyButtons.appendChild(button);
+    });
+  }
+
+  const CASE_STUDY_PLAYED_KEY = "tpraf-case-study-played";
+
+  function caseStudyPlayed() {
+    try {
+      return localStorage.getItem(CASE_STUDY_PLAYED_KEY) === "1";
+    } catch (e) {
+      return false;
     }
   }
+
+  function markCaseStudyPlayed() {
+    try {
+      localStorage.setItem(CASE_STUDY_PLAYED_KEY, "1");
+    } catch (e) {
+      /* per-visitor nicety only — fine if it can't persist */
+    }
+  }
+
+  function caseStudyLesson(data, caseStudy) {
+    const others = (data.caseStudies || []).filter((other) => other.id !== caseStudy.id);
+    const count = caseStudy.steps.length;
+    return {
+      kind: "case-study",
+      id: caseStudy.id,
+      title: caseStudy.title,
+      intro: {
+        title: caseStudy.title,
+        text: caseStudy.intro || "See how TPRAF was put to work in " + caseStudy.title + ", in " + count + " steps. Each step lights up the parts of the diagram it involves. Use Next to move on, or close the card at any time."
+      },
+      steps: caseStudy.steps.map((step) => ({
+        index: step.index,
+        boxes: step.boxes,
+        box: step.boxes[0],
+        title: step.title,
+        text: step.text,
+        figure: step.figure
+      })),
+      outro: {
+        title: "That is the " + caseStudy.title + " case study",
+        text: others.length ? "Choose another case study to see TPRAF used somewhere else." : "",
+        links: [],
+        caseStudies: others.map((other) => ({ label: other.title + " case study", id: other.id }))
+      }
+    };
+  }
+
+  function startCaseStudy(id) {
+    const data = TPRAF_CONTENT[currentViewKey];
+    const caseStudy = ((data && data.caseStudies) || []).find((c) => c.id === id);
+    if (!caseStudy) return;
+    if (lessonState.running) endLesson(false);
+    markCaseStudyPlayed();
+    caseStudyPicker.classList.remove("is-unplayed");
+    installLesson(data, caseStudyLesson(data, caseStudy));
+    caseStudyButtons.querySelectorAll(".case-study-btn").forEach((button) => {
+      button.classList.toggle("is-current", button.dataset.caseStudy === String(id));
+    });
+    startLesson(-1);
+  }
+
+  function assetUrl(path) {
+    return /^(https?:)?\/\//i.test(path) ? path : (window.APP_BASE_URL || "") + "/" + path.replace(/^\/+/, "");
+  }
+
+  // live-edit.js saved a case-study field: keep the in-page copy in step, so
+  // moving Back/Next (or replaying it) shows the new text straight away.
+  function applyCaseStudyEdit(caseStudy, field, value) {
+    if (field === "title") caseStudy.title = value;
+    else if (field === "intro_text") caseStudy.intro = value || null;
+    const match = /^steps\.(\d+)\.(title|text|caption|images\.(\d+)\.src)$/.exec(field);
+    if (!match) return;
+    const step = caseStudy.steps.find((s) => String(s.index) === match[1]);
+    if (!step) return;
+    if (match[2] === "title" || match[2] === "text") step[match[2]] = value;
+    else if (match[2] === "caption" && step.figure) step.figure.caption = value;
+    else if (match[3] !== undefined && step.figure) {
+      const image = step.figure.images.find((img) => String(img.index) === match[3]);
+      if (image) image.src = assetUrl(value);
+    }
+  }
+
+  document.addEventListener("live-edit:saved", (event) => {
+    const detail = event.detail || {};
+    if (detail.kind !== "casestudy") return;
+    Object.keys(TPRAF_CONTENT).forEach((viewKey) => {
+      (TPRAF_CONTENT[viewKey].caseStudies || []).forEach((caseStudy) => {
+        if (String(caseStudy.id) !== String(detail.recordId)) return;
+        applyCaseStudyEdit(caseStudy, detail.field, detail.value);
+        if (isCaseStudy(lessonState.lesson) && String(lessonState.lesson.id) === String(caseStudy.id)) {
+          lessonState.lesson = caseStudyLesson(TPRAF_CONTENT[viewKey], caseStudy);
+        }
+      });
+    });
+  });
 
   // Starts the tour on its own — but only once the page is
   // actually on screen (a tab opened in the background waits until it is
@@ -1783,8 +1990,9 @@
       lessonCard.hidden = false;
       lessonCard.classList.remove("is-ready");
       // A phone shows the whole diagram tiny at "fit"; zoom in so the box being
-      // explained is big enough to see, and let the tour pan along.
-      if (phoneQuery.matches) {
+      // explained is big enough to see, and let the tour pan along. A case
+      // study lights several boxes at once, so it keeps the whole diagram.
+      if (phoneQuery.matches && !isCaseStudy(currentLesson())) {
         setZoomLevel(PHONE_TOUR_ZOOM);
       } else {
         const fit = document.getElementById("zoom-fit");
@@ -1812,14 +2020,20 @@
     if (!(keepRoute && lessonState.index >= lessonState.total)) clearTourMarks();
     lessonState.index = -1;
     setStartLabels("Take a tour again");
+    if (caseStudyButtons) {
+      caseStudyButtons.querySelectorAll(".case-study-btn.is-current").forEach((button) => button.classList.remove("is-current"));
+    }
     const fit = document.getElementById("zoom-fit");
     if (fit) fit.click();
   }
 
-  function buildLessonFigure(figure) {
+  // `live` ({id, step}) makes a case-study step's pictures and caption
+  // editable in place for admins in live-edit mode.
+  function buildLessonFigure(figure, live) {
     lessonFigureEl.textContent = "";
     lessonFigureEl.hidden = !figure;
     if (!figure) return;
+    const editable = !!(live && window.LIVE_EDIT_MODE);
     const grid = document.createElement("div");
     grid.className = "lesson-figure-grid" + (figure.images.length > 1 ? " is-pair" : "");
     figure.images.forEach((image) => {
@@ -1833,8 +2047,16 @@
       img.src = image.src;
       img.alt = image.alt;
       img.decoding = "async";
+      if (editable && image.index !== undefined) {
+        // Clicking the picture swaps it (live-edit.js) instead of enlarging it.
+        wireLiveEdit(img, "casestudy", live.id, "steps." + live.step + ".images." + image.index + ".src", "Picture", false);
+        img.setAttribute("data-live-edit-image", "");
+      }
       button.appendChild(img);
-      button.addEventListener("click", () => openLightbox(image, button));
+      button.addEventListener("click", () => {
+        if (img.hasAttribute("data-live-edit-image")) return;
+        openLightbox(image, button);
+      });
       item.appendChild(button);
       if (image.label) {
         const caption = document.createElement("figcaption");
@@ -1848,6 +2070,7 @@
       const caption = document.createElement("p");
       caption.className = "lesson-caption";
       caption.textContent = figure.caption;
+      if (editable) wireLiveEdit(caption, "casestudy", live.id, "steps." + live.step + ".caption", "Picture caption", false);
       lessonFigureEl.appendChild(caption);
     }
   }
@@ -1887,14 +2110,23 @@
     let handbookUrl; // undefined = no link for this step; any string (even "") shows one
     let placeholder = false;
 
+    const caseStudy = isCaseStudy(lesson);
+    lessonCard.setAttribute("aria-label", caseStudy ? lesson.title + " case study" : "Guided tour");
+
     if (isIntro) {
-      stageText = "Guided tour · " + total + " steps";
+      stageText = (caseStudy ? "Case study · " : "Guided tour · ") + total + " steps";
       title = lesson.intro.title;
       text = lesson.intro.text;
     } else if (isOutro) {
       stageText = "Finished";
       title = lesson.outro.title;
       text = lesson.outro.text;
+    } else if (caseStudy) {
+      const step = lesson.steps[index];
+      stageText = "Step " + (index + 1) + " of " + total + " · " + lesson.title;
+      title = stepTitle(data, step);
+      text = step.text;
+      figure = step.figure || null;
     } else {
       const step = lesson.steps[index];
       const box = data.boxes.find((b) => b.id === step.box);
@@ -1913,8 +2145,20 @@
     lessonStageEl.textContent = stageText;
     lessonStageEl.dataset.stage = stageKey;
     lessonTitleEl.textContent = title;
-    buildLessonFigure(figure);
     lessonTextEl.textContent = text;
+    // A case study's own words are editable in place (live-edit mode): its
+    // name and introduction on the welcome card, and each step's heading,
+    // text, caption and pictures. Anything else on the card is left alone.
+    const caseStudyStep = caseStudy && !isIntro && !isOutro ? lesson.steps[index] : null;
+    const liveId = caseStudy && !isOutro ? lesson.id : null;
+    if (caseStudyStep) {
+      wireLiveEdit(lessonTitleEl, "casestudy", liveId, "steps." + caseStudyStep.index + ".title", "Step heading", false);
+      wireLiveEdit(lessonTextEl, "casestudy", liveId, "steps." + caseStudyStep.index + ".text", "Step text", true);
+    } else {
+      wireLiveEdit(lessonTitleEl, "casestudy", liveId, "title", "Case study name", false);
+      wireLiveEdit(lessonTextEl, "casestudy", liveId, "intro_text", "Case study introduction", true);
+    }
+    buildLessonFigure(figure, caseStudyStep ? { id: lesson.id, step: caseStudyStep.index } : null);
     setOptionalText(lessonExampleEl, example ? "In this example: " + example : "");
     setOptionalText(lessonCreditEl, credit);
     lessonPlaceholderNote.hidden = !placeholder;
@@ -1938,9 +2182,17 @@
       const replay = document.createElement("button");
       replay.type = "button";
       replay.className = "lesson-link";
-      replay.textContent = "Take a tour again";
+      replay.textContent = caseStudy ? "Watch this case study again" : "Take a tour again";
       replay.addEventListener("click", () => lessonGoTo(-1, false));
       lessonExtraEl.appendChild(replay);
+      ((lesson.outro && lesson.outro.caseStudies) || []).forEach((link) => {
+        const other = document.createElement("button");
+        other.type = "button";
+        other.className = "lesson-link";
+        other.textContent = link.label;
+        other.addEventListener("click", () => startCaseStudy(link.id));
+        lessonExtraEl.appendChild(other);
+      });
       ((lesson.outro && lesson.outro.links) || []).forEach((link) => {
         const onward = document.createElement("button");
         onward.type = "button";
@@ -1956,7 +2208,7 @@
     }
 
     lessonBackBtn.hidden = isIntro;
-    lessonNextBtn.textContent = isIntro ? "Start the tour" : isOutro ? "Finish" : "Next";
+    lessonNextBtn.textContent = isIntro ? (caseStudy ? "Start the case study" : "Start the tour") : isOutro ? "Finish" : "Next";
     lessonNextBtn.classList.toggle("has-arrow", !isIntro && !isOutro);
   }
 
@@ -1982,8 +2234,28 @@
   // diagram, and scroll the page if it sits too near the top or bottom of the
   // screen for the card to have room.
   function panToBox(el) {
+    panToRect(el.getBoundingClientRect());
+  }
+
+  /* A case-study step can light a long row of boxes, leaving no room for the
+     card beside them. Then the boxes are brought to the foot of the screen,
+     so the card has the rest of it above them instead of being squeezed. */
+  function panToCaseStudyStep(rect) {
+    const cardWidth = lessonCard.offsetWidth || 390;
+    const sideRoom = Math.max(rect.left, window.innerWidth - rect.right) - CARD_GAP - CARD_MARGIN;    if (phoneQuery.matches || sideRoom >= cardWidth) {
+      panToRect(rect);
+      return;
+    }
+    const behavior = prefersReducedMotion ? "auto" : "smooth";
     const wrapRect = stageWrap.getBoundingClientRect();
-    const boxRect = el.getBoundingClientRect();
+    const left = stageWrap.scrollLeft + (rect.left + rect.width / 2) - (wrapRect.left + wrapRect.width / 2);
+    stageWrap.scrollTo({ left: Math.max(0, left), behavior: behavior });
+    const bottomGap = 32;
+    window.scrollBy({ top: rect.bottom - (window.innerHeight - bottomGap), behavior: behavior });
+  }
+
+  function panToRect(boxRect) {
+    const wrapRect = stageWrap.getBoundingClientRect();
     const left = stageWrap.scrollLeft + (boxRect.left + boxRect.width / 2) - (wrapRect.left + wrapRect.width / 2);
     const behavior = prefersReducedMotion ? "auto" : "smooth";
     stageWrap.scrollTo({ left: Math.max(0, left), behavior: behavior });
@@ -2017,6 +2289,22 @@
     renderLessonCard();
     clearTourMarks();
     if (target < 0) return; // welcome card: the plain diagram, nothing ringed
+
+    // A case study isn't a route: each step just lights its own boxes (and
+    // the lines between them), with the rest of the diagram faded back.
+    if (isCaseStudy(lesson)) {
+      if (target >= steps.length) return; // closing card: the plain diagram
+      const lit = stepBoxIds(steps[target]);
+      stage.classList.add("tour-running", "is-case-study");
+      lit.forEach((id) => {
+        const el = tourBoxEl(id);
+        if (el) el.classList.add("tour-focus");
+      });
+      lightConnectors(lit);
+      const rect = tourTargetRect();
+      if (rect) panToCaseStudyStep(rect);
+      return;
+    }
 
     const ids = steps.map((step) => step.box);
     if (target >= steps.length) { // closing card: the whole route, lit
@@ -2076,10 +2364,10 @@
     trackFrame = 0;
     if (!lessonState.running) return;
 
-    const el = tourTargetEl();
+    const r = tourTargetRect();
+    const el = !!r;
     let target;
-    if (el) {
-      const r = el.getBoundingClientRect();
+    if (r) {
       target = { x: r.left - SPOT_PAD, y: r.top - SPOT_PAD, w: r.width + SPOT_PAD * 2, h: r.height + SPOT_PAD * 2 };
     } else {
       target = { x: window.innerWidth / 2, y: window.innerHeight / 2, w: 0, h: 0 };
@@ -2115,7 +2403,9 @@
       lessonCard.classList.add("is-ready");
       lessonNextBtn.focus({ preventScroll: true });
     }
-    if (cardShown) placeLessonCard(el ? target : null);
+    // Hold the card still while an admin edits text inside it (live-edit
+    // mode): the edit box sits over the card, so the card mustn't move.
+    if (cardShown && !lessonCard.querySelector(".live-edit-editing")) placeLessonCard(el ? target : null);
 
     trackFrame = requestAnimationFrame(trackTour);
   }

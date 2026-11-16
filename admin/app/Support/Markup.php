@@ -41,6 +41,20 @@ class Markup
     }
 
     /**
+     * Resolves an admin-entered picture path ("assets/img/..." or an
+     * uploaded "storage/media/...") to a full URL under the app's own root,
+     * so it works from a sub-folder too. A full URL is returned unchanged.
+     */
+    public static function asset(string $path): string
+    {
+        if (preg_match('#^(https?:)?//#i', $path)) {
+            return $path;
+        }
+
+        return asset(ltrim($path, '/'));
+    }
+
+    /**
      * Renders a paragraph's light inline emphasis (**bold**, *italic*) as
      * HTML. Always call on already-escaped text (e.g. `Markup::inline(e($p))`)
      * — this only ever inserts <strong>/<em> tags around the given text, it

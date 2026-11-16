@@ -87,3 +87,12 @@ any existing file.
 
 Not before the 20 Sept working demo. Planned as Milestone B / post-launch
 work — see `PLAN.md`.
+
+## Status (Nov 2026)
+
+The migration is done: the Laravel app in `admin/` now serves the public
+pages and the admin panel, and this static `site/` folder is no longer
+updated. It runs on SQLite rather than MySQL, so no database server is
+needed. The review site is https://tpraf.coder71.com; the move to
+www.dare.ac.uk/tpraf (SiteGround) is planned once DARe approves it. See
+`admin/README.md` for how it's built, deployed and moved.

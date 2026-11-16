@@ -9,7 +9,7 @@
   <link rel="icon" href="{{ asset('assets/icons/favicon-32.png') }}" sizes="32x32" />
   <link rel="icon" href="{{ asset('assets/icons/favicon-192.png') }}" sizes="192x192" />
   <link rel="apple-touch-icon" href="{{ asset('assets/icons/favicon-192.png') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}" />
   @if(\App\Support\LiveEdit::enabled())
     <link rel="stylesheet" href="{{ asset('assets/css/live-edit.css') }}" />
   @endif
@@ -113,14 +113,14 @@
       // paragraph), the same way it already reads TPRAF_CONTENT.
       window.DIAGRAM_CHROME = @json(['id' => $diagramChromeBlock->id ?? null, 'props' => $diagramChromeBlock->props ?? []]);
     </script>
-    <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script src="{{ asset('assets/js/app.js') }}?v={{ filemtime(public_path('assets/js/app.js')) }}"></script>
   @endif
   @if(\App\Support\LiveEdit::enabled())
     {{-- live-edit.js saves through the admin routes; this is the app's own
          root, so those calls still land when it runs from a sub-folder
          (www.dare.ac.uk/tpraf). --}}
     <script>window.APP_BASE_URL = @json(rtrim(url('/'), '/'));</script>
-    <script src="{{ asset('assets/js/live-edit.js') }}"></script>
+    <script src="{{ asset('assets/js/live-edit.js') }}?v={{ filemtime(public_path('assets/js/live-edit.js')) }}"></script>
   @endif
 </body>
 </html>

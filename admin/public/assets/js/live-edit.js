@@ -419,7 +419,7 @@
     function startImageEdit(target) {
       if (activeField) return;
 
-      const [, recordId, field] = target.getAttribute("data-live-edit").split(":");
+      const [kind, recordId, field] = target.getAttribute("data-live-edit").split(":");
 
       const picker = document.createElement("input");
       picker.type = "file";
@@ -451,22 +451,27 @@
           })
           .then(function (uploaded) {
             showStatus(pageRect(target), "saving", "Saving…");
-            return fetch(adminUrl("/admin/blocks/" + recordId), {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-CSRF-TOKEN": csrfToken(),
-                "X-Requested-With": "XMLHttpRequest",
-              },
-              body: JSON.stringify({ props: { [field]: uploaded.path } }),
-            }).then(function (res) {
+            const save = kind === "casestudy"
+              ? saveCaseStudyField(recordId, field, uploaded.path)
+              : fetch(adminUrl("/admin/blocks/" + recordId), {
+                  method: "PATCH",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": csrfToken(),
+                    "X-Requested-With": "XMLHttpRequest",
+                  },
+                  body: JSON.stringify({ props: { [field]: uploaded.path } }),
+                });
+            return save.then(function (res) {
               if (!res.ok) throw new Error("Save failed (" + res.status + ")");
               return uploaded.path;
             });
           })
           .then(function (path) {
-            const url = "/" + path;
+            // Under the app's own root, so it also works from a sub-folder.
+            const url = adminUrl("/" + path);
+            announceSaved(kind, recordId, field, path);
             if (target.tagName === "IMG") {
               target.src = url;
             } else {
@@ -569,7 +574,28 @@
       return newNodes;
     }
 
-    // Four kinds, each saving to a different endpoint: "block" (a PageBlock
+    // A case-study field (see app.js's case-study card): its name, intro, or
+    // one step's heading/text/caption/picture, addressed by its path.
+    function saveCaseStudyField(recordId, field, value) {
+      return fetch(adminUrl("/admin/case-studies/" + recordId + "/field"), {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-CSRF-TOKEN": csrfToken(),
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify({ field: field, value: value }),
+      });
+    }
+
+    // Lets the page keep its own copy of what was saved in step (app.js
+    // replays case studies from memory, not from the page's HTML).
+    function announceSaved(kind, recordId, field, value) {
+      document.dispatchEvent(new CustomEvent("live-edit:saved", { detail: { kind, recordId, field, value } }));
+    }
+
+    // Five kinds, each saving to a different endpoint ("casestudy" above): "block" (a PageBlock
     // field — ordinary page content, the footer, the diagram chrome text),
     // "element" (a TprafElement field, the diagram's box/popup text — see
     // app.js's openModal()), "view" (a TprafView's own title/subtitle/
@@ -601,6 +627,10 @@
           },
           body: JSON.stringify({ [af.fieldName]: newValue }),
         });
+      }
+
+      if (af.kind === "casestudy") {
+        return saveCaseStudyField(af.recordId, af.fieldName, newValue);
       }
 
       if (af.kind === "dspimp") {
@@ -661,6 +691,7 @@
             TPRAF_DSP_IMP[af.recordId][af.fieldName] = newValue;
           }
           if (af.linkEl && hrefChanged) af.linkEl.setAttribute("href", newHref);
+          announceSaved(af.kind, af.recordId, af.fieldName, newValue);
           cleanupField(af);
           showStatus(newNodes[0] ? pageRect(newNodes[0]) : statusRect, "saved", "Saved", 1200);
         })

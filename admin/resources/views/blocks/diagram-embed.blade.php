@@ -85,6 +85,19 @@
         <button type="button" class="tour-btn" id="tour-restart" hidden>Restart</button>
         <button type="button" class="tour-btn" id="tour-stop" hidden>Stop</button>
       </div>
+      {{-- A view with case studies (Level 1 Extended) offers those in this
+           same strip instead of the walkthrough and guided tour — app.js
+           fills in one button per published case study. --}}
+      <div class="case-study-picker" id="case-study-picker" hidden>
+        <div class="case-study-intro">
+          <span class="case-study-intro-icon" aria-hidden="true"></span>
+          <div>
+            <p class="case-study-picker-label" id="case-study-picker-label">Case study walkthroughs</p>
+            <p class="case-study-picker-hint" id="case-study-picker-hint">See how TPRAF was used in real projects. Pick one to start a guided, step-by-step walkthrough of the diagram.</p>
+          </div>
+        </div>
+        <div class="case-study-buttons" id="case-study-buttons" role="group" aria-labelledby="case-study-picker-label" aria-describedby="case-study-picker-hint"></div>
+      </div>
     </div>
 
     <div class="diagram-tour lesson-launch" id="lesson-launch" hidden>

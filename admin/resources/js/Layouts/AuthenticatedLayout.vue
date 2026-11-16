@@ -51,6 +51,12 @@ const showingNavigationDropdown = ref(false);
                                     Diagrams
                                 </NavLink>
                                 <NavLink
+                                    :href="route('admin.case-studies.index')"
+                                    :active="route().current('admin.case-studies.*')"
+                                >
+                                    Case studies
+                                </NavLink>
+                                <NavLink
                                     v-if="$page.props.auth.user.is_admin"
                                     :href="route('admin.users.index')"
                                     :active="route().current('admin.users.*')"
@@ -195,6 +201,12 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('admin.diagrams.*')"
                         >
                             Diagrams
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('admin.case-studies.index')"
+                            :active="route().current('admin.case-studies.*')"
+                        >
+                            Case studies
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             v-if="$page.props.auth.user.is_admin"

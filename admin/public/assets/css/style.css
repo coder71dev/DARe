@@ -4544,3 +4544,245 @@ html.menu-open { overflow: hidden; }
 @media (max-width: 640px) {
   .diagram-page .site-header .header-nav .header-home { display: inline; }
 }
+
+/* ---------- Case-study walkthroughs (Level 1 Extended) ----------
+   A view with case studies shows them in place of "Take a tour" and "Play
+   walkthrough" (app.js adds .has-case-studies to the strip and the page).
+   The strip becomes its own panel above the diagram card, on every screen
+   size: a heading, one line on what the cards do, then one card per case
+   study that reads plainly as "press to play" — a play button, the name, its
+   length and "Start walkthrough". The play buttons pulse gently until the
+   visitor has started one (.is-unplayed). A case study plays through the
+   guided tour's card and spotlight; each step can light several boxes. */
+.diagram-tour.has-case-studies > :not(.case-study-picker) { display: none !important; }
+
+.diagram-page .landing-diagram > .diagram-tour.has-case-studies {
+  display: block;
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  align-self: auto;
+  z-index: auto;
+  width: auto;
+  max-width: none;
+  margin: clamp(0.75rem, 2vw, 40px) 0 0;
+  padding: clamp(1rem, 1.5vw, 28px);
+  background: var(--color-white);
+  border-radius: clamp(12px, 1vw, 20px);
+}
+
+.case-study-picker[hidden] { display: none; }
+
+.case-study-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: clamp(0.75rem, 1vw, 20px);
+}
+
+/* A small "route" mark: three dots joined by a line, in the brand green. */
+.case-study-intro-icon {
+  flex: 0 0 auto;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: rgba(94, 207, 112, 0.18);
+  position: relative;
+}
+
+.case-study-intro-icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-water);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 18c0-6 12-6 12-12' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-dasharray='2.5 3'/%3E%3Ccircle cx='6' cy='18' r='2.2'/%3E%3Ccircle cx='18' cy='6' r='2.2'/%3E%3Ccircle cx='12' cy='12' r='1.6'/%3E%3C/svg%3E") center / 62% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 18c0-6 12-6 12-12' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-dasharray='2.5 3'/%3E%3Ccircle cx='6' cy='18' r='2.2'/%3E%3Ccircle cx='18' cy='6' r='2.2'/%3E%3Ccircle cx='12' cy='12' r='1.6'/%3E%3C/svg%3E") center / 62% no-repeat;
+}
+
+.case-study-picker-label {
+  margin: 0 0 0.15rem;
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: clamp(1rem, 1.15vw, 22px);
+  line-height: 1.25;
+  color: var(--color-water);
+}
+
+.case-study-picker-hint {
+  margin: 0;
+  font-size: clamp(0.85rem, 0.9vw, 17px);
+  line-height: 1.45;
+  color: var(--color-water-muted);
+}
+
+/* Laid out by how many cards there are (app.js sets data-count), so rows
+   always come out even: 2 or 3 side by side, 4 as one row on a wide screen
+   or two rows of two, and one per line on a phone. Never a card on its own. */
+.case-study-buttons {
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: clamp(0.5rem, 0.8vw, 16px);
+}
+
+.case-study-buttons[data-count="1"] { --cols: 1; max-width: 26rem; }
+.case-study-buttons[data-count="2"] { --cols: 2; }
+.case-study-buttons[data-count="4"] { --cols: 2; }
+
+@media (min-width: 1200px) {
+  .case-study-buttons[data-count="4"] { --cols: 4; }
+}
+
+@media (max-width: 760px) {
+  .case-study-buttons[data-count] { --cols: 1; max-width: none; }
+}
+
+.case-study-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  min-height: 4.25rem;
+  padding: 0.7rem 0.9rem;
+  border: 2px solid var(--color-stone);
+  border-radius: 12px;
+  background: var(--color-white);
+  color: var(--color-water);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
+}
+
+.case-study-btn:hover {
+  border-color: var(--color-leaf);
+  box-shadow: 0 8px 22px rgba(0, 41, 94, 0.12);
+  transform: translateY(-2px);
+}
+
+.case-study-btn:focus-visible {
+  outline: 3px solid var(--color-sky);
+  outline-offset: 2px;
+}
+
+/* The case study being played. */
+.case-study-btn.is-current {
+  border-color: var(--color-leaf);
+  background: rgba(94, 207, 112, 0.12);
+}
+
+/* Round play button with a triangle, like a video's. */
+.case-study-btn-play {
+  flex: 0 0 auto;
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--color-water);
+  transition: background-color 0.18s ease;
+}
+
+.case-study-btn-play::before {
+  content: "";
+  position: absolute;
+  left: 54%;
+  top: 50%;
+  border-left: 12px solid var(--color-white);
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  transform: translate(-50%, -50%);
+}
+
+.case-study-btn:hover .case-study-btn-play,
+.case-study-btn.is-current .case-study-btn-play { background: var(--color-leaf); }
+.case-study-btn:hover .case-study-btn-play::before,
+.case-study-btn.is-current .case-study-btn-play::before { border-left-color: var(--color-water); }
+
+.case-study-btn-body {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.case-study-btn-title {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.05vw, 20px);
+  line-height: 1.2;
+}
+
+.case-study-btn-meta {
+  font-size: clamp(0.78rem, 0.8vw, 15px);
+  color: var(--color-water-muted);
+}
+
+/* Breaks between the two parts, never inside "Start walkthrough". */
+.case-study-btn-meta > span { white-space: nowrap; }
+.case-study-btn-start { font-weight: 700; color: var(--color-water); }
+
+/* An arrow that nudges forward on hover. */
+.case-study-btn-arrow {
+  flex: 0 0 auto;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.3rem;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0.45;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.case-study-btn:hover .case-study-btn-arrow {
+  opacity: 1;
+  transform: translateX(3px) rotate(45deg);
+}
+
+/* Until the visitor has started one: a soft ring pulses out of each play
+   button, staggered so the eye travels along the row. */
+.case-study-picker.is-unplayed .case-study-btn-play { animation: case-study-pulse 2.4s ease-out infinite; }
+.case-study-picker.is-unplayed .case-study-btn:nth-child(2) .case-study-btn-play { animation-delay: 0.4s; }
+.case-study-picker.is-unplayed .case-study-btn:nth-child(3) .case-study-btn-play { animation-delay: 0.8s; }
+.case-study-picker.is-unplayed .case-study-btn:nth-child(4) .case-study-btn-play { animation-delay: 1.2s; }
+
+@keyframes case-study-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(94, 207, 112, 0.6); }
+  70%, 100% { box-shadow: 0 0 0 12px rgba(94, 207, 112, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-study-btn,
+  .case-study-btn-arrow { transition: none; }
+  .case-study-btn:hover { transform: none; }
+  .case-study-picker.is-unplayed .case-study-btn-play { animation: none; }
+}
+
+/* While a case study plays, only the boxes of the current step stand out. */
+.diagram-stage.is-lesson.is-case-study.tour-running .diagram-box { opacity: 0.35; }
+.diagram-stage.is-lesson.is-case-study.tour-running .diagram-box.tour-focus { opacity: 1; }
+
+/* Large screens: the panel takes its own row above the diagram card, so the
+   card no longer needs the band at its top that held the old buttons. */
+@media (min-width: 901px) {
+  .diagram-page .landing-diagram.has-case-studies > .diagram-tour { grid-row: 4; margin-top: clamp(1rem, 2.6vw, 50px); }
+  .diagram-page .landing-diagram.has-case-studies .diagram-viewport {
+    grid-row: 5;
+    margin-top: clamp(0.75rem, 1.6vw, 30px);
+    padding-top: clamp(1rem, 2.6vw, 50px);
+  }
+  .diagram-page .landing-diagram.has-case-studies .diagram-viewport::before { display: none; }
+}
+
+/* Phone: a row of its own above the diagram card (instead of the round icon
+   strip inside it); the cards stack, one per line. */
+@media (max-width: 760px) {
+  .diagram-page .landing-diagram.has-case-studies > .diagram-tour { grid-row: 3; margin-top: 0.6rem; padding: 0.85rem; }
+  .diagram-page .landing-diagram.has-case-studies .diagram-viewport,
+  .diagram-page .landing-diagram.has-case-studies .scroll-hint { grid-row: 4; }
+  .diagram-page .landing-diagram.has-case-studies .diagram-guide { grid-row: 5; }
+  .diagram-page .landing-diagram.has-case-studies .view-next { grid-row: 6; }
+  .case-study-intro-icon { display: none; }
+  .case-study-btn { min-height: 3.6rem; padding: 0.55rem 0.75rem; }
+  .case-study-btn-play { width: 2.4rem; height: 2.4rem; }
+}
