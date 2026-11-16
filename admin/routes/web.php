@@ -59,6 +59,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/case-studies', [CaseStudyAdminController::class, 'store'])->name('case-studies.store');
     Route::get('/case-studies/{caseStudy}', [CaseStudyAdminController::class, 'edit'])->name('case-studies.edit');
     Route::put('/case-studies/{caseStudy}', [CaseStudyAdminController::class, 'update'])->name('case-studies.update');
+    Route::patch('/case-studies/{caseStudy}/field', [CaseStudyAdminController::class, 'updateField'])->name('case-studies.update-field');
     Route::delete('/case-studies/{caseStudy}', [CaseStudyAdminController::class, 'destroy'])->name('case-studies.destroy');
 
     Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');

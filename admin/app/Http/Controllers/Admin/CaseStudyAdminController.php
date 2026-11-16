@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCaseStudyRequest;
+use App\Http\Requests\UpdateCaseStudyFieldRequest;
 use App\Http\Requests\UpdateCaseStudyRequest;
 use App\Models\TprafCaseStudy;
 use App\Models\TprafView;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -95,6 +97,27 @@ class CaseStudyAdminController extends Controller
         ]);
 
         return back()->with('status', 'Case study saved.');
+    }
+
+    /**
+     * One field saved from the public diagram's live-edit overlay (see
+     * live-edit.js) — the case-study card's text and pictures, edited in
+     * place. JSON in, JSON out, like the other live-edit endpoints.
+     */
+    public function updateField(UpdateCaseStudyFieldRequest $request, TprafCaseStudy $caseStudy): JsonResponse
+    {
+        $field = $request->validated('field');
+        $value = (string) ($request->validated('value') ?? '');
+
+        if (in_array($field, ['title', 'intro_text'], true)) {
+            $caseStudy->update([$field => $field === 'intro_text' && $value === '' ? null : $value]);
+        } else {
+            $data = ['steps' => $caseStudy->steps ?? []];
+            data_set($data, $field, $value);
+            $caseStudy->update(['steps' => $data['steps']]);
+        }
+
+        return response()->json(['status' => 'Saved.']);
     }
 
     public function destroy(TprafCaseStudy $caseStudy): RedirectResponse

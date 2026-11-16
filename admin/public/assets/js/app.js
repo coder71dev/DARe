@@ -1802,8 +1802,13 @@
       icon.setAttribute("aria-hidden", "true");
       const label = document.createElement("span");
       label.textContent = caseStudy.title;
+      wireLiveEdit(label, "casestudy", caseStudy.id, "title", "Case study name", false);
       button.append(icon, label);
-      button.addEventListener("click", () => startCaseStudy(caseStudy.id));
+      button.addEventListener("click", (event) => {
+        // In live-edit mode the name itself is click-to-edit (like the level tabs).
+        if (window.LIVE_EDIT_MODE && event.target.closest("[data-live-edit]")) return;
+        startCaseStudy(caseStudy.id);
+      });
       caseStudyButtons.appendChild(button);
     });
   }
@@ -1816,10 +1821,11 @@
       id: caseStudy.id,
       title: caseStudy.title,
       intro: {
-        title: caseStudy.title + " case study",
+        title: caseStudy.title,
         text: caseStudy.intro || "See how TPRAF was put to work in " + caseStudy.title + ", in " + count + " steps. Each step lights up the parts of the diagram it involves. Use Next to move on, or close the card at any time."
       },
       steps: caseStudy.steps.map((step) => ({
+        index: step.index,
         boxes: step.boxes,
         box: step.boxes[0],
         title: step.title,
@@ -1846,6 +1852,41 @@
     });
     startLesson(-1);
   }
+
+  function assetUrl(path) {
+    return /^(https?:)?\/\//i.test(path) ? path : (window.APP_BASE_URL || "") + "/" + path.replace(/^\/+/, "");
+  }
+
+  // live-edit.js saved a case-study field: keep the in-page copy in step, so
+  // moving Back/Next (or replaying it) shows the new text straight away.
+  function applyCaseStudyEdit(caseStudy, field, value) {
+    if (field === "title") caseStudy.title = value;
+    else if (field === "intro_text") caseStudy.intro = value || null;
+    const match = /^steps\.(\d+)\.(title|text|caption|images\.(\d+)\.src)$/.exec(field);
+    if (!match) return;
+    const step = caseStudy.steps.find((s) => String(s.index) === match[1]);
+    if (!step) return;
+    if (match[2] === "title" || match[2] === "text") step[match[2]] = value;
+    else if (match[2] === "caption" && step.figure) step.figure.caption = value;
+    else if (match[3] !== undefined && step.figure) {
+      const image = step.figure.images.find((img) => String(img.index) === match[3]);
+      if (image) image.src = assetUrl(value);
+    }
+  }
+
+  document.addEventListener("live-edit:saved", (event) => {
+    const detail = event.detail || {};
+    if (detail.kind !== "casestudy") return;
+    Object.keys(TPRAF_CONTENT).forEach((viewKey) => {
+      (TPRAF_CONTENT[viewKey].caseStudies || []).forEach((caseStudy) => {
+        if (String(caseStudy.id) !== String(detail.recordId)) return;
+        applyCaseStudyEdit(caseStudy, detail.field, detail.value);
+        if (isCaseStudy(lessonState.lesson) && String(lessonState.lesson.id) === String(caseStudy.id)) {
+          lessonState.lesson = caseStudyLesson(TPRAF_CONTENT[viewKey], caseStudy);
+        }
+      });
+    });
+  });
 
   // Starts the tour on its own — but only once the page is
   // actually on screen (a tab opened in the background waits until it is
@@ -1941,10 +1982,13 @@
     if (fit) fit.click();
   }
 
-  function buildLessonFigure(figure) {
+  // `live` ({id, step}) makes a case-study step's pictures and caption
+  // editable in place for admins in live-edit mode.
+  function buildLessonFigure(figure, live) {
     lessonFigureEl.textContent = "";
     lessonFigureEl.hidden = !figure;
     if (!figure) return;
+    const editable = !!(live && window.LIVE_EDIT_MODE);
     const grid = document.createElement("div");
     grid.className = "lesson-figure-grid" + (figure.images.length > 1 ? " is-pair" : "");
     figure.images.forEach((image) => {
@@ -1958,8 +2002,16 @@
       img.src = image.src;
       img.alt = image.alt;
       img.decoding = "async";
+      if (editable && image.index !== undefined) {
+        // Clicking the picture swaps it (live-edit.js) instead of enlarging it.
+        wireLiveEdit(img, "casestudy", live.id, "steps." + live.step + ".images." + image.index + ".src", "Picture", false);
+        img.setAttribute("data-live-edit-image", "");
+      }
       button.appendChild(img);
-      button.addEventListener("click", () => openLightbox(image, button));
+      button.addEventListener("click", () => {
+        if (img.hasAttribute("data-live-edit-image")) return;
+        openLightbox(image, button);
+      });
       item.appendChild(button);
       if (image.label) {
         const caption = document.createElement("figcaption");
@@ -1973,6 +2025,7 @@
       const caption = document.createElement("p");
       caption.className = "lesson-caption";
       caption.textContent = figure.caption;
+      if (editable) wireLiveEdit(caption, "casestudy", live.id, "steps." + live.step + ".caption", "Picture caption", false);
       lessonFigureEl.appendChild(caption);
     }
   }
@@ -2047,8 +2100,20 @@
     lessonStageEl.textContent = stageText;
     lessonStageEl.dataset.stage = stageKey;
     lessonTitleEl.textContent = title;
-    buildLessonFigure(figure);
     lessonTextEl.textContent = text;
+    // A case study's own words are editable in place (live-edit mode): its
+    // name and introduction on the welcome card, and each step's heading,
+    // text, caption and pictures. Anything else on the card is left alone.
+    const caseStudyStep = caseStudy && !isIntro && !isOutro ? lesson.steps[index] : null;
+    const liveId = caseStudy && !isOutro ? lesson.id : null;
+    if (caseStudyStep) {
+      wireLiveEdit(lessonTitleEl, "casestudy", liveId, "steps." + caseStudyStep.index + ".title", "Step heading", false);
+      wireLiveEdit(lessonTextEl, "casestudy", liveId, "steps." + caseStudyStep.index + ".text", "Step text", true);
+    } else {
+      wireLiveEdit(lessonTitleEl, "casestudy", liveId, "title", "Case study name", false);
+      wireLiveEdit(lessonTextEl, "casestudy", liveId, "intro_text", "Case study introduction", true);
+    }
+    buildLessonFigure(figure, caseStudyStep ? { id: lesson.id, step: caseStudyStep.index } : null);
     setOptionalText(lessonExampleEl, example ? "In this example: " + example : "");
     setOptionalText(lessonCreditEl, credit);
     lessonPlaceholderNote.hidden = !placeholder;
@@ -2293,7 +2358,9 @@
       lessonCard.classList.add("is-ready");
       lessonNextBtn.focus({ preventScroll: true });
     }
-    if (cardShown) placeLessonCard(el ? target : null);
+    // Hold the card still while an admin edits text inside it (live-edit
+    // mode): the edit box sits over the card, so the card mustn't move.
+    if (cardShown && !lessonCard.querySelector(".live-edit-editing")) placeLessonCard(el ? target : null);
 
     trackFrame = requestAnimationFrame(trackTour);
   }

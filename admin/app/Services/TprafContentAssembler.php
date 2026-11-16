@@ -128,10 +128,11 @@ class TprafContentAssembler
     {
         $steps = collect($caseStudy->steps ?? [])
             ->filter(fn (array $step) => ($step['boxes'] ?? []) !== [] || filled($step['title'] ?? null))
-            ->map(function (array $step) {
+            ->map(function (array $step, int $index) {
                 $images = collect($step['images'] ?? [])
                     ->filter(fn (array $image) => filled($image['src'] ?? null))
-                    ->map(fn (array $image) => [
+                    ->map(fn (array $image, int $imageIndex) => [
+                        'index' => $imageIndex,
                         'src' => Markup::asset($image['src']),
                         'alt' => (string) ($image['alt'] ?? ''),
                     ])
@@ -139,6 +140,9 @@ class TprafContentAssembler
                     ->all();
 
                 return [
+                    // Where the step is stored, so live editing saves back to
+                    // the right one even if an empty step was skipped.
+                    'index' => $index,
                     'title' => (string) ($step['title'] ?? ''),
                     'text' => (string) ($step['text'] ?? ''),
                     'boxes' => array_values(array_filter($step['boxes'] ?? [])),

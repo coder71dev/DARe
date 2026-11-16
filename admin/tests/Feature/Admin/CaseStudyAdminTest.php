@@ -130,11 +130,57 @@ class CaseStudyAdminTest extends TestCase
         $this->assertModelMissing($caseStudy);
     }
 
+    public function test_live_editing_saves_one_step_field_and_leaves_the_rest_alone(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $caseStudy = TprafCaseStudy::factory()->create(['view_id' => $this->view->id, 'steps' => $this->validPayload()['steps']]);
+
+        $this->actingAs($admin)
+            ->patchJson(route('admin.case-studies.update-field', $caseStudy), ['field' => 'steps.0.text', 'value' => 'New wording.'])
+            ->assertOk();
+        $this->actingAs($admin)
+            ->patchJson(route('admin.case-studies.update-field', $caseStudy), ['field' => 'steps.0.images.0.src', 'value' => 'storage/media/new.jpg'])
+            ->assertOk();
+        $this->actingAs($admin)
+            ->patchJson(route('admin.case-studies.update-field', $caseStudy), ['field' => 'title', 'value' => 'Tyne & Wear'])
+            ->assertOk();
+
+        $caseStudy->refresh();
+        $this->assertSame('Tyne & Wear', $caseStudy->title);
+        $this->assertSame('New wording.', $caseStudy->steps[0]['text']);
+        $this->assertSame('storage/media/new.jpg', $caseStudy->steps[0]['images'][0]['src']);
+        $this->assertSame('Development of modelling tools', $caseStudy->steps[0]['title']);
+        $this->assertSame(['transport-system', 'hazard-model'], $caseStudy->steps[0]['boxes']);
+    }
+
+    public function test_live_editing_cannot_change_boxes_or_add_steps(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $caseStudy = TprafCaseStudy::factory()->create(['view_id' => $this->view->id, 'steps' => $this->validPayload()['steps']]);
+
+        $this->actingAs($admin)
+            ->patchJson(route('admin.case-studies.update-field', $caseStudy), ['field' => 'steps.0.boxes', 'value' => 'x'])
+            ->assertJsonValidationErrors('field');
+        $this->actingAs($admin)
+            ->patchJson(route('admin.case-studies.update-field', $caseStudy), ['field' => 'steps.5.text', 'value' => 'x'])
+            ->assertJsonValidationErrors('field');
+        $this->actingAs($admin)
+            ->patchJson(route('admin.case-studies.update-field', $caseStudy), ['field' => 'steps.0.title', 'value' => ''])
+            ->assertJsonValidationErrors('value');
+
+        $this->assertCount(1, $caseStudy->fresh()->steps);
+    }
+
     public function test_non_admins_cannot_manage_case_studies(): void
     {
         $user = User::factory()->create();
 
         $this->actingAs($user)->get(route('admin.case-studies.index'))->assertForbidden();
         $this->actingAs($user)->post(route('admin.case-studies.store'), ['title' => 'X'])->assertForbidden();
+
+        $caseStudy = TprafCaseStudy::factory()->create(['view_id' => $this->view->id]);
+        $this->actingAs($user)
+            ->patchJson(route('admin.case-studies.update-field', $caseStudy), ['field' => 'title', 'value' => 'X'])
+            ->assertForbidden();
     }
 }
