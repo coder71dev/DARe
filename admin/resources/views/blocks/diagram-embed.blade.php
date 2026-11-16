@@ -89,8 +89,14 @@
            same strip instead of the walkthrough and guided tour — app.js
            fills in one button per published case study. --}}
       <div class="case-study-picker" id="case-study-picker" hidden>
-        <span class="case-study-picker-label" id="case-study-picker-label">Case studies</span>
-        <div class="case-study-buttons" id="case-study-buttons" role="group" aria-labelledby="case-study-picker-label"></div>
+        <div class="case-study-intro">
+          <span class="case-study-intro-icon" aria-hidden="true"></span>
+          <div>
+            <p class="case-study-picker-label" id="case-study-picker-label">Case study walkthroughs</p>
+            <p class="case-study-picker-hint" id="case-study-picker-hint">See how TPRAF was used in real projects. Pick one to start a guided, step-by-step walkthrough of the diagram.</p>
+          </div>
+        </div>
+        <div class="case-study-buttons" id="case-study-buttons" role="group" aria-labelledby="case-study-picker-label" aria-describedby="case-study-picker-hint"></div>
       </div>
     </div>
 

@@ -1791,19 +1791,41 @@
     if (landing) landing.classList.toggle("has-case-studies", show);
     if (!caseStudyPicker) return;
     caseStudyPicker.hidden = !show;
+    // The play buttons pulse gently until this visitor has started one.
+    caseStudyPicker.classList.toggle("is-unplayed", !caseStudyPlayed());
     caseStudyButtons.textContent = "";
     caseStudies.forEach((caseStudy) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "case-study-btn";
       button.dataset.caseStudy = String(caseStudy.id);
-      const icon = document.createElement("span");
-      icon.className = "case-study-btn-icon";
-      icon.setAttribute("aria-hidden", "true");
+      const steps = caseStudy.steps.length;
+      button.setAttribute("aria-label", "Start the " + caseStudy.title + " case study walkthrough, " + steps + " steps");
+      // A card that reads as "press to play": a play button, the name, how
+      // long it is, and an explicit "Start walkthrough".
+      const play = document.createElement("span");
+      play.className = "case-study-btn-play";
+      play.setAttribute("aria-hidden", "true");
+      const body = document.createElement("span");
+      body.className = "case-study-btn-body";
       const label = document.createElement("span");
+      label.className = "case-study-btn-title";
       label.textContent = caseStudy.title;
       wireLiveEdit(label, "casestudy", caseStudy.id, "title", "Case study name", false);
-      button.append(icon, label);
+      const meta = document.createElement("span");
+      meta.className = "case-study-btn-meta";
+      const count = document.createElement("span");
+      count.textContent = steps + " steps";
+      const start = document.createElement("span");
+      start.className = "case-study-btn-start";
+      start.textContent = "Start walkthrough";
+      meta.append(count, " · ", start);
+      meta.setAttribute("aria-hidden", "true");
+      body.append(label, meta);
+      const arrow = document.createElement("span");
+      arrow.className = "case-study-btn-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      button.append(play, body, arrow);
       button.addEventListener("click", (event) => {
         // In live-edit mode the name itself is click-to-edit (like the level tabs).
         if (window.LIVE_EDIT_MODE && event.target.closest("[data-live-edit]")) return;
@@ -1811,6 +1833,24 @@
       });
       caseStudyButtons.appendChild(button);
     });
+  }
+
+  const CASE_STUDY_PLAYED_KEY = "tpraf-case-study-played";
+
+  function caseStudyPlayed() {
+    try {
+      return localStorage.getItem(CASE_STUDY_PLAYED_KEY) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function markCaseStudyPlayed() {
+    try {
+      localStorage.setItem(CASE_STUDY_PLAYED_KEY, "1");
+    } catch (e) {
+      /* per-visitor nicety only — fine if it can't persist */
+    }
   }
 
   function caseStudyLesson(data, caseStudy) {
@@ -1846,6 +1886,8 @@
     const caseStudy = ((data && data.caseStudies) || []).find((c) => c.id === id);
     if (!caseStudy) return;
     if (lessonState.running) endLesson(false);
+    markCaseStudyPlayed();
+    caseStudyPicker.classList.remove("is-unplayed");
     installLesson(data, caseStudyLesson(data, caseStudy));
     caseStudyButtons.querySelectorAll(".case-study-btn").forEach((button) => {
       button.classList.toggle("is-current", button.dataset.caseStudy === String(id));
