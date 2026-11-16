@@ -69,7 +69,7 @@ const showingNavigationDropdown = ref(false);
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
                             <a
-                                href="/"
+                                :href="route('home')"
                                 target="_blank"
                                 rel="noopener"
                                 title="Visit site"
@@ -211,7 +211,7 @@ const showingNavigationDropdown = ref(false);
                             Email logs
                         </ResponsiveNavLink>
                         <a
-                            href="/"
+                            :href="route('home')"
                             target="_blank"
                             rel="noopener"
                             class="flex items-center gap-2 border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"

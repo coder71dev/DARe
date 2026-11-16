@@ -18,6 +18,12 @@
     image: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
   };
 
+  // The app's own root (printed by layouts.app), so saves still reach the
+  // admin routes when the site runs from a sub-folder (www.dare.ac.uk/tpraf).
+  function adminUrl(path) {
+    return (window.APP_BASE_URL || "") + path;
+  }
+
   function svg(name) {
     return (
       '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[name] + "</svg>"
@@ -431,7 +437,7 @@
         const formData = new FormData();
         formData.append("file", file);
 
-        fetch("/admin/media", {
+        fetch(adminUrl("/admin/media"), {
           method: "POST",
           headers: {
             "X-CSRF-TOKEN": csrfToken(),
@@ -445,7 +451,7 @@
           })
           .then(function (uploaded) {
             showStatus(pageRect(target), "saving", "Saving…");
-            return fetch("/admin/blocks/" + recordId, {
+            return fetch(adminUrl("/admin/blocks/" + recordId), {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
@@ -572,7 +578,7 @@
     // setProcessPanel()).
     function saveRequest(af, newValue, newHref) {
       if (af.kind === "element") {
-        return fetch("/admin/elements/" + af.recordId, {
+        return fetch(adminUrl("/admin/elements/" + af.recordId), {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -585,7 +591,7 @@
       }
 
       if (af.kind === "view") {
-        return fetch("/admin/diagram-views/" + af.recordId, {
+        return fetch(adminUrl("/admin/diagram-views/" + af.recordId), {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -598,7 +604,7 @@
       }
 
       if (af.kind === "dspimp") {
-        return fetch("/admin/diagram-process/" + af.recordId, {
+        return fetch(adminUrl("/admin/diagram-process/" + af.recordId), {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -613,7 +619,7 @@
       const props = { [af.fieldName]: newValue };
       if (af.hrefField) props[af.hrefField] = newHref;
 
-      return fetch("/admin/blocks/" + af.recordId, {
+      return fetch(adminUrl("/admin/blocks/" + af.recordId), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

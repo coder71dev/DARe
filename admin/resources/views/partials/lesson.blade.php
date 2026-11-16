@@ -15,7 +15,7 @@
          carries the live-edit attrs (two elements sharing one data-live-edit
          group would have their text concatenated, not treated as duplicates
          of one value); editing it there updates this one too on next load. --}}
-    <a class="modal-handbook-link lesson-handbook" id="lesson-handbook" href="https://dare-private.netlify.app" target="_blank" rel="noopener" hidden>{{ $diagramChromeBlock->props['handbook_link_text'] ?? 'Take me to the Handbook →' }}</a>
+    <a class="modal-handbook-link lesson-handbook" id="lesson-handbook" href="{{ config('services.tpraf.handbook_url') }}" target="_blank" rel="noopener" hidden>{{ $diagramChromeBlock->props['handbook_link_text'] ?? 'Take me to the Handbook →' }}</a>
   </div>
   <div class="lesson-nav">
     <button type="button" class="lesson-btn lesson-btn-back" id="lesson-back">&larr; Back</button>

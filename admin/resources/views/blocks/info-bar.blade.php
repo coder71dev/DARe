@@ -13,7 +13,7 @@
   <div class="info-bar-body">
     <p {!! \App\Support\LiveEdit::attrs($block, 'body', multiline: true) !!}>{{ $props['body'] ?? '' }}</p>
     @if(! empty($props['link_href']))
-      <a class="inline-link" href="{{ $props['link_href'] }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::attrs($block, 'link_label') !!}>{{ $props['link_label'] ?? $props['link_href'] }}</span> <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
+      <a class="inline-link" href="{{ \App\Support\Markup::href($props['link_href']) }}" target="_blank" rel="noopener"><span {!! \App\Support\LiveEdit::attrs($block, 'link_label') !!}>{{ $props['link_label'] ?? $props['link_href'] }}</span> <span class="cta-arrow" aria-hidden="true">&rarr;</span></a>
     @endif
   </div>
 </details>

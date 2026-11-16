@@ -47,12 +47,11 @@
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
-  // Each box's handbookUrl (content.js) is a path relative to the handbook
-  // site, e.g. "/imp/climate-scenarios/ukcp18-local", or "" for boxes with
-  // no specific page yet. HANDBOOK_BASE_URL is the only thing that should
-  // need to change once the real handbook replaces this temporary preview
-  // site, as long as its URL structure stays the same.
-  const HANDBOOK_BASE_URL = "https://dare-private.netlify.app";
+  // Each box's handbookUrl is a path relative to the handbook site, e.g.
+  // "/imp/climate-scenarios/ukcp18-local", or "" for boxes with no specific
+  // page yet. The site itself comes from config('services.tpraf.handbook_url')
+  // (TPRAF_HANDBOOK_URL), printed by layouts.app.
+  const HANDBOOK_BASE_URL = window.HANDBOOK_BASE_URL || "https://handbook.dare.ac.uk";
 
   function resolveHandbookUrl(path) {
     return HANDBOOK_BASE_URL + (path || "");

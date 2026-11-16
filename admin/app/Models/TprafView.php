@@ -9,14 +9,26 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class TprafView extends Model
 {
     protected $fillable = [
-        'key', 'title', 'subtitle', 'next_view_key', 'next_view_label',
+        'key', 'is_hidden', 'title', 'subtitle', 'next_view_key', 'next_view_label',
         'status', 'scale', 'geometry',
     ];
 
     protected $casts = [
+        'is_hidden' => 'boolean',
         'geometry' => 'array',
         'scale' => 'float',
     ];
+
+    /**
+     * Keys of the views taken off the public site (see is_hidden) — the
+     * diagram page leaves their level tab out.
+     *
+     * @return list<string>
+     */
+    public static function hiddenKeys(): array
+    {
+        return static::query()->where('is_hidden', true)->pluck('key')->all();
+    }
 
     public function elements(): HasMany
     {
